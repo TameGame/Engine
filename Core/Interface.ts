@@ -6,6 +6,14 @@ interface PropertyChangedCallback<TPropertyType> {
 }
 
 //
+// Interface implemented by objects that can cancel something like
+// a previously set up watch.
+//
+interface Cancellable {
+    cancel(): void;
+}
+
+//
 // The passes used for every game tick (in execution order)
 //
 enum UpdatePass {
@@ -43,17 +51,25 @@ interface Watchable {
     // type detects that the contents of that property has changed,
     // call the specified callback.
     //
-    // Returns a value that can be passed to unwatch to stop the property
-    // from being watched.
+    // Returns a value that can be used to cancel the watch.
     //
-    // Watch notifications are generally nopt 
+    // Watch notifications are generally not called immediately but when
+    // a particular update pass is hit during a game tick.
     //
-    watch<TPropertyType>(updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>): number;
+    watch<TPropertyType>(updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>): Cancellable;
 
     //
-    // Clears a previous watch event
+    // When this object is part of the active scene and the game hits
+    // the specified pass as part of processing a tick, the callback
+    // is called, once only.
     //
-    unwatch(watchHandle: number);
+    onPass(updatePass: UpdatePass, callback: (milliseconds: number) => void);
+
+    //
+    // As for onPass, but the call is made every time this object is part
+    // of the active scene and the game hits the specified pass.
+    //
+    everyPass(updatePass: UpdatePass, callback: (milliseconds: number) => void) : Cancellable;
 }
 
 //
@@ -152,4 +168,16 @@ interface Game extends Watchable {
     // Starts running the specified scene
     //
     startScene(scene: Scene): void;
+
+    //
+    // Runs a game tick. Time is a time in milliseconds from an arbitrary
+    // fixed point (it should always increase)
+    //
+    // Normally you don't need to call this manually, the game launcher
+    // will set things up so that it's called automatically.
+    //
+    // It's a good idea to choose a fixed point that's reasonably recent
+    // so that time can be measured to a high degree of accuracy.
+    //
+    tick(milliseconds: number): void;
 }
