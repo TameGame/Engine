@@ -13,12 +13,16 @@
 
             someGame.watch(TameGame.ObjectDetails, 
                             TameGame.UpdatePass.Physics, 
-                            (function (obj, newValue) { console.log("ObjectDetails changed to ", newValue)}));
+                            (function (obj, newValue) { console.log("ObjectDetails changed to ", newValue.objectName)}));
 
             var obj = someGame.createObject();
-            obj.get(TameGame.ObjectDetails).objectName = "Hello";
+            obj.get(TameGame.ObjectDetails).objectName = "Hello, world";
 
             someGame.tick(0);
+            someGame.tick(1);
+
+            obj.get(TameGame.ObjectDetails).objectName = "Goodbye, world";
+            someGame.tick(2);
         </script>
     </body>
 </html>
