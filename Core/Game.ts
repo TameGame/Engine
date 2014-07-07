@@ -157,7 +157,21 @@ module TameGame {
         // so that time can be measured to a high degree of accuracy.
         //
         tick(milliseconds: number): void {
+            // Run the changes through the passes
+            [
+                UpdatePass.Animations, 
+                UpdatePass.Mechanics,
+                UpdatePass.Physics, 
+                UpdatePass.PreRender,
+                UpdatePass.Render,
+                UpdatePass.PostRender
+            ].forEach((pass) => {
+                // Dispatch the changes for this pass to the watchers
+                this._recentChanges.dispatchChanges(pass, this._watchers);
+            });
 
+            // Clear out any changes that might have occured
+            this._recentChanges.clearChanges();
         }
 
         //
@@ -180,7 +194,6 @@ module TameGame {
         // is called, once only.
         //
         onPass(updatePass: UpdatePass, callback: (milliseconds: number) => void) {
-
         }
 
         //

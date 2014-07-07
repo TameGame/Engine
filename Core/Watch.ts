@@ -57,6 +57,10 @@ module TameGame {
     export class Watcher {
         private _changes: { [property: string]: { [id: number]: (callback: any) => void } };
 
+        new() {
+            this._changes = {};
+        }
+
         //
         // Notes that a property on an object has changed
         //
@@ -110,6 +114,13 @@ module TameGame {
                     }
                 }
             }
+        }
+
+        //
+        // Clear out any changes that might have occurred 
+        //
+        clearChanges() {
+            this._changes = {};
         }
     }
 }
