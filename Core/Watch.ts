@@ -4,7 +4,7 @@ module TameGame {
     //
     // Represents a set of registered watchers
     //
-    class RegisteredWatchers implements Watchable {
+    export class RegisteredWatchers implements Watchable {
         _registered: { [updatePass: number]: { [property: string]: any[] } };
 
         new() {
@@ -54,7 +54,7 @@ module TameGame {
     // The watcher notes when objects have changes made and helps
     // with dispatching the relevant events.
     //
-    class Watcher {
+    export class Watcher {
         private _changes: { [property: string]: { [id: number]: (callback: any) => void } };
 
         //
@@ -99,9 +99,10 @@ module TameGame {
 
                     if (callbacks) {
                         // For every object with a change to this property..
-                        for (var objId in changes[prop]) {
+                        var callbackFunctions = changes[prop];
+                        for (var objId in callbackFunctions) {
                             // Fetch the function that can notify of the change
-                            var objCallback = changes[prop][objId];
+                            var objCallback = callbackFunctions[objId];
 
                             // Make the call
                             callbacks.forEach(callback => objCallback(callback));

@@ -183,7 +183,7 @@ module TameGame {
     // The Game interface defines the top-level structures and routines used
     // by the runtime.
     //
-    export interface Game /* extends Watchable */ {
+    export interface Game extends Watchable {
         //
         // Creates a new TameObject that will participate in this game
         //

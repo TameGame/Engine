@@ -1,4 +1,5 @@
 /// <reference path="Interface.ts"/>
+/// <reference path="Watch.ts" />
 
 module TameGame {
     //
@@ -10,6 +11,7 @@ module TameGame {
     export class StandardGame implements Game {
         private _currentScene: Scene;
         private _nextIdentifier: number;
+        private _watchers: RegisteredWatchers;
 
         new() {
             this._nextIdentifier = 0;
@@ -123,6 +125,37 @@ module TameGame {
         //
         tick(milliseconds: number): void {
 
+        }
+
+        //
+        // When any any object with an attached property of the specified
+        // type detects that the contents of that property has changed,
+        // call the specified callback.
+        //
+        // Returns a value that can be used to cancel the watch.
+        //
+        // Watch notifications are generally not called immediately but when
+        // a particular update pass is hit during a game tick.
+        //
+        watch<TPropertyType>(definition: TypeDefinition<TPropertyType>, updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>): Cancellable {
+            return this._watchers.watch(definition, updatePass, callback);
+        }
+
+        //
+        // When this object is part of the active scene and the game hits
+        // the specified pass as part of processing a tick, the callback
+        // is called, once only.
+        //
+        onPass(updatePass: UpdatePass, callback: (milliseconds: number) => void) {
+
+        }
+
+        //
+        // As for onPass, but the call is made every time this object is part
+        // of the active scene and the game hits the specified pass.
+        //
+        everyPass(updatePass: UpdatePass, callback: (milliseconds: number) => void) : Cancellable {
+            return null;
         }
     }
 }
