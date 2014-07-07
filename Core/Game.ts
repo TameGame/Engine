@@ -61,6 +61,7 @@ module TameGame {
             this._nextIdentifier++;
 
             // Declare the functions for retrieving and altering the properties and behaviors
+            var that = this;
             function getProp<TPropertyType>(definition: TypeDefinition<TPropertyType>): TPropertyType {
                 var name = definition.name;
 
@@ -69,7 +70,7 @@ module TameGame {
                     return properties[name];
                 } else {
                     // Create a new value if there isn't
-                    properties[name] = this.watchify(definition.createDefault(), obj, definition);
+                    properties[name] = that.watchify(definition.createDefault(), obj, definition);
                     return properties[name];
                 }
             }
