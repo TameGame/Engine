@@ -64,10 +64,11 @@ module TameGame {
             var that = this;
             function getProp<TPropertyType>(definition: TypeDefinition<TPropertyType>): TPropertyType {
                 var name = definition.name;
+                var val = properties[name];
 
-                if (name in properties) {
+                if (val) {
                     // Use the existing value if there is one
-                    return properties[name];
+                    return val;
                 } else {
                     // Create a new value if there isn't
                     properties[name] = that.watchify(definition.createDefault(), obj, definition);
