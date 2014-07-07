@@ -76,7 +76,7 @@ module TameGame {
         // Watch notifications are generally not called immediately but when
         // a particular update pass is hit during a game tick.
         //
-        watch<TPropertyType>(updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>): Cancellable;
+        watch<TPropertyType>(definition: TypeDefinition<TPropertyType>, updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>): Cancellable;
 
         //
         // When this object is part of the active scene and the game hits
