@@ -4,8 +4,12 @@ module TameGame {
     //
     // Represents a set of registered watchers
     //
-    class WatcherRegistration implements Watchable {
+    class RegisteredWatchers implements Watchable {
         _registered: { [updatePass: number]: { [property: string]: any[] } };
+
+        new() {
+            this._registered = {};
+        }
 
         //
         // When any any object with an attached property of the specified
@@ -51,7 +55,7 @@ module TameGame {
     // with dispatching the relevant events.
     //
     class Watcher {
-        private _changes: { [property: string]: { [id: number]: (callback: any) => void } }
+        private _changes: { [property: string]: { [id: number]: (callback: any) => void } };
 
         //
         // Notes that a property on an object has changed
@@ -74,6 +78,37 @@ module TameGame {
             propertyChanges[o.identifier] = (callback) => {
                 callback(o, o.get(property));
             };
+        }
+
+        //
+        // Sends changes to the watchers in a RegisteredWatchers object
+        //
+        dispatchChanges(pass: UpdatePass, target: RegisteredWatchers) {
+            // Fetch the list of watchers for this pass
+            var watchers = target._registered[pass];
+            if (!watchers) {
+                return;
+            }
+
+            // For each property, dispatch the events
+            var changes = this._changes;
+            for (var prop in changes) {
+                if (changes.hasOwnProperty(prop)) {
+                    // Fetch the callbacks for this property
+                    var callbacks = watchers[prop];
+
+                    if (callbacks) {
+                        // For every object with a change to this property..
+                        for (var objId in changes[prop]) {
+                            // Fetch the function that can notify of the change
+                            var objCallback = changes[prop][objId];
+
+                            // Make the call
+                            callbacks.forEach(callback => objCallback(callback));
+                        }
+                    }
+                }
+            }
         }
     }
 }
