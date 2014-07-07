@@ -9,6 +9,11 @@ module TameGame {
     //
     export class StandardGame implements Game {
         private _currentScene: Scene;
+        private _nextIdentifier: number;
+
+        new() {
+            this._nextIdentifier = 0;
+        }
 
         //
         // Creates a new TameObject that will participate in this game
@@ -17,6 +22,9 @@ module TameGame {
             // An object contains some properties and behaviors, which we declare here
             var properties = {};
             var behaviors = {};
+
+            var identifier = this._nextIdentifier;
+            this._nextIdentifier++;
 
             // Declare the functions for retrieving and altering the properties and behaviors
             function getProp<TPropertyType>(definition: TypeDefinition<TPropertyType>): TPropertyType {
@@ -50,6 +58,7 @@ module TameGame {
             }
 
             return {
+                identifier:     identifier,
                 get:            getProp,
                 getBehavior:    getBehavior,
                 attachBehavior: attachBehavior

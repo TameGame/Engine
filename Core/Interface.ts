@@ -97,6 +97,11 @@ module TameGame {
     //
     export interface TameObject /* extends Watchable */ {
         //
+        // An identifier for this object that is unique within the game
+        //
+        identifier: number;
+
+        //
         // Retrieves this object's implementation of a particular property
         // interface.
         //

@@ -24,8 +24,4 @@ module TameGame {
             }
         }
     };
-
-    // Test: getting a property from an object
-    var x: TameObject;
-    var y = x.get(ObjectDetails).objectName;
 }
