@@ -14,7 +14,28 @@ module TameGame {
         // Creates a new TameObject that will participate in this game
         //
         createObject(): TameObject {
-            return null;
+            // An object contains some properties and behaviors, which we declare here
+            var properties = {};
+            var behaviours = {};
+
+            // Declare the functions for retrieving and altering the properties and behaviors
+            function getProp<TPropertyType>(): TPropertyType {
+                return null;
+            }
+
+            function getBehavior<TBehaviorType>(): TBehaviorType {
+                return null;
+            }
+
+            function attachBehavior<TBehaviorType>(behavior: TBehaviorType) : TameObject {
+                return this;
+            }
+
+            return {
+                get:            getProp,
+                getBehavior:    getBehavior,
+                attachBehavior: attachBehavior
+            };
         }
 
         //
