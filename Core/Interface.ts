@@ -147,6 +147,11 @@ module TameGame {
     //
     export interface Scene /* extends Watchable */ {
         //
+        // A unique ID for this scene within the game
+        //
+        identifier: number;
+
+        //
         // Adds an object to this scene
         //
         // Objects can only be in a single scene at a time.

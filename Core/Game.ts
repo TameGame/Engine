@@ -69,7 +69,39 @@ module TameGame {
         // Creates a new scene
         //
         createScene(): Scene {
-            return null;
+            // Variables used in a scene
+            var objects: { [id: number]: TameObject } = {};
+            var subScenes: { [id: number]: Scene } = {};
+
+            // Basic functions
+            function addObject(o: TameObject): Scene {
+                objects[o.identifier] = o;
+                return this;
+            }
+            function removeObject(o: TameObject): Scene {
+                delete objects[o.identifier];
+                return this;
+            }
+            function addScene(s: Scene): Scene {
+                subScenes[s.identifier] = s;
+                return this;
+            }
+            function removeScene(s: Scene): Scene {
+                delete subScenes[s.identifier];
+                return this;
+            }
+
+            // Assign an identifier to this object
+            var identifier = this._nextIdentifier;
+            this._nextIdentifier++;
+
+            return {
+                identifier:     identifier,
+                addObject:      addObject,
+                removeObject:   removeObject,
+                addScene:       addScene,
+                removeScene:    removeScene
+            };
         }
 
         //
