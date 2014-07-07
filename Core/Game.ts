@@ -12,9 +12,40 @@ module TameGame {
         private _currentScene: Scene;
         private _nextIdentifier: number;
         private _watchers: RegisteredWatchers;
+        private _recentChanges: Watcher;
 
         new() {
             this._nextIdentifier = 0;
+            this._watchers = new RegisteredWatchers();
+            this._recentChanges = new Watcher();
+        }
+
+        //
+        // Attaches watchers to the specified object
+        //
+        // This means that any get/set operation will end up in the 
+        // _recentChanges object for this game
+        //
+        watchify<T>(propertyObj: T, sourceObj: TameObject, propertyType: TypeDefinition<T>): T {
+            var result = {};
+
+            for (var prop in propertyObj) {
+                if (propertyObj.hasOwnProperty(prop)) {
+                    // Add get/set accessors to the result for this property
+                    (() => {
+                        var val = propertyObj[prop];
+                        Object.defineProperty(result, prop, {
+                            get: () => val,
+                            set: (newValue) => {
+                                val = newValue;
+                                this._recentChanges.noteChange(sourceObj, propertyType);
+                            }
+                        });
+                    })();
+                }
+            }
+
+            return <T> result;
         }
 
         //
@@ -24,6 +55,7 @@ module TameGame {
             // An object contains some properties and behaviors, which we declare here
             var properties = {};
             var behaviors = {};
+            var obj: TameObject;
 
             var identifier = this._nextIdentifier;
             this._nextIdentifier++;
@@ -37,7 +69,7 @@ module TameGame {
                     return properties[name];
                 } else {
                     // Create a new value if there isn't
-                    properties[name] = definition.createDefault();
+                    properties[name] = this.watchify(definition.createDefault(), obj, definition);
                     return properties[name];
                 }
             }
@@ -59,12 +91,13 @@ module TameGame {
                 return this;
             }
 
-            return {
+            obj = {
                 identifier:     identifier,
                 get:            getProp,
                 getBehavior:    getBehavior,
                 attachBehavior: attachBehavior
             };
+            return obj;
         }
 
         //
