@@ -43,6 +43,25 @@ module TameGame {
     }
 
     //
+    // A type definition is used as a reference to a property or behaviour
+    //
+    // This is a bit of a hack. Typescript has no good way to create a function
+    // that says 'take a type and return an object of that type' as it has
+    // no type that itself represents a type.
+    //
+    // If it did, we could create a function that takes a type and returns
+    // a typedefinition for it instead of having to define one manually every
+    // time.
+    //
+    export interface TypeDefinition<TType> {
+        // A unique name for this property (usually just the same as the name of the class)
+        name: string;
+
+        // Creates a new default value for this property
+        createDefault(): TType;
+    }
+
+    //
     // A watchable object can generate callbacks when properties that are
     // attached to it or its child objects change
     //
@@ -91,7 +110,7 @@ module TameGame {
         //
         // Property objects can't be replaced.
         //
-        get<TPropertyType>(): TPropertyType;
+        get<TPropertyType>(definition: TypeDefinition<TPropertyType>): TPropertyType;
 
         //
         // Retrieves this object's implementation of a particular behaviour
@@ -100,7 +119,7 @@ module TameGame {
         //
         // Behaviours are how objects send messages to one another.
         //
-        getBehavior<TBehaviorType>(): TBehaviorType;
+        getBehavior<TBehaviorType>(definition: TypeDefinition<TBehaviorType>): TBehaviorType;
 
         //
         // Attaches a behaviour to this object, replacing whatever was
@@ -109,7 +128,7 @@ module TameGame {
         // This function returns the object it was called on: this allows
         // for chained attaches.
         //
-        attachBehavior<TBehaviorType>(behavior: TBehaviorType): TameObject;
+        attachBehavior<TBehaviorType>(definition: TypeDefinition<TBehaviorType>, behavior: TBehaviorType): TameObject;
     }
 
     //

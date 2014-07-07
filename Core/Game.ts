@@ -16,18 +16,36 @@ module TameGame {
         createObject(): TameObject {
             // An object contains some properties and behaviors, which we declare here
             var properties = {};
-            var behaviours = {};
+            var behaviors = {};
 
             // Declare the functions for retrieving and altering the properties and behaviors
-            function getProp<TPropertyType>(): TPropertyType {
-                return null;
+            function getProp<TPropertyType>(definition: TypeDefinition<TPropertyType>): TPropertyType {
+                var name = definition.name;
+
+                if (name in properties) {
+                    // Use the existing value if there is one
+                    return properties[name];
+                } else {
+                    // Create a new value if there isn't
+                    properties[name] = definition.createDefault();
+                    return properties[name];
+                }
             }
 
-            function getBehavior<TBehaviorType>(): TBehaviorType {
-                return null;
+            function getBehavior<TBehaviorType>(definition: TypeDefinition<TBehaviorType>): TBehaviorType {
+                var name = definition.name;
+
+                if (name in behaviors) {
+                    return behaviors[name];
+                } else {
+                    behaviors[name] = definition.createDefault();
+                    return behaviors[name];
+                }
             }
 
-            function attachBehavior<TBehaviorType>(behavior: TBehaviorType) : TameObject {
+            function attachBehavior<TBehaviorType>(definition: TypeDefinition<TBehaviorType>, newBehavior: TBehaviorType) : TameObject {
+                behaviors[definition.name] = newBehavior;
+
                 return this;
             }
 
