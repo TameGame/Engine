@@ -14,10 +14,10 @@ module TameGame {
         private _watchers: RegisteredWatchers;
         private _recentChanges: Watcher;
 
-        new() {
-            this._nextIdentifier = 0;
-            this._watchers = new RegisteredWatchers();
-            this._recentChanges = new Watcher();
+        constructor() {
+            this._nextIdentifier    = 0;
+            this._watchers          = new RegisteredWatchers();
+            this._recentChanges     = new Watcher();
         }
 
         //

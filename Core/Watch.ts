@@ -7,7 +7,7 @@ module TameGame {
     export class RegisteredWatchers implements Watchable {
         _registered: { [updatePass: number]: { [property: string]: any[] } };
 
-        new() {
+        constructor() {
             this._registered = {};
         }
 
@@ -22,8 +22,15 @@ module TameGame {
         // a particular update pass is hit during a game tick.
         //
         watch<TPropertyType>(definition: TypeDefinition<TPropertyType>, updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>): Cancellable {
-            var passCallbacks       = this._registered[updatePass]
-            var propertyCallbacks   = passCallbacks[definition.name];
+            var passCallbacks = this._registered[updatePass];
+            if (!passCallbacks) {
+                passCallbacks = this._registered[updatePass] = {};
+            }
+
+            var propertyCallbacks = passCallbacks[definition.name];
+            if (!propertyCallbacks) {
+                propertyCallbacks = passCallbacks[definition.name] = [];
+            }
 
             propertyCallbacks.push(callback);
 
@@ -57,7 +64,7 @@ module TameGame {
     export class Watcher {
         private _changes: { [property: string]: { [id: number]: (callback: any) => void } };
 
-        new() {
+        constructor() {
             this._changes = {};
         }
 
