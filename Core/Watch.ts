@@ -81,12 +81,12 @@ module TameGame {
             }
 
             // Nothing to do if the object has already been noted as changed
-            if (id in propertyChanges) {
+            if (propertyChanges[id]) {
                 return;
             }
 
             // Create a callback function for this object
-            propertyChanges[o.identifier] = (callback) => {
+            propertyChanges[id] = (callback) => {
                 callback(o, o.get(property));
             };
         }
