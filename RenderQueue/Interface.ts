@@ -1,3 +1,5 @@
+/// <reference path="../Assets/Interface.ts" />
+
 module TameGame {
     /**
      * Represents an action on the render queue
@@ -50,5 +52,20 @@ module TameGame {
          * Sends the actions in this queue to a renderer in the appropriate order
          */
         render(action: (item: RenderQueueItem) => void);
+    }
+    
+    /**
+     * Interface implemented by objects that describe a renderer
+     */
+    export interface Renderer {
+        /**
+         * Renders a queue and performs an optional callback once finished
+         */
+        performRender(queue: RenderQueue, done?: () => void);
+        
+        /**
+         * The sprite asset manager for this object
+         */
+        sprites: SpriteManager;
     }
 }
