@@ -1,58 +1,56 @@
 module TameGame {
-    //
-    // Callback made when a property changes
-    //
+    /**
+     * Callback made when a property changes
+     */
     export interface PropertyChangedCallback<TPropertyType> {
         (obj: TameObject, newValue: TPropertyType): void;
     }
 
-    //
-    // Interface implemented by objects that can cancel something like
-    // a previously set up watch.
-    //
+    /**
+     * Interface implemented by objects that can cancel something like
+     * a previously set up watch.
+     */
     export interface Cancellable {
         cancel(): void;
     }
 
-    //
-    // The passes used for every game tick (in execution order)
-    //
+    /**
+     * The passes used for every game tick (in execution order)
+     */
     export enum UpdatePass {
-        // Not a pass: indicates events that must be generated immediately
+        /** Not a pass: indicates events that must be generated immediately */
         Immediate,
 
-        // The animation pass, when animated properties are updated
+        /** The animation pass, when animated properties are updated */
         Animations,
 
-        // The mechanics pass, when the effects of game mechanics on properties are processed
+        /** The mechanics pass, when the effects of game mechanics on properties are processed */
         Mechanics,
 
-        // The physics pass, when the effects of any physics engine are applied
+        /** The physics pass, when the effects of any physics engine are applied */
         Physics,
 
         // The pre-render update pass
         PreRender,
 
-        // The render pass, when the render queue for the tick is 
-        // generated.
+        /** The render pass, when the render queue for the current tick is generated */
         Render,
 
-        // The post-render pass, after the render queue has been
-        // passed off
+        /** The post-render pass, after the render queue has been passed off */
         PostRender
     }
 
-    //
-    // A type definition is used as a reference to a property or behaviour
-    //
-    // This is a bit of a hack. Typescript has no good way to create a function
-    // that says 'take a type and return an object of that type' as it has
-    // no type that itself represents a type.
-    //
-    // If it did, we could create a function that takes a type and returns
-    // a typedefinition for it instead of having to define one manually every
-    // time.
-    //
+    /**
+     * A type definition is used as a reference to a property or behaviour
+     *
+     * This is a bit of a hack. Typescript has no good way to create a function
+     * that says 'take a type and return an object of that type' as it has
+     * no type that itself represents a type.
+     *
+     * If it did, we could create a function that takes a type and returns
+     * a typedefinition for it instead of having to define one manually every
+     * time.
+     */
     export interface TypeDefinition<TType> {
         // A unique name for this property (usually just the same as the name of the class)
         name: string;
@@ -61,154 +59,154 @@ module TameGame {
         createDefault(): TType;
     }
 
-    //
-    // A watchable object can generate callbacks when properties that are
-    // attached to it or its child objects change
-    //
+    /**
+     * A watchable object can generate callbacks when properties that are
+     * attached to it or its child objects change
+     */
     export interface Watchable {
-        //
-        // When any any object with an attached property of the specified
-        // type detects that the contents of that property has changed,
-        // call the specified callback.
-        //
-        // Returns a value that can be used to cancel the watch.
-        //
-        // Watch notifications are generally not called immediately but when
-        // a particular update pass is hit during a game tick.
-        //
+        /**
+         * When any any object with an attached property of the specified
+         * type detects that the contents of that property has changed,
+         * call the specified callback.
+         *
+         * Returns a value that can be used to cancel the watch.
+         *
+         * Watch notifications are generally not called immediately but when
+         * a particular update pass is hit during a game tick.
+         */
         watch<TPropertyType>(definition: TypeDefinition<TPropertyType>, updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>): Cancellable;
 
-        //
-        // When this object is part of the active scene and the game hits
-        // the specified pass as part of processing a tick, the callback
-        // is called, once only.
-        //
+        /**
+         * When this object is part of the active scene and the game hits
+         * the specified pass as part of processing a tick, the callback
+         * is called, once only.
+         */
         onPass(updatePass: UpdatePass, callback: (milliseconds: number) => void);
 
-        //
-        // As for onPass, but the call is made every time this object is part
-        // of the active scene and the game hits the specified pass.
-        //
+        /**
+         * As for onPass, but the call is made every time this object is part
+         * of the active scene and the game hits the specified pass.
+         */
         everyPass(updatePass: UpdatePass, callback: (milliseconds: number) => void) : Cancellable;
     }
 
-    //
-    // A TameObject provides the base functionality for all game objects
-    //
+    /**
+     * A TameObject provides the base functionality for all game objects
+     */
     export interface TameObject /* extends Watchable */ {
-        //
-        // An identifier for this object that is unique within the game
-        //
+        /**
+         * An identifier for this object that is unique within the game
+         */
         identifier: number;
 
-        //
-        // Retrieves this object's implementation of a particular property
-        // interface.
-        //
-        // If this object does not yet have properties of the specified
-        // type, then the properties are registered with their default
-        // values.
-        //
-        // Behind the scenes, property objects are made 'watchable' so that
-        // updates to properties causes appropriate side-effects elsewhere
-        // in the game engine.
-        //
-        // Property objects can't be replaced.
-        //
+        /**
+         * Retrieves this object's implementation of a particular property
+         * interface.
+         *
+         * If this object does not yet have properties of the specified
+         * type, then the properties are registered with their default
+         * values.
+         *
+         * Behind the scenes, property objects are made 'watchable' so that
+         * updates to properties causes appropriate side-effects elsewhere
+         * in the game engine.
+         *
+         * Property objects can't be replaced.
+         */
         get<TPropertyType>(definition: TypeDefinition<TPropertyType>): TPropertyType;
 
-        //
-        // Retrieves this object's implementation of a particular behaviour
-        // interface. If no behaviour has been set, then this will return
-        // the default value for this object.
-        //
-        // Behaviours are how objects send messages to one another.
-        //
+        /**
+         * Retrieves this object's implementation of a particular behaviour
+         * interface. If no behaviour has been set, then this will return
+         * the default value for this object.
+         *
+         * Behaviours are how objects send messages to one another.
+         */
         getBehavior<TBehaviorType>(definition: TypeDefinition<TBehaviorType>): TBehaviorType;
 
-        //
-        // Attaches a behaviour to this object, replacing whatever was
-        // there before.
-        //
-        // This function returns the object it was called on: this allows
-        // for chained attaches.
-        //
+        /**
+         * Attaches a behaviour to this object, replacing whatever was
+         * there before.
+         *
+         * This function returns the object it was called on: this allows
+         * for chained attaches.
+         */
         attachBehavior<TBehaviorType>(definition: TypeDefinition<TBehaviorType>, behavior: TBehaviorType): TameObject;
     }
 
-    //
-    // A Scene is simply a collection of objects
-    //
-    // It represents a game state. That is, it encompasses a set of game
-    // objects. A single scene can be active in a game at one time, though
-    // this is not a huge limitation as scenes may contain sub-scenes.
-    //
-    // A scene can represent things like a level, a HUD or a loading screen.
-    //
+    /**
+     * A Scene is simply a collection of objects
+     *
+     * It represents a game state. That is, it encompasses a set of game
+     * objects. A single scene can be active in a game at one time, though
+     * this is not a huge limitation as scenes may contain sub-scenes.
+     *
+     * A scene can represent things like a level, a HUD or a loading screen.
+     */
     export interface Scene extends Watchable {
-        //
-        // A unique ID for this scene within the game
-        //
+        /**
+         * A unique ID for this scene within the game
+         */
         identifier: number;
 
-        //
-        // Adds an object to this scene
-        //
-        // Objects can only be in a single scene at a time.
-        // Objects must have been created by the same Game that created this object
-        // Returns this scene to allow for chaining
-        //
+        /**
+         * Adds an object to this scene
+         *
+         * Objects can only be in a single scene at a time.
+         * Objects must have been created by the same Game that created this object
+         * Returns this scene to allow for chaining
+         */
         addObject(o: TameObject): Scene;
 
-        //
-        // Removes an object from this scene
-        //
+        /**
+         * Removes an object from this scene
+         */
         removeObject(o: TameObject): Scene;
 
-        //
-        // Adds a sub-scene to this object
-        //
-        // Sub-scenes must have been created by the same Game that created this object
-        // Returns this scene to allow for chaining
-        //
+        /**
+         * Adds a sub-scene to this object
+         *
+         * Sub-scenes must have been created by the same Game that created this object
+         * Returns this scene to allow for chaining
+         */
         addScene(newScene: Scene): Scene;
 
-        //
-        // Removes a sub-scene from this object
-        //
+        /**
+         * Removes a sub-scene from this object
+         */
         removeScene(oldScene: Scene): Scene;
     }
 
-    //
-    // The Game interface defines the top-level structures and routines used
-    // by the runtime.
-    //
+    /**
+     * The Game interface defines the top-level structures and routines used
+     * by the runtime.
+     */
     export interface Game extends Watchable {
-        //
-        // Creates a new TameObject that will participate in this game
-        //
+        /**
+         * Creates a new TameObject that will participate in this game
+         */
         createObject(): TameObject;
 
-        //
-        // Creates a new scene
-        //
+        /**
+         * Creates a new scene
+         */
         createScene(): Scene;
 
-        //
-        // Starts running the specified scene
-        //
+        /**
+         * Starts running the specified scene
+         */
         startScene(scene: Scene): void;
 
-        //
-        // Runs a game tick. Time is a time in milliseconds from an arbitrary
-        // fixed point (it should always increase)
-        //
-        // Normally you don't need to call this manually, the game launcher
-        // will set things up so that it's called automatically.
-        //
-        // It's a good idea to choose a fixed point that's reasonably recent
-        // so that time can be measured to a high degree of accuracy.
-        //
+        /**
+         * Runs a game tick. Time is a time in milliseconds from an arbitrary
+         * fixed point (it should always increase)
+         *
+         * Normally you don't need to call this manually, the game launcher
+         * will set things up so that it's called automatically.
+         *
+         * It's a good idea to choose a fixed point that's reasonably recent
+         * so that time can be measured to a high degree of accuracy.
+         */
         tick(milliseconds: number): void;
     }
 }

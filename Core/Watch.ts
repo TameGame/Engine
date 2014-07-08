@@ -1,9 +1,9 @@
 /// <reference path="Interface.ts" />
 
 module TameGame {
-    //
-    // Represents a set of registered watchers
-    //
+    /**
+     * Represents a set of registered watchers
+     */
     export class RegisteredWatchers implements Watchable {
         _registered: { [updatePass: number]: { [property: string]: any[] } };
 
@@ -11,16 +11,16 @@ module TameGame {
             this._registered = {};
         }
 
-        //
-        // When any any object with an attached property of the specified
-        // type detects that the contents of that property has changed,
-        // call the specified callback.
-        //
-        // Returns a value that can be used to cancel the watch.
-        //
-        // Watch notifications are generally not called immediately but when
-        // a particular update pass is hit during a game tick.
-        //
+        /**
+         * When any any object with an attached property of the specified
+         * type detects that the contents of that property has changed,
+         * call the specified callback.
+         *
+         * Returns a value that can be used to cancel the watch.
+         *
+         * Watch notifications are generally not called immediately but when
+         * a particular update pass is hit during a game tick.
+         */
         watch<TPropertyType>(definition: TypeDefinition<TPropertyType>, updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>): Cancellable {
             // This only deals with deferred updates
             if (updatePass === UpdatePass.Immediate) {
@@ -46,11 +46,11 @@ module TameGame {
             return { cancel: () => { } };
         }
 
-        //
-        // When this object is part of the active scene and the game hits
-        // the specified pass as part of processing a tick, the callback
-        // is called, once only.
-        //
+        /**
+         * When this object is part of the active scene and the game hits
+         * the specified pass as part of processing a tick, the callback
+         * is called, once only.
+         */
         onPass(updatePass: UpdatePass, callback: (milliseconds: number) => void) {
 
         }
@@ -65,10 +65,10 @@ module TameGame {
 
     }
 
-    //
-    // The watcher notes when objects have changes made and helps
-    // with dispatching the relevant events.
-    //
+    /**
+     * The watcher notes when objects have changes made and helps
+     * with dispatching the relevant events.
+     */
     export class Watcher {
         private _changes: { [property: string]: { [id: number]: (callback: any) => void } };
 
@@ -99,9 +99,9 @@ module TameGame {
             };
         }
 
-        //
-        // Sends changes to the watchers in a RegisteredWatchers object
-        //
+        /**
+         * Sends changes to the watchers in a RegisteredWatchers object
+         */
         dispatchChanges(pass: UpdatePass, target: RegisteredWatchers) {
             // Fetch the list of watchers for this pass
             var watchers = target._registered[pass];
@@ -129,17 +129,17 @@ module TameGame {
             });
         }
 
-        //
-        // Clear out any changes that might have occurred 
-        //
+        /**
+         * Clear out any changes that might have occurred 
+         */
         clearChanges() {
             this._changes = {};
         }
         
-        //
-        // Generate a filtered version of this watcher that only applies to the specified object
-        // IDs.
-        //
+        /**
+         * Generate a filtered version of this watcher that only applies to the specified object
+         * IDs.
+         */
         filter(filterFunc: (objId: number) => boolean): Watcher {
             var result = new Watcher();
             
