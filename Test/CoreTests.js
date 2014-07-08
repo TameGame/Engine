@@ -97,6 +97,16 @@ QUnit.test("SceneWatchesOnlyOccurOnObjectsInThatScene", function(assert) {
     assert.ok(numUpdates === 1, "Should only get one update");
 });
 
+QUnit.test("SceneImmediateNotSupported", function (assert) {
+    // This is supposed to be unsupported, check that it throws an exception
+    var thrownException = false;
+    var someGame = new TameGame.StandardGame();
+    var someScene = someGame.createScene();
+    assert.throws(function () {
+        someScene.watch(TameGame.ObjectDetails, TameGame.UpdatePass.Immediate, (function () { }));
+    }, "Trying to watch an immediate property on a scene is an error");
+});
+
 // =====================================
 //  Simple performance test of the core
 // =====================================
