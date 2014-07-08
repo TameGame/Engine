@@ -71,7 +71,7 @@ QUnit.test("SceneWatchesOnlyOccurOnObjectsInThatScene", function(assert) {
     var someGame = new TameGame.StandardGame();
     var someObject = someGame.createObject();
     var someOtherObject = someGame.createObject();
-    var someScene = someGame.createScene;
+    var someScene = someGame.createScene();
     var numUpdates = 0;
     var sceneObjectChanged = false;
     var nonSceneObjectChanged = false;
