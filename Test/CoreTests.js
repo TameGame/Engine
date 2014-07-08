@@ -98,6 +98,36 @@ QUnit.test("SceneWatchesOnlyOccurOnObjectsInThatScene", function(assert) {
     assert.ok(numUpdates === 1, "Should only get one update");
 });
 
+QUnit.test("SceneWatchesDontOccurWhenSceneIsInactive", function(assert) {
+    var someGame = new TameGame.StandardGame();
+    var someObject = someGame.createObject();
+    var someOtherObject = someGame.createObject();
+    var someScene = someGame.createScene();
+    var numUpdates = 0;
+    var sceneObjectChanged = false;
+    var nonSceneObjectChanged = false;
+    
+    someScene.watch(TameGame.ObjectDetails,
+                    TameGame.UpdatePass.Physics,
+                    (function (obj, newvalue) {
+                        ++numUpdates;
+                        if (obj === someObject) {
+                            sceneObjectChanged = true;
+                        } else {
+                            nonSceneObjectChanged = true;
+                        }
+                    }));
+    someScene.addObject(someObject);
+                    
+    someObject.get(TameGame.ObjectDetails).objectName = "Test";
+    someOtherObject.get(TameGame.ObjectDetails).objectName = "Test";
+    someGame.tick(0);
+    
+    assert.ok(!sceneObjectChanged, "Object in scene should not be changed");
+    assert.ok(!nonSceneObjectChanged, "Object outside of scene not changed");
+    assert.ok(numUpdates === 0, "Should be no updates");
+});
+
 QUnit.test("SceneImmediateNotSupported", function (assert) {
     // This is supposed to be unsupported, check that it throws an exception
     var thrownException = false;
