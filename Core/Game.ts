@@ -13,11 +13,13 @@ module TameGame {
         private _nextIdentifier: number;
         private _watchers: RegisteredWatchers;
         private _recentChanges: Watcher;
+        private _immediate: { [propertyName: string]: (TameObject) => void };
 
         constructor() {
             this._nextIdentifier    = 0;
             this._watchers          = new RegisteredWatchers();
             this._recentChanges     = new Watcher();
+            this._immediate         = {};
         }
 
         //
@@ -32,12 +34,20 @@ module TameGame {
             Object.getOwnPropertyNames(propertyObj).forEach((prop) => {
                 // Add get/set accessors to the result for this property
                 (() => {
-                    var val = propertyObj[prop];
+                    var val                 = propertyObj[prop];
+                    var immediate           = this._immediate;
+                    var propertyTypeName    = propertyType.name;
+
+                    if (!immediate[propertyTypeName]) {
+                        immediate[propertyTypeName] = (o) => {};
+                    }
+
                     Object.defineProperty(result, prop, {
                         get: () => val,
                         set: (newValue) => {
                             val = newValue;
                             this._recentChanges.noteChange(sourceObj, propertyType);
+                            immediate[propertyTypeName](sourceObj);
                         }
                     });
                 })();
