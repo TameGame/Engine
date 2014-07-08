@@ -1,5 +1,3 @@
-/// <reference path="../Core/Core.ts" />
-
 module TameGame {
     /**
      * Represents an action on the render queue
