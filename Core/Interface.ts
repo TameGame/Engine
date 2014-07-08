@@ -145,7 +145,7 @@ module TameGame {
     //
     // A scene can represent things like a level, a HUD or a loading screen.
     //
-    export interface Scene /* extends Watchable */ {
+    export interface Scene extends Watchable {
         //
         // A unique ID for this scene within the game
         //

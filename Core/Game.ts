@@ -2,6 +2,10 @@
 /// <reference path="Watch.ts" />
 
 module TameGame {
+    interface InternalScene extends Scene {
+        _watchers: RegisteredWatchers;
+    }
+
     //
     // The default Game class
     //
@@ -119,6 +123,7 @@ module TameGame {
             // Variables used in a scene
             var objects: { [id: number]: TameObject } = {};
             var subScenes: { [id: number]: Scene } = {};
+            var sceneWatchers = new RegisteredWatchers();
 
             // Basic functions
             function addObject(o: TameObject): Scene {
@@ -142,13 +147,21 @@ module TameGame {
             var identifier = this._nextIdentifier;
             this._nextIdentifier++;
 
-            return {
+            var result: InternalScene = {
+                _watchers:      sceneWatchers,
+                
                 identifier:     identifier,
                 addObject:      addObject,
                 removeObject:   removeObject,
                 addScene:       addScene,
-                removeScene:    removeScene
+                removeScene:    removeScene,
+                
+                watch:          (definition, pass, callback)    => sceneWatchers.watch(definition, pass, callback),
+                onPass:         (pass, callback)                => sceneWatchers.onPass(pass, callback),
+                everyPass:      (pass, callback)                => sceneWatchers.everyPass(pass, callback)
             };
+            
+            return result;
         }
 
         //
