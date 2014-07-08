@@ -22,16 +22,24 @@ module TameGame {
         // a particular update pass is hit during a game tick.
         //
         watch<TPropertyType>(definition: TypeDefinition<TPropertyType>, updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>): Cancellable {
+            // This only deals with deferred updates
+            if (updatePass === UpdatePass.Immediate) {
+                throw "Immediate updates are not supported by this object";
+            }
+
+            // Get/create the callback array for this pass
             var passCallbacks = this._registered[updatePass];
             if (!passCallbacks) {
                 passCallbacks = this._registered[updatePass] = {};
             }
 
+            // Get/create the callback array for the property type
             var propertyCallbacks = passCallbacks[definition.name];
             if (!propertyCallbacks) {
                 propertyCallbacks = passCallbacks[definition.name] = [];
             }
 
+            // Register this callback
             propertyCallbacks.push(callback);
 
             // TODO: cancelling

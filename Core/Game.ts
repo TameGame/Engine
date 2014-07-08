@@ -14,12 +14,14 @@ module TameGame {
         private _watchers: RegisteredWatchers;
         private _recentChanges: Watcher;
         private _immediate: { [propertyName: string]: (TameObject) => void };
+        private _immediateActions: { [propertyName: string]: { (TameObject): void }[] };
 
         constructor() {
             this._nextIdentifier    = 0;
             this._watchers          = new RegisteredWatchers();
             this._recentChanges     = new Watcher();
             this._immediate         = {};
+            this._immediateActions  = {};
         }
 
         //
@@ -39,7 +41,7 @@ module TameGame {
                     var propertyTypeName    = propertyType.name;
 
                     if (!immediate[propertyTypeName]) {
-                        immediate[propertyTypeName] = (o) => {};
+                        immediate[propertyTypeName] = () => {};
                     }
 
                     Object.defineProperty(result, prop, {
@@ -195,7 +197,33 @@ module TameGame {
         // a particular update pass is hit during a game tick.
         //
         watch<TPropertyType>(definition: TypeDefinition<TPropertyType>, updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>): Cancellable {
-            return this._watchers.watch(definition, updatePass, callback);
+            if (updatePass === UpdatePass.Immediate) {
+                // Get the immediate actions for this property
+                var actions = this._immediateActions[definition.name];
+
+                if (!actions) {
+                    // Register new actions
+                    this._immediateActions[definition.name] = actions = [];
+
+                    // When the action occurs, call each item in the actions array
+                    this._immediate[definition.name] = (obj) => {
+                        actions.forEach((action) => {
+                            action(obj);
+                        });
+                    };
+                }
+
+                // Append the action
+                actions.push((obj) => {
+                    callback(obj, obj.get(definition));
+                });
+
+                // TODO: cancelling
+                return { cancel: () => {} };
+            } else {
+                // Use the standard watcher
+                return this._watchers.watch(definition, updatePass, callback);
+            }
         }
 
         //
