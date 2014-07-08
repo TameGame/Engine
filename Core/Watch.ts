@@ -103,24 +103,22 @@ module TameGame {
 
             // For each property, dispatch the events
             var changes = this._changes;
-            for (var prop in changes) {
-                if (changes.hasOwnProperty(prop)) {
-                    // Fetch the callbacks for this property
-                    var callbacks = watchers[prop];
+            Object.getOwnPropertyNames(changes).forEach((prop) => {
+                // Fetch the callbacks for this property
+                var callbacks = watchers[prop];
 
-                    if (callbacks) {
-                        // For every object with a change to this property..
-                        var callbackFunctions = changes[prop];
-                        for (var objId in callbackFunctions) {
-                            // Fetch the function that can notify of the change
-                            var objCallback = callbackFunctions[objId];
+                if (callbacks) {
+                    // For every object with a change to this property..
+                    var callbackFunctions = changes[prop];
+                    Object.keys(callbackFunctions).forEach((objId) => {
+                        // Fetch the function that can notify of the change
+                        var objCallback = callbackFunctions[objId];
 
-                            // Make the call
-                            callbacks.forEach(callback => objCallback(callback));
-                        }
-                    }
+                        // Make the call
+                        callbacks.forEach(callback => objCallback(callback));
+                    });
                 }
-            }
+            });
         }
 
         //

@@ -29,21 +29,19 @@ module TameGame {
         watchify<T>(propertyObj: T, sourceObj: TameObject, propertyType: TypeDefinition<T>): T {
             var result = {};
 
-            for (var prop in propertyObj) {
-                if (propertyObj.hasOwnProperty(prop)) {
-                    // Add get/set accessors to the result for this property
-                    (() => {
-                        var val = propertyObj[prop];
-                        Object.defineProperty(result, prop, {
-                            get: () => val,
-                            set: (newValue) => {
-                                val = newValue;
-                                this._recentChanges.noteChange(sourceObj, propertyType);
-                            }
-                        });
-                    })();
-                }
-            }
+            Object.getOwnPropertyNames(propertyObj).forEach((prop) => {
+                // Add get/set accessors to the result for this property
+                (() => {
+                    var val = propertyObj[prop];
+                    Object.defineProperty(result, prop, {
+                        get: () => val,
+                        set: (newValue) => {
+                            val = newValue;
+                            this._recentChanges.noteChange(sourceObj, propertyType);
+                        }
+                    });
+                })();
+            });
 
             return <T> result;
         }
