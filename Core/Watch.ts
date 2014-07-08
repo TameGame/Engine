@@ -135,5 +135,28 @@ module TameGame {
         clearChanges() {
             this._changes = {};
         }
+        
+        //
+        // Generate a filtered version of this watcher that only applies to the specified object
+        // IDs.
+        //
+        filter(filterFunc: (objId: number) => boolean): Watcher {
+            var result = new Watcher();
+            
+            // Only include objects matched by the filter
+            Object.getOwnPropertyNames(this._changes).forEach((propertyName) => {
+                var oldChanges = this._changes[propertyName];
+                var newChanges = result._changes[propertyName] = {};
+                
+                // Using forEach() here would be preferable but it seems to fail the type checks (TypeScript doesn't realise the IDs are numbers)
+                for (var objId in oldChanges) {
+                    if (filterFunc(objId)) {
+                        newChanges[objId] = oldChanges[objId];
+                    }
+                }
+            });
+            
+            return result;
+        }
     }
 }
