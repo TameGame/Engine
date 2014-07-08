@@ -41,7 +41,7 @@ module TameGame {
         /**
          * Adds an item to this queue
          */
-        addItem(item: RenderQueueItem): RenderQueue;
+        addItem<TItemType extends RenderQueueItem>(item: TItemType): RenderQueue;
         
         /**
          * Empties this render queue
