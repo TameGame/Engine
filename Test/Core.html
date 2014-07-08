@@ -24,8 +24,8 @@
             obj.get(TameGame.ObjectDetails).objectName = "Goodbye, world";
             someGame.tick(2);
 
-            var start = Date.now();
             var numItems = 1000000;
+            var start = Date.now();
             var props = obj.get(TameGame.ObjectDetails);
             for (var x=0; x<numItems; ++x) {
                 props.objectName = "Speed test";
@@ -36,7 +36,6 @@
             console.log(numItems + " property-only updates in " + timeMs + "ms (" + (numItems/(timeMs/1000.0)) + "/sec)");
 
             var start = Date.now();
-            var numItems = 1000000;
             for (var x=0; x<numItems; ++x) {
                 obj.get(TameGame.ObjectDetails).objectName = "Speed test";
             }
@@ -44,9 +43,9 @@
             var timeMs = end - start;
 
             console.log(numItems + " updates in " + timeMs + "ms (" + (numItems/(timeMs/1000.0)) + "/sec)");
+            console.log("At 60fps, can update a maximum of " + numItems*(16.6666/timeMs) + " items per frame");
 
             var start = Date.now();
-            var numItems = 1000000;
             for (var x=0; x<numItems; ++x) {
                 obj.objectName = "Just properties";
             }
