@@ -86,6 +86,7 @@ QUnit.test("SceneWatchesOnlyOccurOnObjectsInThatScene", function(assert) {
                             nonSceneObjectChanged = true;
                         }
                     }));
+    someScene.addObject(someObject);
     someGame.startScene(someScene);
                     
     someObject.get(TameGame.ObjectDetails).objectName = "Test";

@@ -8,6 +8,8 @@ module TameGame {
      */
     interface InternalScene extends Scene {
         _watchers: RegisteredWatchers;
+        objectInScene(id:number): boolean;
+        getChildScenes(): InternalScene[];
     }
 
     /**
@@ -153,6 +155,8 @@ module TameGame {
 
             var result: InternalScene = {
                 _watchers:      sceneWatchers,
+                objectInScene:  (id) => objects[id]?true:false,
+                getChildScenes: () => Object.keys(subScenes).map((key) => <InternalScene> subScenes[key]),
                 
                 identifier:     identifier,
                 addObject:      addObject,
@@ -174,6 +178,32 @@ module TameGame {
         startScene(scene: Scene): void {
             this._currentScene = scene;
         }
+        
+        /**
+         * Retrieves the list of currently active scenes
+         */
+        private getActiveScenes(): InternalScene[] {
+            // There are no active scenes if the current scene is not set
+            if (!this._currentScene) {
+                return [];
+            }
+            
+            // Get the active scenes recursively
+            var scenes: InternalScene[] = [];
+            var stack: InternalScene[] = [];
+            
+            stack.push(<InternalScene> this._currentScene);
+            
+            while (stack.length > 0) {
+                var nextScene = stack.pop();
+                scenes.push(nextScene);
+                
+                scenes.push.apply(scenes, nextScene.getChildScenes());
+            }
+            
+            // Return the results
+            return scenes;
+        }
 
         /**
          * Runs a game tick. Time is a time in milliseconds from an arbitrary
@@ -186,6 +216,14 @@ module TameGame {
          * so that time can be measured to a high degree of accuracy.
          */
         tick(milliseconds: number): void {
+            // Retrieve the list of active scenes
+            var activeScenes = this.getActiveScenes();
+            
+            // Get the watchers and filter the change list for each of the scenes
+            var sceneChanges = activeScenes.map((scene) => { 
+                return { watchers: scene._watchers, changes: this._recentChanges.filter(scene.objectInScene) }
+            });
+            
             // Run the changes through the passes
             [
                 UpdatePass.Animations, 
@@ -195,8 +233,12 @@ module TameGame {
                 UpdatePass.Render,
                 UpdatePass.PostRender
             ].forEach((pass) => {
-                // Dispatch the changes for this pass to the watchers
+                // Dispatch the changes for this pass to the watchers - both global and for each scene in turn
                 this._recentChanges.dispatchChanges(pass, this._watchers);
+                
+                sceneChanges.forEach((change) => {
+                    change.changes.dispatchChanges(pass, change.watchers);
+                });
             });
 
             // Clear out any changes that might have occured
