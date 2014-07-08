@@ -1,61 +1,13 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link rel="stylesheet" href="http://code.jquery.com/qunit/qunit-1.14.0.css">
     </head>
     <body>
-        <h1>TameGame test</h1>
+        <div id="qunit"></div>
+        <div id="qunit-fixture"></div>
+        <script src="http://code.jquery.com/qunit/qunit-1.14.0.js"></script>
         <script src="../TameGame.js" type="text/javascript"></script>
-        <script type="text/javascript">
-            console.log("Starting up");
-
-            var someGame = new TameGame.StandardGame();
-            console.log(someGame);
-
-            someGame.watch(TameGame.ObjectDetails, 
-                            TameGame.UpdatePass.Physics, 
-                            (function (obj, newValue) { console.log("ObjectDetails changed to ", newValue.objectName)}));
-
-            var obj = someGame.createObject();
-            obj.get(TameGame.ObjectDetails).objectName = "Hello, world";
-
-            someGame.tick(0);
-            someGame.tick(1);
-
-            obj.get(TameGame.ObjectDetails).objectName = "Goodbye, world";
-            someGame.tick(2);
-
-            var numItems = 1000000;
-            var start = Date.now();
-            var props = obj.get(TameGame.ObjectDetails);
-            for (var x=0; x<numItems; ++x) {
-                props.objectName = "Speed test";
-            }
-            var end = Date.now();
-            var timeMs = end - start;
-
-            console.log(numItems + " property-only updates in " + timeMs + "ms (" + (numItems/(timeMs/1000.0)) + "/sec)");
-
-            var start = Date.now();
-            for (var x=0; x<numItems; ++x) {
-                obj.get(TameGame.ObjectDetails).objectName = "Speed test";
-            }
-            var end = Date.now();
-            var timeMs = end - start;
-
-            console.log(numItems + " updates in " + timeMs + "ms (" + (numItems/(timeMs/1000.0)) + "/sec)");
-            console.log("At 60fps, can update a maximum of " + numItems*(16.6666/timeMs) + " items per frame");
-
-            var start = Date.now();
-            for (var x=0; x<numItems; ++x) {
-                obj.objectName = "Just properties";
-            }
-            var end = Date.now();
-            var fastTimeMs = end - start;
-
-            console.log(numItems + " fast updates in " + fastTimeMs + "ms (" + (numItems/(fastTimeMs/1000.0)) + "/sec)");
-            console.log("Slowdown factor " + (timeMs/fastTimeMs));
-
-            someGame.tick(3);
-        </script>
+        <script src="CoreTests.js"></script>
     </body>
 </html>
