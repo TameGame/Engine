@@ -15,20 +15,40 @@
                 alert(e);
             }
             
-            var queue = new TameGame.StandardRenderQueue();
-            queue.addItem({
-                action: TameGame.spriteActionName,
-                zIndex: 0,
-                spriteId: 0,
-                position: {
-                    topLeft: { x: -1, y: 1 },
-                    topRight: { x: 1, y: 1 },
-                    bottomLeft: { x: -1, y: -1 },
-                    bottomRight: { x: 1, y: -1 }
-                }
-            });
+            var rotation = 0;
+            
+            function doRender() {
+                var queue = new TameGame.StandardRenderQueue();
+                queue.addItem({
+                    action: TameGame.cameraActionName,
+                    zIndex: -1,
+                    center: { x: 0, y: 0 },
+                    height: 4.0,
+                    rotation: rotation
+                });
+                queue.addItem({
+                    action: TameGame.spriteActionName,
+                    zIndex: 0,
+                    spriteId: 0,
+                    position: {
+                        topLeft: { x: -1, y: 1 },
+                        topRight: { x: 1, y: 1 },
+                        bottomLeft: { x: -1, y: -1 },
+                        bottomRight: { x: 1, y: -1 }
+                    }
+                });
 
-            renderer.performRender(queue);
+                renderer.performRender(queue);
+            }
+
+            function nextRender(now) {
+                doRender();
+                rotation = ((now/10000) * 360) % 360;
+                
+                requestAnimationFrame(nextRender, canvas);
+            }
+            
+            requestAnimationFrame(nextRender, canvas);
         </script>
     </body>
 </html>
