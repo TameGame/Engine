@@ -17,6 +17,6 @@ engines needed to be pretty comprehensively torn apart in order to implement
 the mechanics I wanted. So this is built around the idea of putting things
 together.
 
-The initial goal is to make something that renders via the canvas tag, then
-to go for something a bit more ambitious by making the engine run stand-alone
+The initial goal is to make something that renders via the WebGL, then to go 
+for something a bit more ambitious by making the engine run stand-alone
 using the v8 JavaScript engine.

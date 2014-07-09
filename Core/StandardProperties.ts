@@ -11,7 +11,6 @@ module TameGame {
         objectName: string;
     };
 
-
     /**
      * The type definition is used to store/retrieve these properties when
      * associated with an object 
