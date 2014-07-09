@@ -120,6 +120,8 @@ module TameGame {
             
             var compiledOk = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
             if (!compiledOk) {
+                gl.deleteShader(shader);
+                
                 var error = gl.getShaderInfoLog(shader);
                 console.error('Failed to compile shader: ', error);
                 throw ERR_CantCompileShader;
@@ -154,6 +156,10 @@ module TameGame {
             // Check for errors
             var linkedOk = gl.getProgramParameter(program, gl.LINK_STATUS);
             if (!linkedOk) {
+                gl.deleteShader(vertexShader);
+                gl.deleteShader(fragmentShader);
+                gl.deleteProgram(program);
+                
                 var error = gl.getProgramInfoLog(program);
                 console.error('Failed to link shader: ', error);
                 throw ERR_CantLinkShaderProgram;
