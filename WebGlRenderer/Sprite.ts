@@ -33,10 +33,10 @@ module TameGame {
             vertexArray[1] = spriteItem.position.topLeft.y;
             vertexArray[2] = spriteItem.position.topRight.x;
             vertexArray[3] = spriteItem.position.topRight.y;
-            vertexArray[6] = spriteItem.position.bottomRight.x;
-            vertexArray[7] = spriteItem.position.bottomRight.y;
             vertexArray[4] = spriteItem.position.bottomLeft.x;
             vertexArray[5] = spriteItem.position.bottomLeft.y;
+            vertexArray[6] = spriteItem.position.bottomRight.x;
+            vertexArray[7] = spriteItem.position.bottomRight.y;
             
             gl.useProgram(spriteShader);
             

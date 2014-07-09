@@ -15,7 +15,8 @@
                 alert(e);
             }
             
-            var rotation = 0;
+            var rotation    = 0;
+            var someSprite  = renderer.sprites.loadSprite("TameGame.png");
             
             function doRender() {
                 var queue = new TameGame.StandardRenderQueue();
@@ -29,7 +30,7 @@
                 queue.addItem({
                     action: TameGame.spriteActionName,
                     zIndex: 0,
-                    spriteId: 0,
+                    spriteId: someSprite,
                     position: {
                         topLeft: { x: -1, y: 1 },
                         topRight: { x: 1, y: 1 },

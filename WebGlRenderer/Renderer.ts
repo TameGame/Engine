@@ -1,4 +1,5 @@
 /// <reference path="../RenderQueue/RenderQueue.ts" />
+/// <reference path="SpriteManager.ts" />
 
 module TameGame {
     export var ERR_WebGlNotAvailable        = "WebGL is not available in this browser";
@@ -81,6 +82,7 @@ module TameGame {
             // Ready to go
             this._gl        = context;
             this._canvas    = canvas;
+            this.sprites    = new WebGlSpriteManager(this._gl);
             
             // Initialise the actions
             this._actions   = {};
@@ -237,6 +239,6 @@ module TameGame {
         /**
          * The sprite asset manager for this object
          */
-        sprites: SpriteManager;
+        sprites: WebGlSpriteManager;
     }
 }
