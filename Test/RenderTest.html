@@ -14,8 +14,21 @@
             } catch (e) {
                 alert(e);
             }
+            
+            var queue = new TameGame.StandardRenderQueue();
+            queue.addItem({
+                action: TameGame.spriteActionName,
+                zIndex: 0,
+                spriteId: 0,
+                position: {
+                    topLeft: { x: -1, y: 1 },
+                    topRight: { x: 1, y: 1 },
+                    botomLeft: { x: -1, y: -1 },
+                    bottomRight: { x: 1, y: -1 }
+                }
+            });
 
-            renderer.performRender(null);
+            renderer.performRender(queue);
         </script>
     </body>
 </html>
