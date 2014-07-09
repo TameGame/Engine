@@ -148,7 +148,7 @@ module TameGame {
             // Generate the sprite
             var sprite: WebGlSprite = {
                 texture: this.loadTexture(assetName),
-                coords: new Float32Array([ 0,1, 1,1, 0,0, 1,0 ])
+                coords: new Float32Array([ 0,0, 1,0, 0,1, 1,1 ])
             };
 
             // Store it
