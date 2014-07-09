@@ -179,12 +179,22 @@ module TameGame {
             
             var width           = height * canvasRatio;
             
-            // Create a new camera matrix
-            var newMatrix       = new Float32Array([
-                2.0/width,  0.0,        0.0,    0.0,
-                0.0,        2.0/height, 0.0,    0.0,
-                0.0,        0.0,        1.0,    0.0,
-                -centerX,   -centerY,   0.0,    1.0]);
+            // Generate rotation
+            var rotationRadians = rotationDegrees * Math.PI / 180.0;
+            var cosT = Math.cos(rotationRadians);
+            var sinT = Math.sin(rotationRadians);
+            
+            // Generate the matrix
+            var x = 2.0/width;
+            var y = 2.0/height;
+            var u = centerX;
+            var v = centerY;
+            
+            var newMatrix = new Float32Array([
+                cosT*x,             sinT*y,                 0,  0,
+                -sinT*x,            cosT*y,                 0,  0,
+                0,                  0,                      1,  0,
+                sinT*v*x-cosT*u*x,  -sinT*u*y-cosT*v*y,     0,  1]);
             
             // This becomes the new camera matrix
             this.cameraMatrix = newMatrix;
