@@ -181,8 +181,8 @@ module TameGame {
             
             // Create a new camera matrix
             var newMatrix       = new Float32Array([
-                1.0/width,  0.0,        0.0,    0.0,
-                0.0,        1.0/height, 0.0,    0.0,
+                2.0/width,  0.0,        0.0,    0.0,
+                0.0,        2.0/height, 0.0,    0.0,
                 0.0,        0.0,        1.0,    0.0,
                 -centerX,   -centerY,   0.0,    1.0]);
             
