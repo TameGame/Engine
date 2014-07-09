@@ -7,10 +7,10 @@ module TameGame {
     var nonExistSource: number[] = [];
     for (var y=0; y<8; y++) {
         for (var x=0; x<8; ++x) {
-            if (x == y || (8-x) == y) {
-                nonExistSource.push(1,0,0,1);
+            if (x == y || (7-x) == y) {
+                nonExistSource.push(255,0,0,255);
             } else {
-                nonExistSource.push(1,1,1,1);
+                nonExistSource.push(255,255,255,255);
             }
         }
     }
@@ -43,11 +43,27 @@ module TameGame {
             this._nextSpriteId  = 0;
         }
         
+        /**
+         * Retrieves the sprite map for this object
+         *
+         * The sprite map object doesn't change, so the caller can retain a reference to this if it needs to
+         */
+        getSpriteMap(): { [id: number]: WebGlSprite; } {
+            return this._spriteForId;
+        }
+        
+        /**
+         * Loads a temporary 'nonexistent' texture into a WebGL texture, for while we're waiting for a texture to load
+         */
         loadNonExistentTexture(texture: WebGLTexture) {
             var gl = this._gl;
 
             gl.bindTexture(gl.TEXTURE_2D, texture);
             gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 8,8, 0, gl.RGBA, gl.UNSIGNED_BYTE, nonExistentTexturePixels);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
             gl.bindTexture(gl.TEXTURE_2D, null);
         }
         
@@ -94,6 +110,9 @@ module TameGame {
                 
                 // Ensure that the texture has mipmaps
                 gl.generateMipmap(gl.TEXTURE_2D);
+                
+                // Finished with the texture
+                gl.bindTexture(gl.TEXTURE_2D, null);
             }
             
             // Deal with aborts and failed loads
