@@ -16,5 +16,5 @@ module TameGame {
     /**
      * Value to put in the 'action' field of a sprite action
      */
-    export var spriteActionName = "sprite";
+    export var spriteActionName = createRenderActionName();
 }

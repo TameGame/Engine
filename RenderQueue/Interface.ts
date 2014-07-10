@@ -68,4 +68,14 @@ module TameGame {
          */
         sprites: SpriteManager;
     }
+    
+    var nextActionId = 0;
+    
+    /**
+     * Creates a new unique name for a render action
+     */
+    export function createRenderActionName() {
+        ++nextActionId;
+        return nextActionId.toString();
+    }
 }

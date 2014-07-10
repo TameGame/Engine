@@ -20,5 +20,5 @@ module TameGame {
     }
     
     /** The name to use in the action field for the camera action */
-    export var cameraActionName = "camera";
+    export var cameraActionName = createRenderActionName();
 }
