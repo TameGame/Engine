@@ -232,4 +232,23 @@ module TameGame {
         ++nextTypeId;
         return nextTypeId.toString();
     }
+    
+    /**
+     * The default behaviour object is used to describe how a new game is initialised
+     *
+     * When a game is started for the first time, the functions stored in this object are called
+     * (in alphabetical order by name) in order to register any behaviour. The core game has
+     * almost no behaviour by default.
+     *
+     * There are a few 'well-known' behaviour names. These all begin with 't' to make room for 
+     * user-defined behaviours:
+     *
+     *      tRenderer:      the renderer behaviour (the part that fills the render queue)
+     *      tPhysics:       the physics behaviour
+     *
+     * This is designed to provide a way for modules to have a way to initialise themselves
+     * whenever a new Game is set up, as well as for the engine to supply default behaviours
+     * that can be overridden (for example, to provide a choice of physics engines)
+     */
+    export var defaultBehavior: { [ behaviourName: string ]: (newGame: Game) => void } = {};
 }

@@ -27,11 +27,15 @@ module TameGame {
         private _immediateActions: { [propertyName: string]: { (TameObject): void }[] };
 
         constructor() {
+            // Set up the variables
             this._nextIdentifier    = 0;
             this._watchers          = new RegisteredWatchers();
             this._recentChanges     = new Watcher();
             this._immediate         = {};
             this._immediateActions  = {};
+            
+            // Initialise the default behaviours
+            Object.keys(defaultBehavior).sort().forEach((behaviorName) => defaultBehavior[behaviorName](this));
         }
 
         /**
