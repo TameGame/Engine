@@ -16,7 +16,7 @@ module TameGame {
      * associated with an object 
      */
     export var ObjectDetails: TypeDefinition<IObjectDetails> = {
-        name: "ObjectDetails",
+        name: createTypeName(),
         createDefault: () => {
             return {
                 objectName: "object"

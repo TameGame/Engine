@@ -222,4 +222,14 @@ module TameGame {
          */
         tick(milliseconds: number): void;
     }
+    
+    var nextTypeId: number = 0;
+    
+    /**
+     * Creates a type name for use with the TypeDefinition interface
+     */
+    export function createTypeName(): string {
+        ++nextTypeId;
+        return nextTypeId.toString();
+    }
 }
