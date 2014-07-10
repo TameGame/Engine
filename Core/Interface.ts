@@ -126,7 +126,7 @@ module TameGame {
          *
          * Property objects can't be replaced.
          */
-        get<TPropertyType>(definition: TypeDefinition<TPropertyType>): SettableProperty<TPropertyType>;
+        get<TPropertyType>(definition: TypeDefinition<TPropertyType>): TPropertyType;
 
         /**
          * Retrieves this object's implementation of a particular behaviour
