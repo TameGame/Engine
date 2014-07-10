@@ -40,10 +40,18 @@ module TameGame {
          * This means that any get/set operation will end up in the 
          * _recentChanges object for this game
          */
-        watchify<T>(propertyObj: T, sourceObj: TameObject, propertyType: TypeDefinition<T>): T {
+        watchify<T>(propertyObj: T, sourceObj: TameObject, propertyType: TypeDefinition<T>): SettableProperty<T> {
             var result  = {};
             var backing = {};
-            
+
+            var immediate           = this._immediate;
+            var propertyTypeName    = propertyType.name;
+
+            // Ensure that there is an immediate action for this property type name
+            if (!immediate[propertyTypeName]) {
+                immediate[propertyTypeName] = () => {};
+            }
+
             // Set up a backing store
             Object.getOwnPropertyNames(propertyObj).forEach((prop) => {
                 backing[prop] = propertyObj[prop];
@@ -53,13 +61,7 @@ module TameGame {
             Object.getOwnPropertyNames(propertyObj).forEach((prop) => {
                 // Add get/set accessors to the result for this property
                 (() => {
-                    var p                   = prop;
-                    var immediate           = this._immediate;
-                    var propertyTypeName    = propertyType.name;
-
-                    if (!immediate[propertyTypeName]) {
-                        immediate[propertyTypeName] = () => {};
-                    }
+                    var p = prop;
 
                     Object.defineProperty(result, prop, {
                         get: () => backing[p],
@@ -71,8 +73,20 @@ module TameGame {
                     });
                 })();
             });
+            
+            // Calling setValue updates the backing store and fires a single event
+            result['set'] = (newValue) => {
+                // Update everything in the backing store
+                Object.getOwnPropertyNames(backing).forEach((prop) => {
+                    backing[prop] = newValue[prop];
+                });
+                
+                // Fire the event once
+                this._recentChanges.noteChange(sourceObj, propertyType);
+                immediate[propertyTypeName](sourceObj);
+            };
 
-            return <T> result;
+            return <SettableProperty<T>> result;
         }
 
         /**

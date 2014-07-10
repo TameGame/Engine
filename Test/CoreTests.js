@@ -43,6 +43,22 @@ QUnit.test("PhysicsPassUpdatesOnlyOccurOnce", function(assert) {
     assert.ok(numUpdates === 1, "Update doesn't reoccur on the next tick");
 });
 
+QUnit.test("CallingSetGeneratesUpdate", function(assert) {
+    var someGame        = new TameGame.StandardGame();
+    var someObject      = someGame.createObject();
+    var numUpdates      = 0;
+    
+    someGame.watch(TameGame.ObjectDetails,
+                   TameGame.UpdatePass.Immediate,
+                   (function (obj, newvalue) { 
+                       ++numUpdates; 
+                       assert.ok(newvalue.objectName === 'UpdatedObject', "Updated value correctly");
+                   }));
+    
+    someObject.get(TameGame.ObjectDetails).set({ objectName: "UpdatedObject" });
+    assert.ok(numUpdates === 1, "Only one update");
+});
+
 QUnit.test("ImmediateIsImmediate", function(assert) {
     var someGame = new TameGame.StandardGame();
     var someObject = someGame.createObject();

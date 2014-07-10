@@ -89,6 +89,19 @@ module TameGame {
          */
         everyPass(updatePass: UpdatePass, callback: (milliseconds: number) => void) : Cancellable;
     }
+    
+    /**
+     * A settable property is one which can replace its contents with the contents of another object
+     *
+     * This is used with the get operator for objects: it's often faster than setting all of the
+     * values individually and can be more convenient for the larger property types.
+     *
+     * Calling set will also ensure that the immediate watchers are only fired once regardless
+     * of how many property updates take place.
+     */
+    export interface SettableProperty<TPropertyType> {
+        set(newValue: TPropertyType): void;
+    }
 
     /**
      * A TameObject provides the base functionality for all game objects
@@ -113,7 +126,7 @@ module TameGame {
          *
          * Property objects can't be replaced.
          */
-        get<TPropertyType>(definition: TypeDefinition<TPropertyType>): TPropertyType;
+        get<TPropertyType>(definition: TypeDefinition<TPropertyType>): SettableProperty<TPropertyType>;
 
         /**
          * Retrieves this object's implementation of a particular behaviour
