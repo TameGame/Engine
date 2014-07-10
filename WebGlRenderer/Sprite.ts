@@ -1,5 +1,11 @@
 /// <reference path="Renderer.ts" />
 
+// TODO: it might be useful to make it possible to draw multiple sprites with one 
+// request to reduce the time spent setting things up
+// It's possible that the overhead imposed by JavaScript will overshadow any gains
+// to be made, so I'm not doing this until it's possible to actually measure the
+// benefit.
+
 module TameGame {
     function spriteInit(renderer: WebGlRenderer) {
         // Acquire variables
@@ -62,14 +68,14 @@ module TameGame {
             gl.uniform1i(samplerUni, 0);
             
             // Generate the vertices
-            vertexArray[0] = spriteItem.position.topLeft.x;
-            vertexArray[1] = spriteItem.position.topLeft.y;
-            vertexArray[2] = spriteItem.position.topRight.x;
-            vertexArray[3] = spriteItem.position.topRight.y;
-            vertexArray[4] = spriteItem.position.bottomLeft.x;
-            vertexArray[5] = spriteItem.position.bottomLeft.y;
-            vertexArray[6] = spriteItem.position.bottomRight.x;
-            vertexArray[7] = spriteItem.position.bottomRight.y;
+            vertexArray[0] = spriteItem.position.x1;
+            vertexArray[1] = spriteItem.position.y1;
+            vertexArray[2] = spriteItem.position.x2;
+            vertexArray[3] = spriteItem.position.y2;
+            vertexArray[4] = spriteItem.position.x3;
+            vertexArray[5] = spriteItem.position.y3;
+            vertexArray[6] = spriteItem.position.x4;
+            vertexArray[7] = spriteItem.position.y4;
             
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, vertexArray, gl.STATIC_DRAW);

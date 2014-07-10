@@ -19,17 +19,22 @@ module TameGame {
      * Interface representing a Quad (4 points)
      */
     export interface Quad {
-        topLeft: Point2D;
-        topRight: Point2D;
-        bottomLeft: Point2D;
-        bottomRight: Point2D;
+        /** Top-left coordinate */
+        x1: number; y1: number;
+        
+        /** Top-right coordinate */
+        x2: number; y2: number;
+        
+        /** Bottom-left coordinate */
+        x3: number; y3: number;
+        
+        /** Bottom-right coordinate */
+        x4: number; y4: number;
     }
     
     /**
      * Interface representing a bounding box
      */
-    export interface BoundingBox {
-        topLeft: Point2D;
-        size: Size;
+    export interface BoundingBox extends Point2D, Size {
     }
 }
