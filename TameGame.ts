@@ -3,3 +3,4 @@
 /// <reference path="Assets/Assets.ts"/>
 /// <reference path="Sprite/Sprite.ts"/>
 /// <reference path="WebGlRenderer/WebGlRenderer.ts"/>
+/// <reference path="DefaultBehavior.ts"/>

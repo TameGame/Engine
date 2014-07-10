@@ -12,13 +12,13 @@ module TameGame {
         /**
          * Adds rendering actions to the supplied render queue
          */
-        render(queue: RenderQueue): void;
+        render(obj: TameObject, queue: RenderQueue): void;
     }
     
     /**
      * Type definition for object render behaviour
      */
-    var RenderBehaviour: TypeDefinition<IRenderBehavior> = {
+    export var RenderBehavior: TypeDefinition<IRenderBehavior> = {
         name: createTypeName(),
         createDefault() {
             return { render: () => {} };

@@ -42,6 +42,7 @@ module TameGame {
         name: createTypeName(),
         createDefault() {
             return {
+                // Asset ID -1 indicates no sprite
                 assetId: -1
             };
         }
