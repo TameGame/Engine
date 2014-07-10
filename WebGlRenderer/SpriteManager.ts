@@ -99,7 +99,9 @@ module TameGame {
                 // TODO: if the image is not a power of 2, generate a resized image
                 
                 // Fill the texture bytes from the image we just loaded
+                // We use pre-multiplied alpha when loading images
                 gl.bindTexture(gl.TEXTURE_2D, texture);
+                gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, 1);
                 gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
                 
                 // Set the texture parameters

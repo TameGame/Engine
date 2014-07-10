@@ -79,6 +79,10 @@ module TameGame {
             
             gl.uniformMatrix4fv(transformationUni, false, renderer.cameraMatrix);
             
+            // Draw the texture with pre-multiplied alpha
+            gl.enable(gl.BLEND);
+            gl.blendFuncSeparate(gl.ONE, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+            
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         };
     }
