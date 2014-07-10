@@ -41,12 +41,19 @@ module TameGame {
          * _recentChanges object for this game
          */
         watchify<T>(propertyObj: T, sourceObj: TameObject, propertyType: TypeDefinition<T>): T {
-            var result = {};
-
+            var result  = {};
+            var backing = {};
+            
+            // Set up a backing store
+            Object.getOwnPropertyNames(propertyObj).forEach((prop) => {
+                backing[prop] = propertyObj[prop];
+            });
+            
+            // Setting the property should trigger any attached watchers
             Object.getOwnPropertyNames(propertyObj).forEach((prop) => {
                 // Add get/set accessors to the result for this property
                 (() => {
-                    var val                 = propertyObj[prop];
+                    var p                   = prop;
                     var immediate           = this._immediate;
                     var propertyTypeName    = propertyType.name;
 
@@ -55,9 +62,9 @@ module TameGame {
                     }
 
                     Object.defineProperty(result, prop, {
-                        get: () => val,
+                        get: () => backing[p],
                         set: (newValue) => {
-                            val = newValue;
+                            backing[p] = newValue;
                             this._recentChanges.noteChange(sourceObj, propertyType);
                             immediate[propertyTypeName](sourceObj);
                         }
