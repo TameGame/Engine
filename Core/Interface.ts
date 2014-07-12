@@ -154,6 +154,9 @@ module TameGame {
         /** The current scene has changed */
         onNewScene: EventRegistration<Scene>;
         
+        /** A new scene has been created */
+        onCreateScene: EventRegistration<Scene>;
+        
         /** Event fired after the render pass has completed and it's time to actually render the contents of the queue */
         onPerformRender: EventRegistration<RenderQueue>;
     }

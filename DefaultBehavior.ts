@@ -10,6 +10,9 @@ module TameGame {
     //
     defaultBehavior = {
         // Any object with a sprite asset ID uses sprite rendering behavior (see Sprite/Render.ts)
-        'tSpriteRender': spriteRenderBehavior
+        'tSpriteRender': spriteRenderBehavior,
+    
+        // Just render every object in the scene
+        'tRenderScene': renderAllTheThings
     }
 }

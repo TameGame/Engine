@@ -4,3 +4,4 @@
 /// <reference path="CameraAction.ts" />
 /// <reference path="StandardRenderQueue.ts" />
 /// <reference path="Behavior.ts" />
+/// <reference path="RenderAllTheThings.ts" />

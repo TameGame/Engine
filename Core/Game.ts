@@ -37,6 +37,7 @@ module TameGame {
         private _fireRender:        Event<RenderQueue>;
         private _firePerformRender: Event<RenderQueue>;
         private _fireNewScene:      Event<Scene>;
+        private _fireCreateScene:   Event<Scene>;
         
         private _renderQueue:       RenderQueue;
         private _currentTime:       number;
@@ -57,13 +58,15 @@ module TameGame {
             var renderEvent         = createEvent<RenderQueue>();
             var performRenderEvent  = createEvent<RenderQueue>();
             var newSceneEvent       = createEvent<Scene>();
+            var createSceneEvent    = createEvent<Scene>();
             
             this.events = {
                 onPassStart:        passStartEvent.register,
                 onPassFinish:       passFinishEvent.register,
                 onRender:           renderEvent.register,
                 onPerformRender:    performRenderEvent.register,
-                onNewScene:         newSceneEvent.register
+                onNewScene:         newSceneEvent.register,
+                onCreateScene:      createSceneEvent.register
             };
             
             this._firePassStart     = passStartEvent.fire;
@@ -71,6 +74,7 @@ module TameGame {
             this._fireRender        = renderEvent.fire;
             this._fireNewScene      = newSceneEvent.fire;
             this._firePerformRender = performRenderEvent.fire;
+            this._fireCreateScene   = createSceneEvent.fire;
             
             // Initialise the default behaviours
             Object.keys(defaultBehavior).sort().forEach((behaviorName) => defaultBehavior[behaviorName](this));
@@ -268,6 +272,7 @@ module TameGame {
                 }
             };
             
+            this._fireCreateScene(result, this._currentTime);
             return result;
         }
 
