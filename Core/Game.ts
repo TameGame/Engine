@@ -31,40 +31,42 @@ module TameGame {
         private _firePassStart:     Event<UpdatePass>;
         private _firePassFinish:    Event<UpdatePass>;
         private _fireRender:        Event<RenderQueue>;
+        private _firePerformRender: Event<RenderQueue>;
         private _fireNewScene:      Event<Scene>;
         
-        private _renderer:          Renderer;
         private _renderQueue:       RenderQueue;
         private _currentTime:       number;
 
-        constructor(renderer: Renderer) {
+        constructor() {
             // Set up the variables
             this._nextIdentifier    = 0;
             this._watchers          = new RegisteredWatchers();
             this._recentChanges     = new Watcher();
             this._immediate         = {};
             this._immediateActions  = {};
-            this._renderer          = renderer;
             this._renderQueue       = new StandardRenderQueue();
             this._currentTime       = 0;
             
             // Set up the events
-            var passStartEvent  = createEvent<UpdatePass>();
-            var passFinishEvent = createEvent<UpdatePass>();
-            var renderEvent     = createEvent<RenderQueue>();
-            var newSceneEvent   = createEvent<Scene>();
+            var passStartEvent      = createEvent<UpdatePass>();
+            var passFinishEvent     = createEvent<UpdatePass>();
+            var renderEvent         = createEvent<RenderQueue>();
+            var performRenderEvent  = createEvent<RenderQueue>();
+            var newSceneEvent       = createEvent<Scene>();
             
             this.events = {
-                onPassStart:    passStartEvent.register,
-                onPassFinish:   passFinishEvent.register,
-                onRender:       renderEvent.register,
-                onNewScene:     newSceneEvent.register
+                onPassStart:        passStartEvent.register,
+                onPassFinish:       passFinishEvent.register,
+                onRender:           renderEvent.register,
+                onPerformRender:    performRenderEvent.register,
+                onNewScene:         newSceneEvent.register
             };
             
             this._firePassStart     = passStartEvent.fire;
             this._firePassFinish    = passFinishEvent.fire;
             this._fireRender        = renderEvent.fire;
             this._fireNewScene      = newSceneEvent.fire;
+            this._firePerformRender = performRenderEvent.fire;
             
             // Initialise the default behaviours
             Object.keys(defaultBehavior).sort().forEach((behaviorName) => defaultBehavior[behaviorName](this));
@@ -325,9 +327,7 @@ module TameGame {
                 this._fireRender(queue, milliseconds);
                 
                 // Actually perform the render
-                if (this._renderer) {
-                    this._renderer.performRender(queue);
-                }
+                this._firePerformRender(queue, milliseconds);
             });
             
             // Run the post-render passes

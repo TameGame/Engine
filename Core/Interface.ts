@@ -143,7 +143,7 @@ module TameGame {
         /** Event fired when a pass finishes */
         onPassFinish: EventRegistration<UpdatePass>;
         
-        /** Event fired to perform rendering */
+        /** Event fired when it's time to fill the render queue */
         onRender: EventRegistration<RenderQueue>;
     }
     
@@ -153,6 +153,9 @@ module TameGame {
     export interface GameEvents extends CoreEvents {
         /** The current scene has changed */
         onNewScene: EventRegistration<Scene>;
+        
+        /** Event fired after the render pass has completed and it's time to actually render the contents of the queue */
+        onPerformRender: EventRegistration<RenderQueue>;
     }
     
     /**
