@@ -7,6 +7,10 @@
     <body>
         <canvas width=1280 height=720 id="testCanvas"></canvas>
         
+        <script type="text/js-game" id="game">
+            console.log("Hello!");
+        </script>
+        
         <script type="text/javascript">
             try {
                 var canvas = document.getElementById("testCanvas");
@@ -14,6 +18,8 @@
             } catch (e) {
                 alert(e);
             }
+            
+            TameGame.GameLauncher.launch(null, canvas, { launchScript: "../TameLaunch.js" });
             
             var game        = new TameGame.StandardGame();
             var rotation    = 0;

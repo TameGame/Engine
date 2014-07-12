@@ -4,3 +4,4 @@
 /// <reference path="StandardProperties.ts"/>
 /// <reference path="Event.ts"/>
 /// <reference path="Worker.ts"/>
+/// <reference path="GameLauncher.ts"/>
