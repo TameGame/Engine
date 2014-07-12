@@ -1,3 +1,5 @@
 *.js
 *.map
 !Test/*.js
+TameGame.d.ts
+TameLaunch.d.ts
