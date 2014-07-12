@@ -104,7 +104,8 @@ module TameGame {
             // (Bug in v8? Can't re-assign native functions)
             return () => performance.now();
         } else {
-            return () => Date.now();
+            var start = Date.now();
+            return () => Date.now() - start;
         }
     })();
     
