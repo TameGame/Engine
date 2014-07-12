@@ -19,7 +19,8 @@
                 alert(e);
             }
             
-            TameGame.GameLauncher.launch(null, canvas, { launchScript: "../TameLaunch.js" });
+            var launched = TameGame.GameLauncher.launch(null, canvas, { launchScript: "../TameLaunch.js" });
+            setTimeout(function() { launched.cancel(); console.log("Game cancelled"); }, 60000);
             
             var game        = new TameGame.StandardGame();
             var rotation    = 0;
