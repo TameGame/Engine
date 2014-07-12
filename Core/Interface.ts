@@ -260,6 +260,16 @@ module TameGame {
          * Removes a sub-scene from this object
          */
         removeScene(oldScene: Scene): Scene;
+        
+        /**
+         * Performs an action for all objects in this scene
+         */
+        forAllObjects(callback: (obj: TameObject) => void);
+        
+        /**
+         * Performs an action for all subscenes of this scene
+         */
+        forAllSubscenes(callback: (scene: Scene) => void);
     }
 
     /**

@@ -207,25 +207,33 @@ module TameGame {
                 delete subScenes[s.identifier];
                 return this;
             }
+            function forAllObjects(callback: (obj: TameObject) => void) {
+                Object.keys(objects).forEach((objId) => callback(objects[objId]));
+            }
+            function forAllSubscenes(callback: (scene: Scene) => void) {
+                Object.keys(subScenes).forEach((subSceneId) => callback(subScenes[subSceneId]));
+            }
 
             // Assign an identifier to this object
             var identifier = this._nextIdentifier;
             this._nextIdentifier++;
 
             var result: InternalScene = {
-                _watchers:      sceneWatchers,
-                objectInScene:  (id) => objects[id]?true:false,
-                getChildScenes: () => Object.keys(subScenes).map((key) => <InternalScene> subScenes[key]),
+                _watchers:          sceneWatchers,
+                objectInScene:      (id) => objects[id]?true:false,
+                getChildScenes:     () => Object.keys(subScenes).map((key) => <InternalScene> subScenes[key]),
                 
-                identifier:     identifier,
-                addObject:      addObject,
-                removeObject:   removeObject,
-                addScene:       addScene,
-                removeScene:    removeScene,
+                identifier:         identifier,
+                addObject:          addObject,
+                removeObject:       removeObject,
+                addScene:           addScene,
+                removeScene:        removeScene,
+                forAllObjects:      forAllObjects,
+                forAllSubscenes:    forAllSubscenes,
                 
-                watch:          (definition, pass, callback)    => sceneWatchers.watch(definition, pass, callback),
-                onPass:         (pass, callback)                => sceneWatchers.onPass(pass, callback),
-                everyPass:      (pass, callback)                => sceneWatchers.everyPass(pass, callback)
+                watch:              (definition, pass, callback)    => sceneWatchers.watch(definition, pass, callback),
+                onPass:             (pass, callback)                => sceneWatchers.onPass(pass, callback),
+                everyPass:          (pass, callback)                => sceneWatchers.everyPass(pass, callback)
             };
             
             return result;
