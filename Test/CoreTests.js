@@ -154,6 +154,52 @@ QUnit.test("SceneImmediateNotSupported", function (assert) {
     }, "Trying to watch an immediate property on a scene is an error");
 });
 
+QUnit.test("CanCreateEvent", function (assert) {
+    var evt = TameGame.createEvent();
+    var fired = false;
+    
+    evt.register(function() { fired = true; });
+    evt.fire(null, 1);
+    
+    assert.ok(fired, "Event registered and fired");
+});
+
+QUnit.test("CanCancelEvent", function (assert) {
+    var evt = TameGame.createEvent();
+    var fired = false;
+    
+    var cancellable = evt.register(function() { fired = true; });
+    cancellable.cancel();
+    evt.fire(null, 1);
+    
+    assert.ok(!fired, "Event should not fire after being cancelled");
+});
+
+QUnit.test("CanCreateTwoEvents", function (assert) {
+    var evt = TameGame.createEvent();
+    var firedOne = false;
+    var firedTwo = false;
+    
+    evt.register(function() { firedOne = true; assert.ok(!firedTwo, "Event two not fired before event one"); });
+    evt.register(function() { firedTwo = true; assert.ok(firedOne, "Event one fired before event two"); });
+    evt.fire(null, 1);
+    
+    assert.ok(firedOne && firedTwo, "Two events registered and fired");
+});
+
+QUnit.test("CanCancelOneOfTwoEvents", function (assert) {
+    var evt = TameGame.createEvent();
+    var firedOne = false;
+    var firedTwo = false;
+    
+    evt.register(function() { firedOne = true; assert.ok(!firedTwo, "Event two not fired before event one"); });
+    var cancel = evt.register(function() { firedTwo = true; assert.ok(firedOne, "Event one fired before event two"); });
+    cancel.cancel();
+    evt.fire(null, 1);
+    
+    assert.ok(firedOne && !firedTwo, "Two events registered, and only one fired");
+});
+
 // =====================================
 //  Simple performance test of the core
 // =====================================

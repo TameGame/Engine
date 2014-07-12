@@ -9,6 +9,7 @@ module TameGame {
     // effects in a game or to quickly replace an entire module of functionality.
     //
     defaultBehavior = {
+        // Any object with a sprite asset ID uses sprite rendering behavior (see Sprite/Render.ts)
         'tSpriteRender': spriteRenderBehavior
     }
 }

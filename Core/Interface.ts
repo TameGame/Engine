@@ -13,6 +13,34 @@ module TameGame {
     export interface Cancellable {
         cancel(): void;
     }
+    
+    /**
+     * Callback representing an event
+     */
+    export interface Event<TParameterType> {
+        (param: TParameterType, millseconds: number): void;
+    }
+    
+    /**
+     * Callback representing an event that takes no parameter
+     */
+    export interface EventVoid {
+        (milliseconds: number): void;
+    }
+    
+    /**
+     * Callback implemented by something that registers an event
+     */
+    export interface EventRegistration<TParameterType> {
+        (callback: Event<TParameterType>): Cancellable;
+    }
+    
+    /**
+     * Callback implemented by something that registers an event that takes no parameter
+     */
+    export interface EventRegistrationVoid {
+        (callback: EventVoid): Cancellable;
+    }
 
     /**
      * The passes used for every game tick (in execution order)
