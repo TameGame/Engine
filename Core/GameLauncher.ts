@@ -1,6 +1,11 @@
 /// <reference path="Worker.ts" />
+/// <reference path="Interface.ts" />
+/// <reference path="Game.ts" />
 
 module TameGame {
+    /** The current game */
+    export var game: Game;
+    
     /**
      * Options that can be used while launching a game
      */
@@ -33,6 +38,11 @@ module TameGame {
             // A null script tag instructs us to run an embedded script
             if (!script) {
                 var scriptTag   = document.getElementById('game');
+                
+                if (!scriptTag) {
+                    throw "Could not find game script";
+                }
+                
                 var scriptText  = scriptTag.textContent;
                 var scriptBlob  = new Blob([scriptText], {type: "text/javascript"});
                 script = URL.createObjectURL(scriptBlob);
@@ -49,14 +59,67 @@ module TameGame {
                 }
             };
             gameWorker.postMessage(launchMessage);
+            
+            // Create a way to cancel/stop the game: this is the value that we return
+            var result: Cancellable = {
+                cancel: () => {
+                    gameWorker.terminate();
+                }
+            };
+            
+            return result;
         },
     
         /**
          * This callback is made by TameLaunch when it receives the message to start the game
          */
         finishLaunch: (msg: WorkerMessage) => {
-            // We'll do something useful here eventually
-            console.log("Hello!");
+            if (msg.action !== WorkerStartGame) {
+                throw "finishLaunch must be called with a start game request";
+            }
+            
+            // Set up the game
+            game = new StandardGame();
+            
+            // Run the initial tick
+            game.tick(perf.now());
+            
+            // Get the game loop running
+            runWebWorkerGameLoop();
+            
+            // We should have the ID of a script
+            var gameScript = msg.data.gameScript;
+            
+            // Launch the game
+            importScripts(gameScript);
         }
     };
+    
+    // Use the high-resolution timer if it's available, or shim it with Date if it's not
+    var perf: any = {};
+    perf.now = (() => {
+        var winPerf: any = performance;
+        return winPerf.now          ||
+                winPerf.mozNow      ||
+                winPerf.msNow       ||
+                winPerf.oNow        ||
+                winPerf.webkitNow   ||
+                (() => Date.now());
+    })();
+    
+    /**
+     * Runs the 'live' webworker game loop
+     */
+    function runWebWorkerGameLoop() {
+        // Game ticks 200 times a second
+        setInterval(() => {
+            game.tick(perf.now());
+        }, 2000 /* 5 */);
+    }
+    
+    /**
+     * Runs the in-browser game loop, which renders the current scene as often as possible
+     */
+    function runBrowserGameLoop(gameWorker) {
+    }
 }
