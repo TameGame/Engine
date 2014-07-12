@@ -79,9 +79,10 @@ module TameGame {
             }
             
             // Set up the game
+            // TODO: some means to allow the user to specify modules, which get loaded before we create the game
             game = new StandardGame();
             
-            // Run the initial tick
+            // Run the initial tick before any user code has run
             game.tick(perf.now());
             
             // Get the game loop running
@@ -97,14 +98,14 @@ module TameGame {
     
     // Use the high-resolution timer if it's available, or shim it with Date if it's not
     var perf: any = {};
-    perf.now = (() => {
-        var winPerf: any = performance;
-        return winPerf.now          ||
-                winPerf.mozNow      ||
-                winPerf.msNow       ||
-                winPerf.oNow        ||
-                winPerf.webkitNow   ||
-                (() => Date.now());
+    perf.now = (function () {
+        if (performance.now) {
+            // Seem to need to wrap in a function or we get Illegal invocation in Chrome
+            // (Bug in v8? Can't re-assign native functions)
+            return () => performance.now();
+        } else {
+            return () => Date.now();
+        }
     })();
     
     /**
@@ -114,7 +115,7 @@ module TameGame {
         // Game ticks 200 times a second
         setInterval(() => {
             game.tick(perf.now());
-        }, 2000 /* 5 */);
+        }, 5);
     }
     
     /**
