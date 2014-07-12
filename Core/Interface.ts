@@ -1,3 +1,5 @@
+/// <reference path="../RenderQueue/Interface.ts"/>
+
 module TameGame {
     /**
      * Callback made when a property changes
@@ -129,6 +131,45 @@ module TameGame {
      */
     export interface SettableProperty<TPropertyType> {
         set(newValue: TPropertyType): void;
+    }
+    
+    /**
+     * The core events
+     */
+    export interface CoreEvents {
+        /** Event fired when a pass starts */
+        onPassStart: EventRegistration<UpdatePass>;
+        
+        /** Event fired when a pass finishes */
+        onPassFinish: EventRegistration<UpdatePass>;
+        
+        /** Event fired to perform rendering */
+        onRender: EventRegistration<RenderQueue>;
+    }
+    
+    /**
+     * Events for the Game object
+     */
+    export interface GameEvents extends CoreEvents {
+        /** The current scene has changed */
+        onNewScene: EventRegistration<Scene>;
+    }
+    
+    /**
+     * Events for the Scene object
+     */
+    export interface SceneEvents extends CoreEvents {
+        /** An object has been added to this scene */
+        onAddObject: EventRegistration<TameObject>;
+        
+        /** An object has been removed from this scene */
+        onRemoveObject: EventRegistration<TameObject>;
+        
+        /** A new sub-scene has been added */
+        onAddSubScene: EventRegistration<Scene>;
+        
+        /** A sub-scene has been removed */
+        onRemoveSubScene: EventRegistration<Scene>;
     }
 
     /**
