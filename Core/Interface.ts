@@ -290,6 +290,11 @@ module TameGame {
          * so that time can be measured to a high degree of accuracy.
          */
         tick(milliseconds: number): void;
+        
+        /**
+         * The events for this object
+         */
+        events: GameEvents;
     }
     
     var nextTypeId: number = 0;

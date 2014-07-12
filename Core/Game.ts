@@ -1,5 +1,7 @@
 /// <reference path="Interface.ts"/>
 /// <reference path="Watch.ts" />
+/// <reference path="Event.ts" />
+/// <reference path="../RenderQueue/RenderQueue.ts"/>
 
 module TameGame {
     /**
@@ -25,14 +27,44 @@ module TameGame {
         private _recentChanges: Watcher;
         private _immediate: { [propertyName: string]: (TameObject) => void };
         private _immediateActions: { [propertyName: string]: { (TameObject): void }[] };
+        
+        private _firePassStart:     Event<UpdatePass>;
+        private _firePassFinish:    Event<UpdatePass>;
+        private _fireRender:        Event<RenderQueue>;
+        private _fireNewScene:      Event<Scene>;
+        
+        private _renderer:          Renderer;
+        private _renderQueue:       RenderQueue;
+        private _currentTime:       number;
 
-        constructor() {
+        constructor(renderer: Renderer) {
             // Set up the variables
             this._nextIdentifier    = 0;
             this._watchers          = new RegisteredWatchers();
             this._recentChanges     = new Watcher();
             this._immediate         = {};
             this._immediateActions  = {};
+            this._renderer          = renderer;
+            this._renderQueue       = new StandardRenderQueue();
+            this._currentTime       = 0;
+            
+            // Set up the events
+            var passStartEvent  = createEvent<UpdatePass>();
+            var passFinishEvent = createEvent<UpdatePass>();
+            var renderEvent     = createEvent<RenderQueue>();
+            var newSceneEvent   = createEvent<Scene>();
+            
+            this.events = {
+                onPassStart:    passStartEvent.register,
+                onPassFinish:   passFinishEvent.register,
+                onRender:       renderEvent.register,
+                onNewScene:     newSceneEvent.register
+            };
+            
+            this._firePassStart     = passStartEvent.fire;
+            this._firePassFinish    = passFinishEvent.fire;
+            this._fireRender        = renderEvent.fire;
+            this._fireNewScene      = newSceneEvent.fire;
             
             // Initialise the default behaviours
             Object.keys(defaultBehavior).sort().forEach((behaviorName) => defaultBehavior[behaviorName](this));
@@ -201,7 +233,11 @@ module TameGame {
          * Starts running the specified scene
          */
         startScene(scene: Scene): void {
+            // Update the current scene
             this._currentScene = scene;
+            
+            // Fire an event to indicate that the scene has changed
+            this._fireNewScene(scene, this._currentTime);
         }
         
         /**
@@ -231,6 +267,26 @@ module TameGame {
         }
 
         /**
+         * Performs the actions associated with a pass
+         */
+        private runPass(pass: UpdatePass, milliseconds: number, sceneChanges: { watchers: RegisteredWatchers; changes: Watcher }[] , callback?: () => void) {
+            this._firePassStart(pass, milliseconds);
+
+            // Dispatch the changes for this pass to the watchers - both global and for each scene in turn
+            this._recentChanges.dispatchChanges(pass, this._watchers);
+
+            sceneChanges.forEach((change) => {
+                change.changes.dispatchChanges(pass, change.watchers);
+            });
+            
+            if (callback) {
+                callback();
+            }
+
+            this._firePassFinish(pass, milliseconds);
+        }
+        
+        /**
          * Runs a game tick. Time is a time in milliseconds from an arbitrary
          * fixed point (it should always increase)
          *
@@ -241,6 +297,9 @@ module TameGame {
          * so that time can be measured to a high degree of accuracy.
          */
         tick(milliseconds: number): void {
+            // Update the current time
+            this._currentTime = milliseconds;
+            
             // Retrieve the list of active scenes
             var activeScenes = this.getActiveScenes();
             
@@ -249,24 +308,34 @@ module TameGame {
                 return { watchers: scene._watchers, changes: this._recentChanges.filter(scene.objectInScene) }
             });
             
-            // Run the changes through the passes
+            // Run the pre-render passes
             [
                 UpdatePass.Animations, 
                 UpdatePass.Mechanics,
                 UpdatePass.Physics, 
                 UpdatePass.PreRender,
-                UpdatePass.Render,
-                UpdatePass.PostRender
-            ].forEach((pass) => {
-                // Dispatch the changes for this pass to the watchers - both global and for each scene in turn
-                this._recentChanges.dispatchChanges(pass, this._watchers);
+            ].forEach((pass) => this.runPass(pass, milliseconds, sceneChanges));
+            
+            // Run the render pass
+            var queue = this._renderQueue;
+            queue.clearQueue();
+            
+            this.runPass(UpdatePass.Render, milliseconds, sceneChanges, () => {
+                // Send the render event
+                this._fireRender(queue, milliseconds);
                 
-                sceneChanges.forEach((change) => {
-                    change.changes.dispatchChanges(pass, change.watchers);
-                });
+                // Actually perform the render
+                if (this._renderer) {
+                    this._renderer.performRender(queue);
+                }
             });
+            
+            // Run the post-render passes
+            [
+                UpdatePass.PostRender
+            ].forEach((pass) => this.runPass(pass, milliseconds, sceneChanges));
 
-            // Clear out any changes that might have occured
+            // Clear out any property changes: they are now all handled
             this._recentChanges.clearChanges();
         }
 
@@ -325,5 +394,10 @@ module TameGame {
         everyPass(updatePass: UpdatePass, callback: (milliseconds: number) => void) : Cancellable {
             return null;
         }
+
+        /**
+         * The events for this object
+         */
+        events: GameEvents;
     }
 }

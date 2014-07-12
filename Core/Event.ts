@@ -34,7 +34,7 @@ module TameGame {
         }
         
         // Function to fire an event
-        var fire = (param: TParameterType, milliseconds: number) => {
+        var fire: Event<TParameterType> = (param: TParameterType, milliseconds: number) => {
             Object.keys(events).forEach((eventId) => {
                 events[eventId](param, milliseconds);
             });
