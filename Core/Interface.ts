@@ -270,6 +270,11 @@ module TameGame {
          * Performs an action for all subscenes of this scene
          */
         forAllSubscenes(callback: (scene: Scene) => void);
+        
+        /**
+         * Events attached to this scene
+         */
+        events: SceneEvents;
     }
 
     /**
