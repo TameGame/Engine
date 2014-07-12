@@ -13,6 +13,6 @@ module TameGame {
         'tSpriteRender': spriteRenderBehavior,
     
         // Just render every object in the scene
-        'tRenderScene': renderAllTheThings
+        'tRenderer': renderAllTheThings
     }
 }

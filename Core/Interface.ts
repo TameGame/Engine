@@ -340,6 +340,7 @@ module TameGame {
      *
      *      tRenderer:      the renderer behaviour (the part that fills the render queue)
      *      tPhysics:       the physics behaviour
+     *      tSpriteRender:  the behaviour that attaches the sprite renderer to any object with a sprite ID
      *
      * This is designed to provide a way for modules to have a way to initialise themselves
      * whenever a new Game is set up, as well as for the engine to supply default behaviours
