@@ -244,3 +244,23 @@ console.log(numItems + " fast updates in " + fastTimeMs + "ms (" + (numItems/(fa
 console.log("Slowdown factor " + (timeMs/fastTimeMs));
 
 someGame.tick(3);
+
+function testItemRenderingSpeed() {
+    var start = Date.now();
+    var numItemsToTest = 100000;
+    var queue = new TameGame.StandardRenderQueue();
+
+    for (var x=0; x<numItemsToTest; ++x) {
+        queue.addItem({ action: 0, zIndex: x, intValues: [0] });
+    }
+
+    queue.render(function (item) { });
+
+    var end = Date.now();
+
+    var itemsPerFrame = (numItemsToTest/(end-start)) * (1000/60);
+    console.log("Renderered " + numItemsToTest + " items in " + (end-start) + "ms (" + itemsPerFrame + " items per frame at 60fps)");
+}
+
+testItemRenderingSpeed();
+testItemRenderingSpeed();
