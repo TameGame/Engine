@@ -38,6 +38,21 @@ module TameGame {
     }
     
     /**
+     * Callback implemented by something that registers an event that filters by a value
+     */
+    export interface FilteredEventRegistration<TFilterType, TParameterType> {
+        (type: TFilterType, callback: Event<TParameterType>): Cancellable;
+        (type: TFilterType[], callback: Event<TParameterType>): Cancellable;
+    }
+
+    /**
+     * Callback representing an event
+     */
+    export interface FireFilteredEvent<TFilterType, TParameterType> {
+        (filterVal: TFilterType, param: TParameterType, millseconds: number): void;
+    }
+
+    /**
      * Callback implemented by something that registers an event that takes no parameter
      */
     export interface EventRegistrationVoid {
@@ -138,10 +153,10 @@ module TameGame {
      */
     export interface CoreEvents {
         /** Event fired when a pass starts */
-        onPassStart: EventRegistration<UpdatePass>;
+        onPassStart: FilteredEventRegistration<UpdatePass, UpdatePass>;
         
         /** Event fired when a pass finishes */
-        onPassFinish: EventRegistration<UpdatePass>;
+        onPassFinish: FilteredEventRegistration<UpdatePass, UpdatePass>;
         
         /** Event fired when it's time to fill the render queue */
         onRender: EventRegistration<RenderQueue>;

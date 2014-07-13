@@ -13,8 +13,8 @@ module TameGame {
         objectInScene(id:number): boolean;
         getChildScenes(): InternalScene[];
         
-        _firePassStart:     Event<UpdatePass>;
-        _firePassFinish:    Event<UpdatePass>;
+        _firePassStart:     FireFilteredEvent<UpdatePass, UpdatePass>;
+        _firePassFinish:    FireFilteredEvent<UpdatePass, UpdatePass>;
         _fireRender:        Event<RenderQueue>;
     }
 
@@ -32,8 +32,8 @@ module TameGame {
         private _immediate: { [propertyName: string]: (TameObject) => void };
         private _immediateActions: { [propertyName: string]: { (TameObject): void }[] };
         
-        private _firePassStart:     Event<UpdatePass>;
-        private _firePassFinish:    Event<UpdatePass>;
+        private _firePassStart:     FireFilteredEvent<UpdatePass, UpdatePass>;
+        private _firePassFinish:    FireFilteredEvent<UpdatePass, UpdatePass>;
         private _fireRender:        Event<RenderQueue>;
         private _firePerformRender: Event<RenderQueue>;
         private _fireNewScene:      Event<Scene>;
@@ -53,8 +53,8 @@ module TameGame {
             this._currentTime       = 0;
             
             // Set up the events
-            var passStartEvent      = createEvent<UpdatePass>();
-            var passFinishEvent     = createEvent<UpdatePass>();
+            var passStartEvent      = createFilteredEvent<UpdatePass, UpdatePass>();
+            var passFinishEvent     = createFilteredEvent<UpdatePass, UpdatePass>();
             var renderEvent         = createEvent<RenderQueue>();
             var performRenderEvent  = createEvent<RenderQueue>();
             var newSceneEvent       = createEvent<Scene>();
@@ -201,8 +201,8 @@ module TameGame {
             var sceneWatchers = new RegisteredWatchers();
             
             // Create the event handlers for this scene
-            var passStartEvent      = createEvent<UpdatePass>();
-            var passFinishEvent     = createEvent<UpdatePass>();
+            var passStartEvent      = createFilteredEvent<UpdatePass, UpdatePass>();
+            var passFinishEvent     = createFilteredEvent<UpdatePass, UpdatePass>();
             var renderEvent         = createEvent<RenderQueue>();
             var addObjectEvent      = createEvent<TameObject>();
             var removeObjectEvent   = createEvent<TameObject>();
@@ -317,8 +317,8 @@ module TameGame {
          * Performs the actions associated with a pass
          */
         private runPass(pass: UpdatePass, milliseconds: number, sceneChanges: { scene: InternalScene; watchers: RegisteredWatchers; changes: Watcher }[] , callback?: () => void) {
-            this._firePassStart(pass, milliseconds);
-            sceneChanges.forEach((change) => change.scene._firePassStart(pass, milliseconds));
+            this._firePassStart(pass, pass, milliseconds);
+            sceneChanges.forEach((change) => change.scene._firePassStart(pass, pass, milliseconds));
 
             // Dispatch the changes for this pass to the watchers - both global and for each scene in turn
             this._recentChanges.dispatchChanges(pass, this._watchers);
@@ -331,8 +331,8 @@ module TameGame {
                 callback();
             }
 
-            sceneChanges.forEach((change) => change.scene._firePassFinish(pass, milliseconds));
-            this._firePassFinish(pass, milliseconds);
+            sceneChanges.forEach((change) => change.scene._firePassFinish(pass, pass, milliseconds));
+            this._firePassFinish(pass, pass, milliseconds);
         }
         
         /**

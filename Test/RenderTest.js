@@ -28,10 +28,6 @@ scene.addObject(spriteObject);
 game.startScene(scene);
 
 // Update the rotation during the animation pass
-scene.events.onPassStart(function (pass, milliseconds) {
-    if (pass !== TameGame.UpdatePass.Animations) {
-        return;
-    }
-
+scene.events.onPassStart(TameGame.UpdatePass.Animations, function (pass, milliseconds) {
     rotation = (milliseconds/10000)*360;
 });
