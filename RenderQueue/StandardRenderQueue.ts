@@ -61,25 +61,28 @@ module TameGame {
                 }
             }
             
-            // Retrieves the list of action offsets (as block, offset pairs)
+            // Retrieves the list of action offsets (as intPos, floatPos pairs)
             var getOffsets = () => {
-                var offsets = [];
+                var ordering        = [];
+                var intOffsets      = [];
+                var floatOffsets    = [];
                 
                 // Current position
                 var iPos    = 0;
-                var iBlock  = 0;
                 var fPos    = 0;
-                var fBlock  = 0;
+                var intEnd  = intBlock * blockSize + intPos;
                 
-                while (iBlock < intBlock || iPos < intPos) {
+                while (iPos < intPos) {
                     // Fetch the header bits
-                    var items       = read(integers, iBlock, iPos, 3);
+                    var items       = read(integers, Math.floor(iPos/blockSize), iPos%blockSize, 3);
                     var action      = items[0];
                     var intLen      = items[1];
                     var floatLen    = items[2];
                     
                     // Store this value
-                    offsets.push([ iBlock, iPos, fBlock, fPos ]);
+                    intOffsets.push(iPos);
+                    floatOffsets.push(fPos);
+                    ordering.push(ordering.length);
                     
                     // Increase the lengths by the header size
                     intLen += 3;
@@ -88,18 +91,9 @@ module TameGame {
                     // Move on to the next value
                     iPos += intLen;
                     fPos += floatLen;
-                    
-                    while (iPos >= blockSize) {
-                        iPos -= blockSize;
-                        ++iBlock;
-                    }
-                    while (fPos >= blockSize) {
-                        fPos -= blockSize;
-                        ++fBlock;
-                    }
                 }
                 
-                return offsets;
+                return { intOffsets: intOffsets, floatOffsets: floatOffsets, ordering: ordering };
             }
             
             // Reads some items from an array
@@ -134,11 +128,12 @@ module TameGame {
             };
             
             // Given an offset (as [iBlock, iPos, fBlock, fPos]), returns a RenderQueueItem
-            var decodeOffset = (offset: number[]) => {
-                var iBlock  = offset[0];
-                var iPos    = offset[1];
-                var fBlock  = offset[2];
-                var fPos    = offset[3];
+            var decodeOffset = (iPos: number, fPos: number) => {
+                var iBlock  = Math.floor(iPos/blockSize);
+                var fBlock  = Math.floor(fPos/blockSize);
+                
+                iPos %= blockSize;
+                fPos %= blockSize;
                 
                 var result: RenderQueueItem;
 
@@ -198,11 +193,15 @@ module TameGame {
                 var offsets = getOffsets();
                 
                 // Sort them by zIndex
-                offsets.sort((a, b) => {
-                    var fBlockA = a[2];
-                    var fPosA   = a[3];
-                    var fBlockB = b[2];
-                    var fPosB   = b[3];
+                offsets.ordering.sort((a, b) => {
+                    var fPosA   = offsets.floatOffsets[a];
+                    var fPosB   = offsets.floatOffsets[b];
+                    
+                    var fBlockA = Math.floor(fPosA/blockSize);
+                    var fBlockB = Math.floor(fPosB/blockSize);
+                    
+                    fPosA %= blockSize;
+                    fPosB %= blockSize;
                     
                     var zIndexA = floats[fBlockA][fPosA];
                     var zIndexB = floats[fBlockB][fPosB];
@@ -230,8 +229,8 @@ module TameGame {
                 });
                 
                 // Render them
-                offsets.forEach((offset) => {
-                    action(decodeOffset(offset));
+                offsets.ordering.forEach((itemNum) => {
+                    action(decodeOffset(offsets.intOffsets[itemNum], offsets.floatOffsets[itemNum]));
                 });
             }
         }

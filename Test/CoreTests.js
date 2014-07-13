@@ -253,6 +253,8 @@ function testItemRenderingSpeed() {
     for (var x=0; x<numItemsToTest; ++x) {
         queue.addItem({ action: 0, zIndex: x, intValues: [0] });
     }
+    
+    var midPoint = Date.now();
 
     queue.render(function (item) { });
 
@@ -260,6 +262,7 @@ function testItemRenderingSpeed() {
 
     var itemsPerFrame = (numItemsToTest/(end-start)) * (1000/60);
     console.log("Renderered " + numItemsToTest + " items in " + (end-start) + "ms (" + itemsPerFrame + " items per frame at 60fps)");
+    console.log("(MidPoint reached after " + (midPoint-start) + "ms");
 }
 
 testItemRenderingSpeed();
