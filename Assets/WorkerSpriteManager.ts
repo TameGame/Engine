@@ -48,7 +48,7 @@ module TameGame {
                 }
             };
             
-            postMessage(msg, null);
+            postMessage(msg, undefined);            // 2nd argument is a hack around TypeScript's lack of knowledge of WebWorkers
             
             return id;
         }
