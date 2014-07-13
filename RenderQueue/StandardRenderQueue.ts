@@ -1,89 +1,238 @@
 /// <reference path="RenderQueue.ts" />
 
 module TameGame {
+    // Blocks are 32k each
+    var blockSize = 32*1024 / 4;
+    
     /**
      * The standard implementation of a render queue
      */
     export class StandardRenderQueue extends RenderQueueBase implements RenderQueue {
-        private _items: RenderQueueItem[];
-        
         constructor() {
             super();
-            this._items = [];
-        }
-        
-        /**
-         * Adds an item to this queue
-         */
-        addItem(item: RenderQueueItem): RenderQueue {
-            // Don't add empty/bad items to the queue
-            if (!item) {
-                return;
+            
+            var integers: Int32Array[]  = [];
+            var floats: Float32Array[]  = [];
+            var intPos: number          = 0;
+            var floatPos: number        = 0;
+            var intBlock: number        = 0;
+            var floatBlock: number      = 0;
+            
+            // Functions to extend the array
+            var extendIntegers = () => { integers.push(new Int32Array(blockSize)); }
+            var extendFloats = () => { floats.push(new Float32Array(blockSize)); }
+            
+            extendIntegers();
+            extendFloats();
+            
+            // Functions to write values
+            var write = (intVals: number[], floatVals?: number[]) => {
+                // Write the integers
+                var iBlock = integers[intBlock];
+                
+                for (var i = 0; i<intVals.length; ++i) {
+                    iBlock[intPos] = intVals[i];
+                    
+                    ++intPos;
+                    if (intPos >= blockSize) {
+                        extendIntegers();
+                        intPos = 0;
+                        intBlock++;
+                        iBlock = integers[intBlock];
+                    }
+                }
+                
+                // Write the floats
+                if (!floatVals) {
+                    return;
+                }
+                var fBlock = floats[floatBlock];
+                
+                for (var f=0; f<floatVals.length; ++f) {
+                    fBlock[floatPos] = floatVals[f];
+                    
+                    ++floatPos;
+                    if (floatPos >= blockSize) {
+                        extendFloats();
+                        floatPos = 0;
+                        ++floatBlock;
+                        fBlock = floats[floatBlock];
+                    }
+                }
             }
             
-            // JavaScript sort isn't stable. We need to stablise it: in this case, by adding an indexing element
-            // (Cost: memory, advantage: don't need to write our own sort algorithm to do something that JS
-            // REALLY should be able to do itself)
-            item["_stability"] = this._items.length;
-            
-            // Store the item
-            this._items.push(item);
-        }
-        
-        /**
-         * Empties this render queue
-         */
-        clearQueue(): void {
-            this._items = [];
-        }
-        
-        /**
-         * Sends the actions in this queue to a renderer in the appropriate order
-         */
-        render(action: (item: RenderQueueItem) => void) {
-            // Sort the items into order
-            this._items.sort((a, b) => {
-                var aOrder = a.zIndex;
-                var bOrder = b.zIndex;
+            // Retrieves the list of action offsets (as block, offset pairs)
+            var getOffsets = () => {
+                var offsets = [];
                 
-                // Order by z-index
-                if (aOrder < bOrder) {
-                    return -1;
-                } else if (aOrder > bOrder) {
-                    return 1;
+                // Current position
+                var iPos    = 0;
+                var iBlock  = 0;
+                var fPos    = 0;
+                var fBlock  = 0;
+                
+                while (iBlock < intBlock || iPos < intPos) {
+                    // Fetch the header bits
+                    var items       = read(integers, iBlock, iPos, 3);
+                    var action      = items[0];
+                    var intLen      = items[1];
+                    var floatLen    = items[2];
+                    
+                    // Store this value
+                    offsets.push([ iBlock, iPos, fBlock, fPos ]);
+                    
+                    // Increase the lengths by the header size
+                    intLen += 3;
+                    floatLen += 1;
+                    
+                    // Move on to the next value
+                    iPos += intLen;
+                    fPos += floatLen;
+                    
+                    while (iPos >= blockSize) {
+                        iPos -= blockSize;
+                        ++iBlock;
+                    }
+                    while (fPos >= blockSize) {
+                        fPos -= blockSize;
+                        ++fBlock;
+                    }
                 }
                 
-                // Order by when it was added to the array
-                var aStable = a["_stability"];
-                var bStable = b["_stability"];
-                if (aStable < bStable) {
-                    return -1;
-                } else if (aStable > bStable) {
-                    return 1;
+                return offsets;
+            }
+            
+            // Reads some items from an array
+            var read = (source: any[], block: number, pos: number, len: number) => {
+                var result = [];
+                
+                var remaining = len;
+                
+                while (pos > blockSize) {
+                    pos -= blockSize;
+                    ++block;
                 }
                 
-                // This will never happen unless something weird has happened (eg: item updated after being added)
-                return 0;
-            });
+                while (remaining > 0) {
+                    // Read toRead items from pos
+                    var toRead = len;
+                    if (pos + toRead > blockSize) {
+                        toRead = blockSize - pos;
+                    }
+                    
+                    var curBlock = source[block];
+                    for (var i=0; i<toRead; ++i) {
+                        result.push(curBlock[pos+i]);
+                    }
+                    
+                    remaining -= toRead;
+                    pos = 0;
+                    ++block;
+                }
+                
+                return <number[]> result;
+            };
             
-            // Perform the action
-            this._items.forEach(action);
-        }
-        
-        /**
-         * Retrieves the data to use when sending this queue via postMessage
-         */
-        getMessageData(): any {
-            // TODO: turn into a transferable object
-            return this._items;
-        }
+            // Given an offset (as [iBlock, iPos, fBlock, fPos]), returns a RenderQueueItem
+            var decodeOffset = (offset: number[]) => {
+                var iBlock  = offset[0];
+                var iPos    = offset[1];
+                var fBlock  = offset[2];
+                var fPos    = offset[3];
+                
+                var result: RenderQueueItem;
 
-        /**
-         * Fills this render queue from data generated by getMessageData
-         */
-        fillFromMessageData(data: any) {
-            if (data) {
-                this._items = data;
+                // Read the header
+                var header      = read(integers, iBlock, iPos, 3);
+                var action      = header[0];
+                var intLen      = header[1];
+                var floatLen    = header[2];
+                
+                // Read the values
+                var actionIntValues = read(integers, iBlock, iPos+3, intLen);
+                var actionFloatValues = read(floats, fBlock, fPos, floatLen+1);
+                
+                var zIndex = actionFloatValues[0];
+                
+                // Generate the result
+                result = {
+                    action: action,
+                    zIndex: zIndex,
+                    intValues: actionIntValues,
+                    floatValues: actionFloatValues.slice(1)
+                };
+                
+                return result;
+            }
+            
+            // Exported function definitions
+            this.addItem = (item) => {
+                var intValues   = item.intValues || [];
+                var floatValues = item.floatValues || [];
+                
+                // Standard header: the action, the lengths and the z-Index
+                write([item.action, intValues.length, floatValues.length], [item.zIndex]);
+                
+                // The values themselves
+                write(intValues, floatValues);
+                
+                // Done
+                return this;
+            }
+            
+            this.clearQueue = () => {
+                // Clear everything out
+                integers    = [];
+                floats      = [];
+                intPos      = 0;
+                intBlock    = 0;
+                floatPos    = 0;
+                floatBlock  = 0;
+                
+                extendIntegers();
+                extendFloats();
+            }
+            
+            this.render = (action) => {
+                // Grab the offsets of the commands
+                var offsets = getOffsets();
+                
+                // Sort them by zIndex
+                offsets.sort((a, b) => {
+                    var fBlockA = a[2];
+                    var fPosA   = a[3];
+                    var fBlockB = b[2];
+                    var fPosB   = b[3];
+                    
+                    var zIndexA = floats[fBlockA][fPosA];
+                    var zIndexB = floats[fBlockB][fPosB];
+                    
+                    if (zIndexA < zIndexB) {
+                        return -1;
+                    } else if (zIndexA > zIndexB) {
+                        return 1;
+                    }
+                    
+                    // Order by positioning
+                    if (fBlockA < fBlockB) {
+                        return -1;
+                    } else if (fBlockA > fBlockB) {
+                        return 1;
+                    }
+                    
+                    if (fPosA < fPosB) {
+                        return -1;
+                    } else if (fPosA > fPosB) {
+                        return 1;
+                    }
+                    
+                    return 0;
+                });
+                
+                // Render them
+                offsets.forEach((offset) => {
+                    action(decodeOffset(offset));
+                });
             }
         }
     }
