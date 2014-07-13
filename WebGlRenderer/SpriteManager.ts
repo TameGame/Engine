@@ -143,9 +143,11 @@ module TameGame {
          *
          * Sprite assets usually come in the form of .png files
          */
-        loadSprite(assetName: string): number {
+        loadSprite(assetName: string, id?: number): number {
             // Choose an ID for this sprite
-            var id = this._nextSpriteId++;
+            if (typeof id === 'undefined' || id === null) {
+                id = this._nextSpriteId++;
+            }
             
             // Generate the sprite
             var sprite: WebGlSprite = {

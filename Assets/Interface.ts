@@ -17,6 +17,15 @@ module TameGame {
     export interface SpriteDefinition {
         /** The bounding box of the sprite on the source image, in pixels */
         bounds: BoundingBox;
+        
+        /**
+         * The ID to assign to this sprite
+         *
+         * This should usually be left empty: the asset manager will assign IDs automatically.
+         * The main use of this is so that a worker can assign IDs and ensure that the same
+         * IDs will be used by the main renderer.
+         */
+        id?: number;
     }
     
     /**
@@ -49,6 +58,6 @@ module TameGame {
          *
          * Sprite assets usually come in the form of .png files
          */
-        loadSprite(assetName: string): number;
+        loadSprite(assetName: string, id?: number): number;
     }
 }
