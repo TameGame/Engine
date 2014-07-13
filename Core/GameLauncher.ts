@@ -134,9 +134,7 @@ module TameGame {
      */
     function runBrowserGameLoop(gameWorker: Worker, canvas: HTMLCanvasElement) {
         // Handle the worker messages
-        gameWorker.onmessage = (evt) => {
-            receivedMessageFromWorker(evt.data);
-        };
+        var messageHandler = new WorkerMessageHandler(gameWorker);
 
         // Create the renderer for this game
         var renderer: Renderer = new WebGlRenderer(canvas);
@@ -144,8 +142,8 @@ module TameGame {
         // Handle rendering events
         var mostRecentTime: number = 0;
         var mostRecentRenderQueue: RenderQueue = null;
-
-        var receivedRender = (msg: WorkerMessage) => {
+        
+        messageHandler.renderQueue = (msg: WorkerMessage) => {
             // Work out when the message was sent
             var time = msg.data.time;
 
@@ -174,14 +172,5 @@ module TameGame {
                 });
             }
         }
-
-        // Function to handle messages from the worker
-        var receivedMessageFromWorker = (msg: WorkerMessage) => {
-            switch (msg.action) {
-                case workerRenderQueue:
-                    receivedRender(msg);
-                    break;
-            }
-        };
     }
 }
