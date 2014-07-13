@@ -53,7 +53,7 @@ module TameGame {
         
             // Tell it which script to run
             var launchMessage: WorkerMessage = {
-                action: WorkerStartGame,
+                action: workerStartGame,
                 data: {
                     gameScript: script
                 }
@@ -71,10 +71,10 @@ module TameGame {
         },
     
         /**
-         * This callback is made by TameLaunch when it receives the message to start the game
+         * This callback is made by TameLaunch when it receives the message to start the game (in the worker thread)
          */
         finishLaunch: (msg: WorkerMessage) => {
-            if (msg.action !== WorkerStartGame) {
+            if (msg.action !== workerStartGame) {
                 throw "finishLaunch must be called with a start game request";
             }
             
@@ -97,7 +97,7 @@ module TameGame {
     };
     
     // Use the high-resolution timer if it's available, or shim it with Date if it's not
-    var perf: any = {};
+    export var perf: { now?: () => number } = { now: null };
     perf.now = (function () {
         if (typeof performance !== 'undefined' && performance.now) {
             // Seem to need to wrap in a function or we get Illegal invocation in Chrome

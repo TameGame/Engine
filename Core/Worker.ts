@@ -11,5 +11,6 @@ module TameGame {
     }
 
     /** Instruction to the webworker to start a game defined in a JavaScript file */
-    export var WorkerStartGame = "start-game";
+    export var workerStartGame = "start-game";
+    export var workerRenderQueue = "render-queue";
 }

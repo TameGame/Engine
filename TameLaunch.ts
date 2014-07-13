@@ -13,7 +13,7 @@ onmessage = (event: MessageEvent) => {
     
     // Finish the launch once we receive a suitable event
     switch (msg.action) {
-        case TameGame.WorkerStartGame:
+        case TameGame.workerStartGame:
             TameGame.GameLauncher.finishLaunch(msg);
             break;
     }

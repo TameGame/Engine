@@ -1,4 +1,6 @@
 /// <reference path="RenderQueue.ts" />
+/// <reference path="../Core/GameLauncher.ts" />
+/// <reference path="../Core/Worker.ts" />
 
 module TameGame {
     // Blocks are 32k each
@@ -232,6 +234,53 @@ module TameGame {
                 offsets.ordering.forEach((itemNum) => {
                     action(decodeOffset(offsets.intOffsets[itemNum], offsets.floatOffsets[itemNum]));
                 });
+            }
+            
+            this.postQueue = () => {
+                // Get the values to post
+                var lastInts    = integers;
+                var lastFloats  = floats;
+                var intLen      = intPos + intBlock*blockSize;
+                var floatLen    = floatPos + floatBlock*blockSize;
+                
+                var transfer    = lastInts.concat(lastFloats);
+                
+                // Clear the old values (we'll transfer the values so these old values no longer apply)
+                this.clearQueue();
+                
+                // Post the message to the owner of this worker
+                var message: WorkerMessage = {
+                    action: workerRenderQueue,
+                    data: {
+                        time:           perf.now(),
+                        integers:       lastInts,
+                        floats:         lastFloats,
+                        integerLength:  intLen,
+                        floatLen:       floatLen
+                    }
+                };
+                
+                postMessage(message, '*', transfer);
+                
+                // Hm, try this out
+                console.log(lastInts);
+            }
+            
+            this.fillQueue = (msg: MessageEvent) => {
+                // Get the data
+                var data    = msg.data.data;
+                
+                // Fill the arrays
+                integers    = data.integers;
+                floats      = data.floats;
+                
+                intPos      = data.integerLength;
+                floatPos    = data.floatLength;
+                
+                intBlock    = Math.floor(intPos/blockSize);
+                floatBlock  = Math.floor(floatPos/blockSize);
+                intPos      %= blockSize;
+                floatPos    %= blockSize;
             }
         }
     }
