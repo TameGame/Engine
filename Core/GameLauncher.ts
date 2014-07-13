@@ -99,11 +99,12 @@ module TameGame {
     // Use the high-resolution timer if it's available, or shim it with Date if it's not
     var perf: any = {};
     perf.now = (function () {
-        if (performance.now) {
+        if (typeof performance !== 'undefined' && performance.now) {
             // Seem to need to wrap in a function or we get Illegal invocation in Chrome
             // (Bug in v8? Can't re-assign native functions)
             return () => performance.now();
         } else {
+            console.warn('Using lower-precision timer (performance.now not available)');
             var start = Date.now();
             return () => Date.now() - start;
         }
