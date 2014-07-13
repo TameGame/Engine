@@ -4,13 +4,12 @@ module TameGame {
     /**
      * The standard implementation of a render queue
      */
-    export class StandardRenderQueue implements RenderQueue {
+    export class StandardRenderQueue extends RenderQueueBase implements RenderQueue {
         private _items: RenderQueueItem[];
         
         constructor() {
+            super();
             this._items = [];
-            
-            mixInRenderQueueExtensions(this);
         }
         
         /**

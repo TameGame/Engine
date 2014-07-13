@@ -14,20 +14,18 @@ module TameGame {
     }
     
     // Here's the definition that gets mixed in to any render queue that gets created
-    renderQueueExtensions['moveCamera'] = (queue) => {
-        var moveCameraAction = Actions.moveCamera;
-        return (zIndex: number, center: Point2D, height: number, rotation: number) => {
-            queue.addItem({
-                action: moveCameraAction,
-                zIndex: zIndex,
-                intValues: [],
-                floatValues: [
-                    center.x,
-                    center.y,
-                    height,
-                    rotation
-                ]
-            });
-        }
+    var moveCameraAction = Actions.moveCamera;
+    RenderQueueBase.prototype['moveCamera'] = function (zIndex: number, center: Point2D, height: number, rotation: number)  {
+        this.addItem({
+            action: moveCameraAction,
+            zIndex: zIndex,
+            intValues: [],
+            floatValues: [
+                center.x,
+                center.y,
+                height,
+                rotation
+            ]
+        });
     }
 }
