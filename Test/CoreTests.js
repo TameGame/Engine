@@ -267,3 +267,4 @@ function testItemRenderingSpeed() {
 
 testItemRenderingSpeed();
 testItemRenderingSpeed();
+testItemRenderingSpeed();
