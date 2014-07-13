@@ -35,18 +35,22 @@ QUnit.test("OrderByZIndex", function(assert) {
 
 QUnit.test("StableWhenZTheSame", function(assert) {
     var renderQueue = new TameGame.StandardRenderQueue();
-    renderQueue.addItem({ zIndex: 0, ourIndex: 0, action: "Test" });
-    renderQueue.addItem({ zIndex: 1, ourIndex: 3, action: "Test" });
-    renderQueue.addItem({ zIndex: 1, ourIndex: 4, action: "Test" });
-    renderQueue.addItem({ zIndex: 1, ourIndex: 5, action: "Test" });
-    renderQueue.addItem({ zIndex: 0, ourIndex: 1, action: "Test" });
-    renderQueue.addItem({ zIndex: 0, ourIndex: 2, action: "Test" });
+    
+    // The intValues value indicates the expected ordering
+    renderQueue.addItem({ zIndex: 0, intValues: [0], action: "Test" });
+    renderQueue.addItem({ zIndex: 1, intValues: [3], action: "Test" });
+    renderQueue.addItem({ zIndex: 1, intValues: [4], action: "Test" });
+    renderQueue.addItem({ zIndex: 1, intValues: [5], action: "Test" });
+    renderQueue.addItem({ zIndex: 0, intValues: [1], action: "Test" });
+    renderQueue.addItem({ zIndex: 0, intValues: [2], action: "Test" });
     
     var itemCount = 0;
     var lastIndex = -1;
     renderQueue.render(function (item) { 
-        assert.ok(item.ourIndex > lastIndex, "Item " + (itemCount+1) + " is ordered properly (" + item.ourIndex + ")");
-        lastIndex = item.ourIndex;
+        var ourIndex = item.intValues[0];
+        
+        assert.ok(ourIndex > lastIndex, "Item " + (itemCount+1) + " is ordered properly (" + ourIndex + ")");
+        lastIndex = ourIndex;
         itemCount++; 
     });
     assert.ok(itemCount === 6, "Found all items");
