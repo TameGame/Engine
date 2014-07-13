@@ -1,11 +1,15 @@
 /// <reference path="Worker.ts" />
 /// <reference path="Interface.ts" />
 /// <reference path="Game.ts" />
+/// <reference path="../Assets/Assets.ts" />
 /// <reference path="../WebGlRenderer/WebGlRenderer.ts" />
 
 module TameGame {
     /** The current game */
     export var game: Game;
+    
+    /** The sprite manager for the current game */
+    export var sprites: SpriteManager;
     
     /**
      * Options that can be used while launching a game
@@ -84,7 +88,8 @@ module TameGame {
             
             // Set up the game
             // TODO: some means to allow the user to specify modules, which get loaded before we create the game
-            game = new StandardGame();
+            game    = new StandardGame();
+            sprites = new WorkerSpriteManager();
             
             // Run the initial tick before any user code has run
             game.tick(perf.now());
@@ -172,5 +177,13 @@ module TameGame {
                 });
             }
         }
+        
+        messageHandler.loadSprite = (msg: WorkerMessage) => {
+            var assetName   = msg.data.assetName;
+            var id          = msg.data.id;
+            
+            // Pass on to the renderer
+            renderer.sprites.loadSprite(assetName, id);
+        };
     }
 }
