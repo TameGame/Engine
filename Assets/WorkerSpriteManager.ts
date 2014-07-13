@@ -9,6 +9,7 @@ module TameGame {
         private _nextSpriteId: number;
         
         constructor() {
+            this._nextSpriteId = 0;
         }
 
         /**

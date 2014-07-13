@@ -8,32 +8,16 @@
         <canvas width=1280 height=720 id="testCanvas"></canvas>
         
         <script type="text/js-game" id="game">
-            console.log("Hello!");
-        </script>
+            var game        = TameGame.game;
+            var sprites     = TameGame.sprites;
         
-        <script type="text/javascript">
-            try {
-                var canvas = document.getElementById("testCanvas");
-                var renderer = new TameGame.WebGlRenderer(canvas);
-            } catch (e) {
-                alert(e);
-            }
-            
-            var launched = TameGame.GameLauncher.launch(null, canvas, { launchScript: "../TameLaunch.js" });
-            setTimeout(function() { launched.cancel(); console.log("Game cancelled"); }, 60000);
-            
-            var game        = new TameGame.StandardGame();
+            // Load a sprite
             var rotation    = 0;
-            var someSprite  = renderer.sprites.loadSprite("TameGame.png");
+            var someSprite  = sprites.loadSprite("TameGame.png");
             
             // Set up the camera every time we get a render
             game.events.onRender(function(queue) {
                 queue.moveCamera(-1, { x:0, y: 0 }, 4.0, rotation);
-            });
-            
-            // Call the WebGL renderer to actually perform the rendering
-            game.events.onPerformRender(function(queue) {
-                renderer.performRender(queue);
             });
             
             // Create a sprite object
@@ -52,39 +36,26 @@
             scene.addObject(spriteObject);
             
             game.startScene(scene);
-
-            var frames = 0;
-            var startTime = -1;
-            function nextRender(now) {
-                // Do no more frames after the rotation exceeds 720
-                var moreFrames = true;
-                if (rotation >= 720) {
-                    rotation = 720;
-                    moreFrames = false;
+            
+            // Update the rotation during the animation pass
+            scene.events.onPassStart(function (pass, milliseconds) {
+                if (pass != TameGame.UpdatePass.Animation) {
+                    return;
                 }
                 
-                frames++;
-                if (startTime < 0) startTime = now;
-                
-                if ((frames%60) === 0 || !moreFrames) {
-                    console.log((frames / ((now-startTime)/1000.0)) + "fps");
-                    frames = 0;
-                    startTime = now;
-                }
-                
-                // Advance the game state
-                game.tick(now);
-                
-                // Set the new rotation
-                rotation = ((now/10000) * 360);
-                
-                // Request more frames
-                if (moreFrames) {
-                    requestAnimationFrame(nextRender, canvas);
-                }
+                rotation = (milliseocnds/10000)*360;
+            });
+        </script>
+        
+        <script type="text/javascript">
+            try {
+                var canvas = document.getElementById("testCanvas");
+            } catch (e) {
+                alert(e);
             }
             
-            requestAnimationFrame(nextRender, canvas);
+            var launched = TameGame.GameLauncher.launch(null, canvas, { launchScript: "../TameLaunch.js" });
+            setTimeout(function() { launched.cancel(); console.log("Game cancelled"); }, 60000);
         </script>
     </body>
 </html>
