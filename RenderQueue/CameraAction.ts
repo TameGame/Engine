@@ -1,24 +1,33 @@
 /// <reference path="RenderTypes.ts" />
 /// <reference path="Interface.ts" />
+/// <reference path="Actions.ts" />
 
 module TameGame {
-    /**
-     * Action that sets the location of the camera for the 2D renderer
-     *
-     * At the start of rendering, the camera is at position 0,0 with a screen height of 2.
-     * This gives coordinates from (-1, -1) to (1, 1).
-     */
-    export interface CameraAction extends RenderQueueItem {
-        /** Location of the center of the screen */
-        center: Point2D;
-        
-        /** Number of units from the bottom to the top of the screen (width is calculated automatically) */
-        height: number;
-        
-        /** Rotation around the center point, in degrees */
-        rotation: number;
+    export interface RenderQueue {
+        /** 
+         * Set the location of the camera for the 2D renderer
+         *
+         * At the start of rendering, the camera is at position 0,0 with a screen height of 2.
+         * This gives coordinates from (-1, -1) to (1, 1).
+         */
+        moveCamera?: (zIndex: number, center: Point2D, height: number, rotation: number) => void;
     }
     
-    /** The name to use in the action field for the camera action */
-    export var cameraActionName = createRenderActionName();
+    // Here's the definition that gets mixed in to any render queue that gets created
+    renderQueueExtensions['moveCamera'] = (queue) => {
+        var moveCameraAction = Actions.moveCamera;
+        return (zIndex: number, center: Point2D, height: number, rotation: number) => {
+            queue.addItem({
+                action: moveCameraAction,
+                zIndex: zIndex,
+                intValues: [],
+                floatValues: [
+                    center.x,
+                    center.y,
+                    height,
+                    rotation
+                ]
+            });
+        }
+    }
 }
