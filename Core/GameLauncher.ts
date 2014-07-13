@@ -85,6 +85,11 @@ module TameGame {
             // Run the initial tick before any user code has run
             game.tick(perf.now());
             
+            // Whenever we get a render request, send it by posting the queue
+            game.events.onPerformRender((queue) => {
+                queue.postQueue();
+            });
+            
             // Get the game loop running
             runWebWorkerGameLoop();
             
@@ -117,7 +122,7 @@ module TameGame {
         // Game ticks 200 times a second
         setInterval(() => {
             game.tick(perf.now());
-        }, 5);
+        }, 200);
     }
     
     /**

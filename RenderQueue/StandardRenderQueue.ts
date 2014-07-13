@@ -238,8 +238,8 @@ module TameGame {
             
             this.postQueue = () => {
                 // Get the values to post
-                var lastInts    = integers;
-                var lastFloats  = floats;
+                var lastInts    = integers.map((array) => array.buffer);
+                var lastFloats  = floats.map((array) => array.buffer);
                 var intLen      = intPos + intBlock*blockSize;
                 var floatLen    = floatPos + floatBlock*blockSize;
                 
@@ -260,10 +260,8 @@ module TameGame {
                     }
                 };
                 
-                postMessage(message, '*', transfer);
-                
-                // Hm, try this out
-                console.log(lastInts);
+                var realPostMessage: any = postMessage;         // HACK: typescript doesn't know about web workers, apparently
+                realPostMessage(message, transfer);
             }
             
             this.fillQueue = (msg: MessageEvent) => {
@@ -271,8 +269,8 @@ module TameGame {
                 var data    = msg.data.data;
                 
                 // Fill the arrays
-                integers    = data.integers;
-                floats      = data.floats;
+                integers    = data.integers.map((buf) => new Int32Array(buf));
+                floats      = data.floats.map((buf) => new Float32Array(buf));
                 
                 intPos      = data.integerLength;
                 floatPos    = data.floatLength;
