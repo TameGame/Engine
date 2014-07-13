@@ -11,8 +11,16 @@ module TameGame {
     }
 
     /** Instruction to the webworker to start a game defined in a JavaScript file */
-    export var workerStartGame = "start-game";
-    export var workerRenderQueue = "render-queue";
+    export var workerStartGame          = "start-game";
+    
+    /** Instruction to the main thread: render a frame */
+    export var workerRenderQueue        = "render-queue";
+    
+    /** Instruction to the main thread: load a sprite asset */
+    export var workerLoadSprite         = "load-sprite";
+    
+    /** Instruction to the main thread: load a sprite sheet asset */
+    export var workerLoadSpriteSheet    = "load-sprite-sheet";
     
     /** Class that handles messages coming from a webworker */
     export class WorkerMessageHandler {
@@ -28,11 +36,24 @@ module TameGame {
                             this.renderQueue(msgData);
                         }
                         break;
+
+                    case workerLoadSprite:
+                        if (this.loadSprite) {
+                            this.loadSprite(msgData);
+                        }
+                        break;
+                        
+                    case workerLoadSpriteSheet:
+                        if (this.loadSpriteSheet) {
+                            this.loadSpriteSheet(msgData);
+                        }
+                        break;
                 }
             };
         }
         
-        /** Action to take when the render queue message arrives */
-        renderQueue: (msg: WorkerMessage) => void;
+        renderQueue:        (msg: WorkerMessage) => void;
+        loadSprite:         (msg: WorkerMessage) => void;
+        loadSpriteSheet:    (msg: WorkerMessage) => void;
     }
 }
