@@ -256,7 +256,7 @@ module TameGame {
                         integers:       lastInts,
                         floats:         lastFloats,
                         integerLength:  intLen,
-                        floatLen:       floatLen
+                        floatLength:    floatLen
                     }
                 };
                 
@@ -264,9 +264,9 @@ module TameGame {
                 realPostMessage(message, transfer);
             }
             
-            this.fillQueue = (msg: MessageEvent) => {
+            this.fillQueue = (msg: WorkerMessage) => {
                 // Get the data
-                var data    = msg.data.data;
+                var data    = msg.data;
                 
                 // Fill the arrays
                 integers    = data.integers.map((buf) => new Int32Array(buf));

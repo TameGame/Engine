@@ -1,6 +1,7 @@
 /// <reference path="Worker.ts" />
 /// <reference path="Interface.ts" />
 /// <reference path="Game.ts" />
+/// <reference path="../WebGlRenderer/WebGlRenderer.ts" />
 
 module TameGame {
     /** The current game */
@@ -47,9 +48,60 @@ module TameGame {
                 var scriptBlob  = new Blob([scriptText], {type: "text/javascript"});
                 script = URL.createObjectURL(scriptBlob);
             }
-        
+            
+            // Create the renderer for this game
+            var renderer: Renderer = new WebGlRenderer(canvas);
+            
+            // Handle rendering events
+            var mostRecentTime: number = 0;
+            var mostRecentRenderQueue: RenderQueue = null;
+            
+            var receivedRender = (msg: WorkerMessage) => {
+                // Work out when the message was sent
+                var time = msg.data.time;
+                
+                // If there's no render queue, then we'll need to render the queue on the next animation frame
+                var queueRender = mostRecentRenderQueue === null;
+                
+                if (mostRecentRenderQueue === null || time > mostRecentTime) {
+                    // This message is more recent than the last render request: replace it
+                    var newQueue = new StandardRenderQueue();
+                    newQueue.fillQueue(msg);
+                    
+                    mostRecentTime          = time;
+                    mostRecentRenderQueue   = newQueue;
+                }
+                
+                // If there's no pending render, then get one queued up
+                if (queueRender) {
+                    requestAnimationFrame(() => {
+                        // Render whatever queue is most recent
+                        var nextRender = mostRecentRenderQueue;
+                        mostRecentRenderQueue = null;
+                        
+                        if (nextRender) {
+                            renderer.performRender(nextRender);
+                        }
+                    });
+                }
+            }
+            
+            // Function to handle messages from the worker
+            var receivedMessageFromWorker = (msg: WorkerMessage) => {
+                switch (msg.action) {
+                    case workerRenderQueue:
+                        receivedRender(msg);
+                        break;
+                }
+            };
+
             // Create the worker
             var gameWorker = new Worker(options.launchScript);
+            
+            // Handle any messages it might send
+            gameWorker.onmessage = (evt) => {
+                receivedMessageFromWorker(evt.data);
+            };
         
             // Tell it which script to run
             var launchMessage: WorkerMessage = {
@@ -122,7 +174,7 @@ module TameGame {
         // Game ticks 200 times a second
         setInterval(() => {
             game.tick(perf.now());
-        }, 200);
+        }, 5);
     }
     
     /**
