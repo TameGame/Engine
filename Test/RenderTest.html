@@ -39,11 +39,11 @@
             
             // Update the rotation during the animation pass
             scene.events.onPassStart(function (pass, milliseconds) {
-                if (pass != TameGame.UpdatePass.Animation) {
+                if (pass !== TameGame.UpdatePass.Animations) {
                     return;
                 }
                 
-                rotation = (milliseocnds/10000)*360;
+                rotation = (milliseconds/10000)*360;
             });
         </script>
         
