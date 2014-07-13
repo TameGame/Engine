@@ -1,5 +1,6 @@
 /// <reference path="../Core/Core.ts" />
 /// <reference path="../RenderQueue/RenderQueue.ts" />
+/// <reference path="Properties.ts" />
 
 module TameGame {
     /**
@@ -16,12 +17,7 @@ module TameGame {
             
             // Render it if it exists
             if (assetId !== -1) {
-                queue.addItem({
-                    action: TameGame.spriteActionName,
-                    zIndex: pos.zIndex,
-                    spriteId: assetId,
-                    position: pos
-                });
+                queue.drawSprite(assetId, pos.zIndex, pos);
             }
         }
     }

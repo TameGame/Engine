@@ -9,12 +9,14 @@ module TameGame {
         
         constructor() {
             this._items = [];
+            
+            mixInRenderQueueExtensions(this);
         }
         
         /**
          * Adds an item to this queue
          */
-        addItem<TItemType extends RenderQueueItem>(item: TItemType): RenderQueue {
+        addItem(item: RenderQueueItem): RenderQueue {
             // Don't add empty/bad items to the queue
             if (!item) {
                 return;

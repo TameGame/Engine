@@ -51,8 +51,7 @@ module TameGame {
         // Return the rendering function
         return (item: RenderQueueItem) => {
             // The item should be a sprite action item
-            var spriteItem  = <SpriteAction> item;
-            var sprite      = spriteMap[spriteItem.spriteId] || noSprite;
+            var sprite      = spriteMap[item.intValues[0]] || noSprite;
             
             gl.useProgram(spriteShader);
             
@@ -68,14 +67,14 @@ module TameGame {
             gl.uniform1i(samplerUni, 0);
             
             // Generate the vertices
-            vertexArray[0] = spriteItem.position.x1;
-            vertexArray[1] = spriteItem.position.y1;
-            vertexArray[2] = spriteItem.position.x2;
-            vertexArray[3] = spriteItem.position.y2;
-            vertexArray[4] = spriteItem.position.x3;
-            vertexArray[5] = spriteItem.position.y3;
-            vertexArray[6] = spriteItem.position.x4;
-            vertexArray[7] = spriteItem.position.y4;
+            vertexArray[0] = item.floatValues[0];
+            vertexArray[1] = item.floatValues[1];
+            vertexArray[2] = item.floatValues[2];
+            vertexArray[3] = item.floatValues[3];
+            vertexArray[4] = item.floatValues[4];
+            vertexArray[5] = item.floatValues[5];
+            vertexArray[6] = item.floatValues[6];
+            vertexArray[7] = item.floatValues[7];
             
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, vertexArray, gl.STATIC_DRAW);
@@ -93,5 +92,5 @@ module TameGame {
         };
     }
     
-    webGlRenderAction[spriteActionName] = spriteInit;
+    webGlRenderAction[Actions.drawSprite] = spriteInit;
 }

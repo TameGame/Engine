@@ -27,10 +27,21 @@ module TameGame {
         /**
          * The action represented by this item
          *
-         * In general, every action has an interface defined for it, which should inherit from 
-         * RenderQueueItem: this is how the data is stored for each action.
+         * Actions are assigned unique numbers: presently this is in Actions.ts, and there's no
+         * real mechanism for adding new actions. Being able to create new drawing actions is
+         * important, however, so this will be added at some later date.
          */
-        action: string;
+        action: number;
+        
+        /**
+         * The integer values associated with this action
+         */
+        intValues: number[];
+        
+        /**
+         * The floating point values associated with this action
+         */
+        floatValues: number[];
     }
     
     /**
@@ -41,7 +52,7 @@ module TameGame {
         /**
          * Adds an item to this queue
          */
-        addItem<TItemType extends RenderQueueItem>(item: TItemType): RenderQueue;
+        addItem(item: RenderQueueItem): RenderQueue;
         
         /**
          * Empties this render queue
@@ -87,5 +98,31 @@ module TameGame {
     export function createRenderActionName() {
         ++nextActionId;
         return nextActionId.toString();
+    }
+    
+    /**
+     * Hash of functions that create the implementations of extensions to the render queue
+     *
+     * This is a workaround to the fact that TypeScript doens't support adding to the prototype
+     * of existing classes (except for the built-in classes like Array). You should be able to
+     * treat classes as open-ended like you can with interfaces but it's not possible yet. Looking
+     * at the discussions I don't think anyone associated with TypeScript has ever considered that
+     * you might want to do this.
+     *
+     * (That is, there's no way to do something like RenderQueueBase.prototype.foo = something and
+     * have TypeScript do anything other than moan that 'foo is not declared in RenderQueueBase')
+     *
+     * A disadvantage of this approach is that extensions can't be added once the first instance
+     * of the class has been created.
+     */
+    export var renderQueueExtensions: { [name: string]: (RenderQueue) => any; } = {};
+    
+    /**
+     * Given a standard render queue object, mixes in the standard set of extensions
+     */
+    export var mixInRenderQueueExtensions = (queue: RenderQueue) => {
+        Object.keys(renderQueueExtensions).forEach((extnName) => {
+            queue[extnName] = renderQueueExtensions[extnName](queue);
+        });
     }
 }
