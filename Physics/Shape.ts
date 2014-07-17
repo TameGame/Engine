@@ -15,6 +15,14 @@ module TameGame {
         transform(matrix: Float32Array): Shape;
     }
     
+    /** 
+     * Projection onto an axis
+     */
+    export interface Projection {
+        min: number;
+        max: number;
+    }
+    
     /**
      * Interface implemented by shapes that support SAT (separating axis theorem) collision
      * detection.
@@ -28,7 +36,7 @@ module TameGame {
         getAxes(): Point2D[];
         
         /** Projects the points of this shape onto the specified axis */
-        projectOntoAxis(axis: Point2D): number[];
+        projectOntoAxis(axis: Point2D): Projection;
     }
     
     /**

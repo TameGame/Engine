@@ -50,7 +50,7 @@ module TameGame {
                     }
                 }
                 
-                return [min, max];
+                return { min: min, max: max };
             }
             
             this.transform = (transformMatrix) => new TransformedPolygon(initVertices, multiplyMatrix(matrix, transformMatrix));
@@ -63,7 +63,7 @@ module TameGame {
         getAxes: () => Point2D[];
         
         /** Projects the points of this shape onto the specified axis */
-        projectOntoAxis: (axis: Point2D) => number[];
+        projectOntoAxis: (axis: Point2D) => Projection;
     }
     
     /**
@@ -114,7 +114,7 @@ module TameGame {
                     }
                 }
                 
-                return [min, max];
+                return { min: min, max: max };
             }
             
             this.transform = (matrix) => new TransformedPolygon(vertices, matrix);
@@ -127,6 +127,6 @@ module TameGame {
         getAxes: () => Point2D[];
         
         /** Projects the points of this shape onto the specified axis */
-        projectOntoAxis: (axis: Point2D) => number[];
+        projectOntoAxis: (axis: Point2D) => Projection;
     }
 }
