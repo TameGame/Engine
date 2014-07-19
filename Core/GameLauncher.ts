@@ -128,10 +128,10 @@ module TameGame {
      * Runs the 'live' webworker game loop
      */
     function runWebWorkerGameLoop() {
-        // Game ticks 200 times a second
+        // Game ticks 240 times a second
         setInterval(() => {
             game.tick(perf.now());
-        }, 5);
+        }, 1000.0 / 240.0);
     }
     
     /**
