@@ -3,8 +3,8 @@
 
 module TameGame {
     function doesOverlap(a: Projection, b: Projection) {
-        if (a.min > b.max) return false;
-        if (b.min > a.max) return false;
+        if (a.min >= b.max) return false;
+        if (b.min >= a.max) return false;
         
         return true;
     }
