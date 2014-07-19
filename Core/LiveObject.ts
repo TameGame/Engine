@@ -13,14 +13,14 @@ module TameGame {
      * Extends the scene interface so that it can support live ticks
      */
     export interface SceneEvents {
-        onTick?: EventRegistration<Tick>;
+        onTick?: FilteredEventRegistration<UpdatePass, Tick>;
     }
     
     /**
      * Extends the game events interface so that it can support live ticks
      */
     export interface GameEvents {
-        onTick?: EventRegistration<Tick>;
+        onTick?: FilteredEventRegistration<UpdatePass, Tick>;
     }
     
     /**
@@ -73,7 +73,7 @@ module TameGame {
      */
     export function liveObjectBehavior(game: Game) {
         // Register the ticks event
-        var gameTicks = createEvent<Tick>();
+        var gameTicks = createFilteredEvent<UpdatePass, Tick>();
         game.events.onTick = gameTicks.register;
         
         // When a new scene begins, the live ticks are reset
@@ -84,7 +84,7 @@ module TameGame {
             var scene = <InternalLiveObjectsScene> standardScene;
 
             // Register the ticks event
-            var sceneTicks = createEvent<Tick>();
+            var sceneTicks = createFilteredEvent<UpdatePass, Tick>();
             scene.events.onTick = sceneTicks.register;
 
             // The scene will initially have no live objects
@@ -112,21 +112,21 @@ module TameGame {
                     // If no time has passed yet, we do nothing
                     if (lastTime < 0) return;
                     
-                    var onTick = (tick: Tick) => {
-                        gameTicks.fire(tick, time);
-                        sceneTicks.fire(tick, time);
+                    var onTick = (tick: Tick, tickTime: number) => {
+                        gameTicks.fire(updatePass, tick, time);
+                        sceneTicks.fire(updatePass, tick, time);
                     };
                     
                     // They are called at 60fps. If the game engine is running slow they get called multiple times
                     // to catch up
                     var liveObjectList = scene.liveObjects;
-                    for (var tickTime = lastTime; tickTime <= time; tickTime += tickDuration) {
+                    for (var tickTime = lastTime; tickTime < time; tickTime += tickDuration) {
                         Object.keys(liveObjectList).forEach((objId) => {
                             // Get the object that is being acted upon
                             var liveObject = liveObjectList[objId];
                             
                             // Call the tick functions
-                            onTick({ duration: tickDuration, obj: liveObject });
+                            onTick({ duration: tickDuration, obj: liveObject }, tickTime);
                         });
                     }
                 });
