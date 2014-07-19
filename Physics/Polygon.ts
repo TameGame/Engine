@@ -2,9 +2,17 @@
 
 module TameGame {
     /**
+     * Interface implemented by shapes that are a polygon
+     */
+    export interface PolygonShape extends SatShape {
+        /** Retrieves the vertices making up this polygon */
+        getVertices(): Point2D[];
+    }
+    
+    /**
      * A polygon with a transformation
      */
-    class TransformedPolygon implements SatShape {
+    class TransformedPolygon implements PolygonShape {
         constructor(initVertices: Point2D[], matrix: Float32Array) {
             var vertices: Point2D[];
             
@@ -54,6 +62,7 @@ module TameGame {
             }
             
             this.transform = (transformMatrix) => new TransformedPolygon(initVertices, multiplyMatrix(matrix, transformMatrix));
+            this.getVertices = getVertices;
         }
         
         /** Returns a transformed version of this shape */
@@ -64,12 +73,15 @@ module TameGame {
         
         /** Projects the points of this shape onto the specified axis */
         projectOntoAxis: (axis: Point2D) => Projection;
+        
+        /** Retrieves the vertices making up this polygon */
+        getVertices: () => Point2D[];
     }
     
     /**
      * A shape that is a polygon
      */
-    export class Polygon implements SatShape {
+    export class Polygon implements PolygonShape {
         /**
          * Creates a polygon with the specified vertices
          */
@@ -118,6 +130,7 @@ module TameGame {
             }
             
             this.transform = (matrix) => new TransformedPolygon(vertices, matrix);
+            this.getVertices = () => vertices;
         }
         
         /** Returns a transformed version of this shape */
@@ -128,5 +141,8 @@ module TameGame {
         
         /** Projects the points of this shape onto the specified axis */
         projectOntoAxis: (axis: Point2D) => Projection;
+        
+        /** Retrieves the vertices making up this polygon */
+        getVertices: () => Point2D[];
     }
 }
