@@ -27,6 +27,9 @@ module TameGame {
      * Interface implemented by shapes that support SAT (separating axis theorem) collision
      * detection.
      *
+     * The separating axis theorem states that for any two convex shapes that are not in
+     * collision, an axis can be found that divides them.
+     *
      * SAT shapes are convex and have a finite number of axes to test, plus they provide a
      * routine for projecting themselves onto an axis. Typically the axes are the normals
      * for the edges of the shape, and projection is done via the dot product.

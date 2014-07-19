@@ -9,6 +9,43 @@ module TameGame {
         getVertices(): Point2D[];
     }
     
+    function getAxes(vertices: Point2D[]): Point2D[] {
+        var numVertices = vertices.length;
+        return vertices.map((vertex, index) => {
+            var nextIndex = index + 1;
+            if (nextIndex >= numVertices) nextIndex = 0;
+
+            var nextVertex = vertices[nextIndex];
+
+            // Compute the vector between vertices
+            var vector = { x: nextVertex.x - vertex.x, y: nextVertex.y - vertex.y };
+
+            // Return the normal (the unnormalised normal, in fact)
+            return { x: -vector.y, y: vector.x };
+        });
+    }
+    
+    function projectOntoAxis(vertices: Point2D[], axis: Point2D): Projection {
+        var numVertices = vertices.length;
+
+        // Initial value is the projection of the first vertex
+        var min = dot(axis, vertices[0]);
+        var max = min;
+
+        // Pick the max/min points
+        for (var index=1; index<numVertices; ++index) {
+            var projection = dot(axis, vertices[index]);
+
+            if (projection < min) {
+                min = projection;
+            } else if (projection > max) {
+                max = projection;
+            }
+        }
+
+        return { min: min, max: max };
+    }
+    
     /**
      * A polygon with a transformation
      */
@@ -22,47 +59,10 @@ module TameGame {
                 return vertices;
             };
 
-            this.getAxes = () => {
-                var vertices = getVertices();
-                var numVertices = vertices.length;
-                return vertices.map((vertex, index) => {
-                    var nextIndex = index + 1;
-                    if (nextIndex >= numVertices) nextIndex = 0;
-                    
-                    var nextVertex = vertices[nextIndex];
-                    
-                    // Compute the vector between vertices
-                    var vector = { x: nextVertex.x - vertex.x, y: nextVertex.y - vertex.y };
-                    
-                    // Return the normal (the unnormalised normal, in fact)
-                    return { x: -vector.y, y: vector.x };
-                });
-            }
-
-            this.projectOntoAxis = (axis) => {
-                var vertices = getVertices();
-                var numVertices = vertices.length;
-                
-                // Initial value is the projection of the first vertex
-                var min = dot(axis, vertices[0]);
-                var max = min;
-                
-                // Pick the max/min points
-                for (var index=1; index<numVertices; ++index) {
-                    var projection = dot(axis, vertices[index]);
-                    
-                    if (projection < min) {
-                        min = projection;
-                    } else if (projection > max) {
-                        max = projection;
-                    }
-                }
-                
-                return { min: min, max: max };
-            }
-            
-            this.transform = (transformMatrix) => new TransformedPolygon(initVertices, multiplyMatrix(matrix, transformMatrix));
-            this.getVertices = getVertices;
+            this.getAxes            = () => getAxes(getVertices());
+            this.projectOntoAxis    = (axis) => projectOntoAxis(getVertices(), axis);
+            this.transform          = (transformMatrix) => new TransformedPolygon(initVertices, multiplyMatrix(matrix, transformMatrix));
+            this.getVertices        = getVertices;
         }
         
         /** Returns a transformed version of this shape */
@@ -95,42 +95,10 @@ module TameGame {
             var vertices    = initVertices.map((vertex) => { return { x: vertex.x, y: vertex.y } });
             
             // Create the functions
-            this.getAxes = () => {
-                return vertices.map((vertex, index) => {
-                    var nextIndex = index + 1;
-                    if (nextIndex >= numVertices) nextIndex = 0;
-                    
-                    var nextVertex = vertices[nextIndex];
-                    
-                    // Compute the vector between vertices
-                    var vector = { x: nextVertex.x - vertex.x, y: nextVertex.y - vertex.y };
-                    
-                    // Return the normal (the unnormalised normal, in fact)
-                    return { x: -vector.y, y: vector.x };
-                });
-            }
-            
-            this.projectOntoAxis = (axis) => {
-                // Initial value is the projection of the first vertex
-                var min = dot(axis, vertices[0]);
-                var max = min;
-                
-                // Pick the max/min points
-                for (var index=1; index<numVertices; ++index) {
-                    var projection = dot(axis, vertices[index]);
-                    
-                    if (projection < min) {
-                        min = projection;
-                    } else if (projection > max) {
-                        max = projection;
-                    }
-                }
-                
-                return { min: min, max: max };
-            }
-            
-            this.transform = (matrix) => new TransformedPolygon(vertices, matrix);
-            this.getVertices = () => vertices;
+            this.getAxes            = () => getAxes(vertices);
+            this.projectOntoAxis    = (axis) => projectOntoAxis(vertices, axis);
+            this.transform          = (matrix) => new TransformedPolygon(vertices, matrix);
+            this.getVertices        = () => vertices;
         }
         
         /** Returns a transformed version of this shape */
