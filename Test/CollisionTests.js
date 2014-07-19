@@ -24,3 +24,21 @@ QUnit.test("DoesCollideSmallIntersection", function(assert) {
     
     assert.ok(collides.collided === true);
 });
+
+QUnit.test("DoesntCollideAfterTranslation", function(assert) {
+    var triangle1 = new TameGame.Polygon([ { x:1, y:1 }, { x:2, y:2 }, { x:1, y:2 }]);
+    var triangle2 = triangle1.transform(TameGame.translateMatrix(3,3));
+    
+    var collides = TameGame.satCollision(triangle1, triangle2);
+    
+    assert.ok(collides.collided === false);
+});
+
+QUnit.test("DoesCollideAfterTranslation", function(assert) {
+    var triangle1 = new TameGame.Polygon([ { x:1, y:1 }, { x:2, y:2 }, { x:1, y:2 }]);
+    var triangle2 = triangle1.transform(TameGame.translateMatrix(.5,.5));
+    
+    var collides = TameGame.satCollision(triangle1, triangle2);
+    
+    assert.ok(collides.collided === true);
+});
