@@ -66,3 +66,20 @@ QUnit.test("DoesNotCollideAfterMtv", function(assert) {
     
     assert.ok(collides2.collided === false, 'Triangles are not in collision after translating along the MTV');
 });
+
+QUnit.test("DoesCollideJustInsideMtv", function(assert) {
+    var triangle1 = new TameGame.Polygon([ { x:1, y:1 }, { x:2, y:2 }, { x:1, y:2 }]);
+    var triangle2 = triangle1.transform(TameGame.translateMatrix({ x:.5, y:.5 }));
+    
+    var collides1 = TameGame.satCollision(triangle1, triangle2);
+    
+    assert.ok(collides1.collided === true, 'Triangles are initially in collision');
+    
+    var mtv = collides1.getMtv();
+    var slightlyBackwards = { x: -mtv.x*0.0000001, y: -mtv.y*0.0000001 };
+    var triangle3 = triangle2.transform(TameGame.multiplyMatrix(TameGame.translateMatrix(mtv), TameGame.translateMatrix(slightlyBackwards)));
+    
+    var collides2 = TameGame.satCollision(triangle1, triangle3);
+    
+    assert.ok(collides2.collided === true, 'Triangles are in collision slightly inside the MTV');
+});

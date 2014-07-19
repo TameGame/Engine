@@ -62,7 +62,7 @@ module TameGame {
             this.getAxes            = () => getAxes(getVertices());
             this.projectOntoAxis    = (axis) => projectOntoAxis(getVertices(), axis);
             this.transform          = (transformMatrix) => new TransformedPolygon(initVertices, multiplyMatrix(matrix, transformMatrix));
-            this.getVertices        = getVertices;
+            this.getVertices        = () => getVertices();
         }
         
         /** Returns a transformed version of this shape */
