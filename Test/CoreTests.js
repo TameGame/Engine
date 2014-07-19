@@ -200,6 +200,14 @@ QUnit.test("CanCancelOneOfTwoEvents", function (assert) {
     assert.ok(firedOne && !firedTwo, "Two events registered, and only one fired");
 });
 
+QUnit.test("CanTranslatePoint", function (assert) {
+    var translationMatrix = TameGame.translateMatrix({ x:3, y:3 });
+    var translatedPoint = TameGame.transform(translationMatrix, { x: 0, y: 0 });
+    
+    assert.ok(translatedPoint.x === 3);
+    assert.ok(translatedPoint.y === 3);
+});
+
 // =====================================
 //  Simple performance test of the core
 // =====================================
