@@ -201,6 +201,11 @@ module TameGame {
          * An identifier for this object that is unique within the game
          */
         identifier: number;
+        
+        /**
+         * Every object can belong to at most once scene
+         */
+        scene: Scene;
 
         /**
          * Retrieves this object's implementation of a particular property

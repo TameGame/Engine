@@ -184,7 +184,8 @@ module TameGame {
                 identifier:     identifier,
                 get:            getProp,
                 getBehavior:    getBehavior,
-                attachBehavior: attachBehavior
+                attachBehavior: attachBehavior,
+                scene:          null
             };
             return obj;
         }
@@ -211,11 +212,21 @@ module TameGame {
 
             // Basic functions
             function addObject(o: TameObject): Scene {
+                if (o.scene) {
+                    o.scene.removeObject(o);
+                }
+                
                 objects[o.identifier] = o;
                 addObjectEvent.fire(o, game._currentTime);
+                o.scene = this;
                 return this;
             }
             function removeObject(o: TameObject): Scene {
+                if (o.scene !== this) {
+                    return;
+                }
+                o.scene = null;
+                
                 delete objects[o.identifier];
                 removeObjectEvent.fire(o, game._currentTime);
                 return this;
