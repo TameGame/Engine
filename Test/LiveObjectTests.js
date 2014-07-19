@@ -5,7 +5,7 @@ QUnit.test("CanGetLiveTicks", function(assert) {
     var numTicks = 0;
     
     someScene.addObject(someObject);
-    someScene.events.onTick(function (tickData) {
+    someScene.events.onTick(TameGame.UpdatePass.Animations, function (tickData) {
         ++numTicks;
     });
     
@@ -13,7 +13,7 @@ QUnit.test("CanGetLiveTicks", function(assert) {
     someGame.startScene(someScene);
     
     someGame.tick(0);
-    someGame.tick(1000.0);
+    someGame.tick(999.0);
     
     assert.ok(numTicks > 0, "Got some ticks");
     assert.ok(numTicks === 60, "Running at 60 ticks per second");
