@@ -108,7 +108,7 @@ module TameGame {
             
             // Live objects run on the early passes of the engine
             [ UpdatePass.Animations, UpdatePass.Mechanics, UpdatePass.Physics, UpdatePass.PreRender ].forEach((updatePass) => {
-                scene.events.onPassStart(updatePass, (time: number) => {
+                scene.events.onPassStart(updatePass, (pass, time: number) => {
                     // If no time has passed yet, we do nothing
                     if (lastTime < 0) return;
                     
@@ -120,7 +120,7 @@ module TameGame {
                     // They are called at 60fps. If the game engine is running slow they get called multiple times
                     // to catch up
                     var liveObjectList = scene.liveObjects;
-                    for (var tickTime = lastTime; tickTime < time; tickTime += tickDuration) {
+                    for (var tickTime = lastTime; tickTime <= time; tickTime += tickDuration) {
                         Object.keys(liveObjectList).forEach((objId) => {
                             // Get the object that is being acted upon
                             var liveObject = liveObjectList[objId];
@@ -133,7 +133,7 @@ module TameGame {
             });
             
             // Time updates post-render
-            scene.events.onPassFinish(UpdatePass.PostRender, (time: number) => {
+            scene.events.onPassFinish(UpdatePass.PostRender, (pass, time: number) => {
                 lastTime = time;
             });
             
