@@ -29,7 +29,7 @@ module TameGame {
      */
     export function spriteRenderBehavior(game: Game) {
         // If a sprite has a non-0 asset ID, then it gets sprite rendering behavior
-        game.watch(Sprite, UpdatePass.Immediate, (obj, newValue) => {
+        game.watch(Sprite, UpdatePass.Immediate, (obj) => {
             // Use a flag so that this only executes once per object
             if (obj['_sRender']) return;
             obj['_sRender'] = true;

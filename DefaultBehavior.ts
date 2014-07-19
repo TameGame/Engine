@@ -13,6 +13,9 @@ module TameGame {
         'tSpriteRender': spriteRenderBehavior,
     
         // Just render every object in the scene
-        'tRenderer': renderAllTheThings
+        'tRenderer': renderAllTheThings,
+        
+        // Allow objects and scenes to have 'live' behavior
+        'tLiveObjects': liveObjectBehavior
     }
 }
