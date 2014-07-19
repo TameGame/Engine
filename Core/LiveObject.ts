@@ -1,5 +1,5 @@
 /// <reference path="Interface.ts" />
-/// 
+/// <reference path="Event.ts" />
 
 module TameGame {
     /**
@@ -116,7 +116,7 @@ module TameGame {
                     if (lastTime < 0) return;
                     
                     // Create the list of tick objects in the earliest update pass (which happens to be the animations pass)
-                    if (updatePass === UpdatePass.Animations) {
+                    if (updatePass === firstUpdatePass) {
                         var liveObjectList = scene.liveObjects;
                         tickObjects = [];
                         Object.keys(liveObjectList).forEach((objId) => tickObjects.push(liveObjectList[objId]));

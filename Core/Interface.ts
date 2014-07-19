@@ -84,6 +84,9 @@ module TameGame {
         /** The post-render pass, after the render queue has been passed off */
         PostRender
     }
+    
+    /** The earliest update pass */
+    export var firstUpdatePass = UpdatePass.Animations;
 
     /**
      * A type definition is used as a reference to a property or behaviour
