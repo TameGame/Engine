@@ -26,7 +26,7 @@ module TameGame {
                 
                 // If we find we don't overlap on any axis, then these polygons do not collide
                 if (!doesOverlap(projectA, projectB)) {
-                    result = { collided: false };
+                    result = { collided: false, getMtv: null };
                     return true;
                 }
             });
@@ -36,7 +36,7 @@ module TameGame {
         if (checkAxes(aAxes) || checkAxes(bAxes)) {
             return result;
         } else {
-            return { collided: true };
+            return { collided: true, getMtv: null };
         }
     }
 }
