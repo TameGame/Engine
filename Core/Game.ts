@@ -77,7 +77,26 @@ module TameGame {
             this._fireCreateScene   = createSceneEvent.fire;
             
             // Initialise the default behaviours
-            Object.keys(defaultBehavior).sort().forEach((behaviorName) => defaultBehavior[behaviorName](this));
+            var initializedBehavior: { [name: string]: boolean } = {};
+            var initBehavior = (name: string) => {
+                if (initializedBehavior[name]) {
+                    return;
+                }
+                
+                // Mark this behavior as initialised (prevent initialisation loops)
+                initializedBehavior[name] = true;
+                
+                // Initialise its dependenceis
+                var dependencies = behaviorDependencies[name];
+                if (dependencies) {
+                    dependencies.forEach((dependentName) => initBehavior(dependentName));
+                }
+                
+                // Initialise this behavior
+                defaultBehavior[name](this);
+            }
+            
+            Object.keys(defaultBehavior).sort().forEach((behaviorName) => initBehavior(behaviorName));
         }
 
         /**

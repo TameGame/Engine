@@ -67,7 +67,6 @@ module TameGame {
         });
     }
 
-
     /**
      * Attaches the live object behavior to a game
      */

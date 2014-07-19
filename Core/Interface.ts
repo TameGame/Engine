@@ -364,10 +364,21 @@ module TameGame {
      *      tRenderer:      the renderer behaviour (the part that fills the render queue)
      *      tPhysics:       the physics behaviour
      *      tSpriteRender:  the behaviour that attaches the sprite renderer to any object with a sprite ID
+     *      tLiveObjects:   behavior that controls how objects become 'alive' and are processed per tick
      *
      * This is designed to provide a way for modules to have a way to initialise themselves
      * whenever a new Game is set up, as well as for the engine to supply default behaviours
      * that can be overridden (for example, to provide a choice of physics engines)
      */
-    export var defaultBehavior: { [ behaviourName: string ]: (newGame: Game) => void } = {};
+    export var defaultBehavior: { [ behaviorName: string ]: (newGame: Game) => void } = {};
+    
+    /**
+     * Specifies which behaviors must be initialised before a particular behavior
+     *
+     * Behaviors can optionally specify some dependencies: these specify the names of the other
+     * behaviors within the defaultBehavior object that should be initialised before they can
+     * work. For instance, many kinds of behavior require the live objects behavior to be
+     * registered first.
+     */
+    export var behaviorDependencies: { [behaviorName: string]: string[] } = {};
 }
