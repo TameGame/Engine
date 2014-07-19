@@ -143,6 +143,10 @@ module TameGame {
         
         // Setting the 'isAlive' flag on an object updates the live objects list
         game.watch(AliveStatus, UpdatePass.Immediate, (obj, newValue) => {
+            if (!obj.scene) {
+                return;
+            }
+            
             if (newValue.isAlive) {
                 obj.scene.liveObjects[obj.identifier] = obj;
             } else {
