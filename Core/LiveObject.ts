@@ -30,8 +30,8 @@ module TameGame {
         /** Time since last tick */
         duration: number;
         
-        /** The object that the tick applies to */
-        obj: TameObject;
+        /** The objects that the tick applies to */
+        liveObjects: TameObject[];
     }
     
     /**
@@ -92,7 +92,7 @@ module TameGame {
             
             // The last time, or negative if no ticks have passed
             var lastTime = -1;
-            scene.internalResetTick = () => { lastTime = -1; };
+            scene.internalResetTick = () => { lastTime = -1; tickObjects = []; };
             
             // Removing an object from a scene removes it from the live objects list
             scene.events.onRemoveObject((obj) => {
@@ -106,11 +106,21 @@ module TameGame {
                 }
             });
             
+            // This is the set of objects updated in the most recent tick
+            var tickObjects: TameObject[] = [];
+            
             // Live objects run on the early passes of the engine
             [ UpdatePass.Animations, UpdatePass.Mechanics, UpdatePass.Physics, UpdatePass.PreRender ].forEach((updatePass) => {
                 scene.events.onPassStart(updatePass, (pass, time: number) => {
                     // If no time has passed yet, we do nothing
                     if (lastTime < 0) return;
+                    
+                    // Create the list of tick objects in the earliest update pass (which happens to be the animations pass)
+                    if (updatePass === UpdatePass.Animations) {
+                        var liveObjectList = scene.liveObjects;
+                        tickObjects = [];
+                        Object.keys(liveObjectList).forEach((objId) => tickObjects.push(liveObjectList[objId]));
+                    }
                     
                     var onTick = (tick: Tick, tickTime: number) => {
                         gameTicks.fire(updatePass, tick, time);
@@ -119,15 +129,9 @@ module TameGame {
                     
                     // They are called at 60fps. If the game engine is running slow they get called multiple times
                     // to catch up
-                    var liveObjectList = scene.liveObjects;
                     for (var tickTime = lastTime; tickTime < time; tickTime += tickDuration) {
-                        Object.keys(liveObjectList).forEach((objId) => {
-                            // Get the object that is being acted upon
-                            var liveObject = liveObjectList[objId];
-                            
-                            // Call the tick functions
-                            onTick({ duration: tickDuration, obj: liveObject }, tickTime);
-                        });
+                        // Call the tick functions
+                        onTick({ duration: tickDuration, liveObjects: tickObjects }, tickTime);
                     }
                 });
             });
