@@ -56,6 +56,7 @@ module TameGame {
     
     // Tick at 60fps
     var tickDuration = 1000.0 / 60.0;
+    var maxPassTime  = 1000.0 / 15.0;
 
     /** Resets the ticks for a scene (and any subscenes it may have) */
     function resetTicks(scene: Scene) {
@@ -91,6 +92,7 @@ module TameGame {
             
             // The last time, or negative if no ticks have passed
             var lastTime = -1;
+            var lastTick = 0;
             scene.internalResetTick = () => { lastTime = -1; tickObjects = []; };
             
             // Removing an object from a scene removes it from the live objects list
@@ -128,9 +130,21 @@ module TameGame {
                     
                     // They are called at 60fps. If the game engine is running slow they get called multiple times
                     // to catch up
+                    //
+                    // If the ticks take too long to process then we only process them until we hit maxPassTime
+                    // This deals with cases where the game is suspended or is running slow
+                    var processingStartTime = perf.now();
+                    var processingEndTime   = processingStartTime + maxPassTime;
+                    
                     for (var tickTime = lastTime; tickTime < time; tickTime += tickDuration) {
                         // Call the tick functions
-                        onTick({ duration: tickDuration, liveObjects: tickObjects }, tickTime);
+                        onTick({ duration: tickDuration, liveObjects: tickObjects }, lastTick);
+                        lastTick += tickDuration;
+                        
+                        // Don't process beyond the end time
+                        if (perf.now() > processingEndTime) {
+                            break;
+                        }
                     }
                 });
             });
