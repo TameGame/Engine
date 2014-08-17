@@ -3,3 +3,4 @@
 !Test/*.js
 TameGame.d.ts
 TameLaunch.d.ts
+*.tps
