@@ -14,8 +14,7 @@
                 alert(e);
             }
             
-            // For some reason, the script is relative to TameGame.js rather than the current page
-            var launched = TameGame.GameLauncher.launch('Test/RenderTest.js', canvas, { launchScript: "../TameLaunch.js" });
+            var launched = TameGame.GameLauncher.launch('RenderTest.js', canvas, { launchScript: "TameLaunch.js" });
             setTimeout(function() { launched.cancel(); console.log("Game cancelled"); }, 60000);
         </script>
     </body>
