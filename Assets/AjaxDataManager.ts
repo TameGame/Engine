@@ -24,7 +24,7 @@ module TameGame {
                     var jsonText    = xhr.responseText;
                     
                     try {
-                        var jsonObject  = JSON.parse(jsonText);
+                        var jsonObject = JSON.parse(jsonText);
                         resolve(jsonObject);
                     } catch (e) {
                         console.error('Failed to parse', assetName, e);
