@@ -1,3 +1,4 @@
+/// <reference path="../ThirdParty/DefinitelyTyped/es6-promise.d.ts"/>
 /// <reference path="../RenderQueue/RenderTypes.ts" />
 
 module TameGame {
@@ -59,5 +60,15 @@ module TameGame {
          * Sprite assets usually come in the form of .png files
          */
         loadSprite(assetName: string, id?: number): number;
+    }
+    
+    /**
+     * The data manager handles loading data objects
+     */
+    export interface DataManager extends AssetLoader {
+        /**
+         * Loads some JSON data
+         */
+        loadJsonData(assetName: string) : Promise<any>;
     }
 }
