@@ -208,6 +208,20 @@ QUnit.test("CanTranslatePoint", function (assert) {
     assert.ok(translatedPoint.y === 3);
 });
 
+QUnit.asyncTest("CanLoadJSON", function (assert) {
+    expect(1);
+
+    var ajaxLoader = new TameGame.AjaxDataManager();
+    ajaxLoader.loadJsonData('Test.json').then(function (jsonObject) {
+        assert.ok(jsonObject.Test === 'Yep', "Retrieved OK");
+        QUnit.start();
+    }).catch(function (error) {
+        console.error('Failed', error);
+        assert.ok(false, "Error");
+        QUnit.start();
+    });
+});
+
 // =====================================
 //  Simple performance test of the core
 // =====================================

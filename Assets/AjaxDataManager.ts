@@ -16,7 +16,7 @@ module TameGame {
          * Loads some JSON data
          */
         loadJsonData(assetName: string) : Promise<any> {
-            return new Promise((resolve, reject) => {
+            var promise = new Promise((resolve, reject) => {
                 var xhr = new XMLHttpRequest();
 
                 // On load, try to parse the JSON
@@ -27,18 +27,21 @@ module TameGame {
                         var jsonObject  = JSON.parse(jsonText);
                         resolve(jsonObject);
                     } catch (e) {
+                        console.error('Failed to parse', assetName, e);
                         reject(e);
                     }
                 };
                 
+                // Deal with abort and error cases too
                 xhr.onerror = (e) => { console.error(e); reject('Error while loading resource'); }
-                xhr.onabort = () => reject('Request aborted');
+                xhr.onabort = () => { reject('Request aborted'); }
                 
                 // Request this resource
                 xhr.open("get", assetName, true);
                 xhr.send();
             });
             
+            return promise;
         }
     }
 }
