@@ -23,6 +23,18 @@ module TameGame {
                     return;
                 }
                 
+                // If the asset name contains a directory, then we need to prepend that to any images
+                // JS doesn't have a standard way to handle URLs, which is understandable for a language not associated with the web
+                // Traditional way to do this is to use an 'a' tag from the DOM because that ensures that things run really
+                // really slowly, but this will eventually run in a place where the DOM isn't around, so we'll just have
+                // to settle for not being incredibly slow and overweight.
+                var lastSlash = assetName.lastIndexOf('/');                     // Probably some pathological cases we don't handle
+                var uriPrefix = '';
+                
+                if (lastSlash >= 0) {
+                    uriPrefix = assetName.substr(0, lastSlash+1);
+                }
+                
                 // Need some details
                 var imageWidth  = meta.size.w;
                 var imageHeight = meta.size.h;
@@ -48,7 +60,7 @@ module TameGame {
                 });
             
                 // Load the texture using the sprite manager
-                var identifiers = spriteManager.loadSpriteSheet(imageAsset, spriteSheet);
+                var identifiers = spriteManager.loadSpriteSheet(uriPrefix + imageAsset, spriteSheet);
             
                 // Done
                 resolve(identifiers);

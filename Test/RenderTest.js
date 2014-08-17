@@ -5,8 +5,6 @@ var data        = TameGame.data;
 // Load a sprite
 var rotation    = 0;
 var spriteIds   = TameGame.loadTpJsonSpriteSheet(sprites, data, 'Sprites/SpriteSheet.json').then(function (spriteIds) {
-    console.log(spriteIds);
-    
     var someSprite  = spriteIds['TameGame.png'];
 
     // Set up the camera every time we get a render
