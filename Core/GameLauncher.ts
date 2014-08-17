@@ -11,6 +11,9 @@ module TameGame {
     /** The sprite manager for the current game */
     export var sprites: SpriteManager;
     
+    /** The data manager for the current game */
+    export var data: DataManager;
+    
     /**
      * Options that can be used while launching a game
      */
@@ -90,6 +93,7 @@ module TameGame {
             // TODO: some means to allow the user to specify modules, which get loaded before we create the game
             game    = new StandardGame();
             sprites = new WorkerSpriteManager();
+            data    = new AjaxDataManager();
             
             // Run the initial tick before any user code has run
             game.tick(perf.now());
