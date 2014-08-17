@@ -135,7 +135,7 @@ module TameGame {
          * Sprite assets usually come in the form of .png files.
          */
         loadSpriteSheet(assetName: string, sheet: SpriteSheet): SpriteIdentifiers {
-            var identifiers: SpriteIdentifiers;
+            var identifiers: SpriteIdentifiers = {};
             
             // Assign any missing IDs to the sheet
             Object.keys(sheet).forEach((spriteName) => {

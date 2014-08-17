@@ -25,7 +25,29 @@ module TameGame {
          * Sprite assets usually come in the form of .png files.
          */
         loadSpriteSheet(assetName: string, sheet: SpriteSheet): SpriteIdentifiers {
-            throw "Not implemented";
+            var identifiers: SpriteIdentifiers = {};
+            
+            // Assign IDs prior to sending
+            Object.keys(sheet).forEach((spriteName) => {
+                var sprite = sheet[spriteName];
+                if (typeof sprite.id === 'undefined' || sprite.id === null) {
+                    sprite.id = this._nextSpriteId++;
+                }
+                
+                identifiers[spriteName] = sprite.id;
+            });
+            
+            var msg: WorkerMessage = {
+                action: workerLoadSpriteSheet,
+                data: {
+                    assetName: assetName,
+                    sheet: sheet
+                }
+            };
+            
+            postMessage(msg, undefined);
+            
+            return identifiers;
         }
         
         /**

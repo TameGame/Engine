@@ -185,5 +185,12 @@ module TameGame {
             // Pass on to the renderer
             renderer.sprites.loadSprite(assetName, id);
         };
+        
+        messageHandler.loadSpriteSheet = (msg: WorkerMessage) => {
+            var assetName   = msg.data.assetName;
+            var sheet       = msg.data.sheet;
+            
+            renderer.sprites.loadSpriteSheet(assetName, sheet);
+        }
     }
 }
