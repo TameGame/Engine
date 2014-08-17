@@ -135,7 +135,40 @@ module TameGame {
          * Sprite assets usually come in the form of .png files.
          */
         loadSpriteSheet(assetName: string, sheet: SpriteSheet): SpriteIdentifiers {
-            throw "Not implemented";
+            var identifiers: SpriteIdentifiers;
+            
+            // Assign any missing IDs to the sheet
+            Object.keys(sheet).forEach((spriteName) => {
+                var sprite = sheet[spriteName];
+                
+                // Assign an ID if one isn't already assigned
+                if (typeof sprite.id === 'undefined' || sprite.id === null) {
+                    sprite.id = this._nextSpriteId++;
+                }
+                
+                // Set the identifiers
+                identifiers[spriteName] = sprite.id;
+            });
+            
+            // Load the asset
+            var texture = this.loadTexture(assetName);
+            
+            // Generate sprites
+            Object.keys(sheet).forEach((spriteName) => {
+                var sprite = sheet[spriteName];
+                var bounds = sprite.bounds;
+                var spriteDefn: WebGlSprite = {
+                    texture: texture,
+                    coords: new Float32Array([  bounds.x, bounds.y, 
+                                                bounds.x+bounds.width, bounds.y,
+                                                bounds.x, bounds.y+bounds.height,
+                                                bounds.x+bounds.width, bounds.y+bounds.height ])
+                };
+                
+                this._spriteForId[sprite.id] = spriteDefn;
+            });
+            
+            return identifiers;
         }
         
         /**
