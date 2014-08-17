@@ -82,7 +82,7 @@ module TameGame {
         /**
          * Renders a queue and performs an optional callback once finished
          */
-        performRender(queue: RenderQueue, done?: () => void);
+        performRender(queue: RenderQueue) : Promise<void>;
         
         /**
          * The sprite asset manager for this object

@@ -205,35 +205,35 @@ module TameGame {
         /**
          * Renders a queue and performs an optional callback once finished
          */
-        performRender(queue: RenderQueue, done?: () => void) {
-            // Clear the screen
-            var gl = this._gl;
-            var actions = this._actions;
-            
-            // Default background colour is an bluish off-white
-            gl.clearColor(0.95,0.98,1,1);
-            gl.clear(gl.COLOR_BUFFER_BIT);
-            
-            // Set up the initial camera
-            this.setCamera(0, 0, 2.0, 0);
-            
-            // Render the queue
-            queue.render((item) => {
-                var action = actions[item.action];
-                if (action) {
-                    // Perform the action
-                    action(item);
-                } else {
-                    // Notify the user there's a problem. Replace the action with a default one so we only notify once
-                    console.error("Unknown render queue action: " + item.action);
-                    actions[item.action] = () => {};
-                }
+        performRender(queue: RenderQueue) : Promise<void> {
+            return new Promise<void>((resolve, reject) => {
+                // Clear the screen
+                var gl = this._gl;
+                var actions = this._actions;
+
+                // Default background colour is an bluish off-white
+                gl.clearColor(0.95,0.98,1,1);
+                gl.clear(gl.COLOR_BUFFER_BIT);
+
+                // Set up the initial camera
+                this.setCamera(0, 0, 2.0, 0);
+
+                // Render the queue
+                queue.render((item) => {
+                    var action = actions[item.action];
+                    if (action) {
+                        // Perform the action
+                        action(item);
+                    } else {
+                        // Notify the user there's a problem. Replace the action with a default one so we only notify once
+                        console.error("Unknown render queue action: " + item.action);
+                        actions[item.action] = () => {};
+                    }
+                });
+
+                // Signal 'done'
+                resolve();
             });
-            
-            // Signal 'done'
-            if (done) {
-                done();
-            }
         }
         
         /**
