@@ -9,6 +9,28 @@ module TameGame {
         getVertices(): Point2D[];
     }
     
+    function getBoundingBox(vertices: Point2D[]): BoundingBox {
+        if (vertices.length <= 0) {
+            return { x: 0, y: 0, width: 0, height: 0 };
+        }
+        
+        var minX, minY, maxX, maxY;
+        
+        minX = vertices[0].x;
+        minY = vertices[0].y;
+        maxX = minX;
+        maxY = maxY;
+        
+        vertices.slice(1).forEach((vertex) => {
+            if (vertex.x < minX) minX = vertex.x;
+            if (vertex.y < minY) minY = vertex.y;
+            if (vertex.x > maxX) maxX = vertex.x;
+            if (vertex.y > maxY) maxY = vertex.y;
+        });
+        
+        return { x: minX, y: minY, width: maxX - minX, height: maxY - minY };
+    }
+    
     function getAxes(vertices: Point2D[]): Point2D[] {
         var numVertices = vertices.length;
         return vertices.map((vertex, index) => {
@@ -63,6 +85,11 @@ module TameGame {
             this.projectOntoAxis    = (axis) => projectOntoAxis(getVertices(), axis);
             this.transform          = (transformMatrix) => new TransformedPolygon(initVertices, multiplyMatrix(matrix, transformMatrix));
             this.getVertices        = () => getVertices();
+            this.getBoundingBox     = () => {
+                var boundingBox = getBoundingBox(getVertices());
+                this.getBoundingBox = () => boundingBox;
+                return boundingBox;
+            };
         }
         
         /** Returns a transformed version of this shape */
@@ -76,6 +103,9 @@ module TameGame {
         
         /** Retrieves the vertices making up this polygon */
         getVertices: () => Point2D[];
+
+        /** Retrieves the bounding box for this shape */
+        getBoundingBox: () => BoundingBox;
     }
     
     /**
@@ -99,6 +129,11 @@ module TameGame {
             this.projectOntoAxis    = (axis) => projectOntoAxis(vertices, axis);
             this.transform          = (matrix) => new TransformedPolygon(vertices, matrix);
             this.getVertices        = () => vertices;
+            this.getBoundingBox     = () => {
+                var boundingBox = getBoundingBox(vertices);
+                this.getBoundingBox = () => boundingBox;
+                return boundingBox;
+            };
         }
         
         /** Returns a transformed version of this shape */
@@ -112,5 +147,8 @@ module TameGame {
         
         /** Retrieves the vertices making up this polygon */
         getVertices: () => Point2D[];
+
+        /** Retrieves the bounding box for this shape */
+        getBoundingBox: () => BoundingBox;
     }
 }
