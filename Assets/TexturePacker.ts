@@ -24,10 +24,7 @@ module TameGame {
                 }
                 
                 // If the asset name contains a directory, then we need to prepend that to any images
-                // JS doesn't have a standard way to handle URLs, which is understandable for a language not associated with the web
-                // Traditional way to do this is to use an 'a' tag from the DOM because that ensures that things run really
-                // really slowly, but this will eventually run in a place where the DOM isn't around, so we'll just have
-                // to settle for not being incredibly slow and overweight.
+                // Slightly hacky technique (can't use the usual 'a' element hack here)
                 var lastSlash = assetName.lastIndexOf('/');                     // Probably some pathological cases we don't handle
                 var uriPrefix = '';
                 
