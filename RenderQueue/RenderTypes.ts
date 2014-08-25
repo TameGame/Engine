@@ -84,6 +84,29 @@ module TameGame {
         ]);
     }
     
+    /** Transforms a point with a matrix */
+    export function transformPoint(point: Point2D, matrix: Float32Array): Point2D {
+        var x = point.x;
+        var y = point.y;
+    
+        return { x: x*matrix[0] + y*matrix[1] + matrix[2], y: x*matrix[3] + y*matrix[4] + matrix[5] };
+    }
+    
+    /** Transforms a quad with a matrix */
+    export function transformQuad(quad: Quad, matrix: Float32Array): Quad {
+        var p1 = transformPoint({ x: quad.x1, y: quad.y1 }, matrix);
+        var p2 = transformPoint({ x: quad.x2, y: quad.y2 }, matrix);
+        var p3 = transformPoint({ x: quad.x3, y: quad.y3 }, matrix);
+        var p4 = transformPoint({ x: quad.x4, y: quad.y4 }, matrix);
+        
+        return { 
+            x1: p1.x, y1: p1.y,
+            x2: p2.x, y2: p2.y,
+            x3: p3.x, y2: p3.y,
+            x4: p4.x, y2: p4.y
+        };
+    }
+    
     /** Creates the identity matrix */
     export function identityMatrix(): Float32Array {
         return new Float32Array([1,0,0, 0,1,0, 0,0,1]);

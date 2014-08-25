@@ -1,5 +1,6 @@
 /// <reference path="../Core/Core.ts" />
 /// <reference path="../RenderQueue/RenderQueue.ts" />
+/// <reference path="../Physics/BasicProperties.ts" />
 /// <reference path="Properties.ts" />
 
 module TameGame {
@@ -12,12 +13,19 @@ module TameGame {
          */
         render(obj: TameObject, queue: RenderQueue): void {
             // Get the position of this sprite
-            var assetId = obj.get(Sprite).assetId;
-            var pos     = obj.get(Position);
+            var assetId     = obj.get(Sprite).assetId;
+            var pos         = obj.get(Position);
+            var presence    = obj.get(Presence);
             
             // Render it if it exists
             if (assetId !== -1) {
-                queue.drawSprite(assetId, pos.zIndex, pos);
+                if (presence.rotation !== 0 || presence.location.x !== 0 || presence.location.y !== 0) {
+                    var presenceTransform   = transform(rotationMatrix(presence.rotation), presence.location);
+                    var transformedPos      = transformQuad(pos, presenceTransform);
+                    queue.drawSprite(assetId, pos.zIndex, transformedPos);
+                } else {
+                    queue.drawSprite(assetId, pos.zIndex,  pos);
+                }
             }
         }
     }
