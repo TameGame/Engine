@@ -23,19 +23,12 @@ var spriteIds   = TameGame.loadTpJsonSpriteSheet(sprites, data, 'Sprites/SpriteS
         x4: 1,  y4: -1
     });
     
-    spriteObject.get(TameGame.Presence).location = { x: 0.5, y: 0.5 };
-    //spriteObject.get(TameGame.Motion).rotationVelocity = 90.0;
+    // Rotate at 20 degress/second
+    spriteObject.get(TameGame.Motion).rotationVelocity = 20.0;
 
     // Put it in a scene
     var scene = game.createScene();
     scene.addObject(spriteObject);
 
     game.startScene(scene);
-
-    // Update the rotation during the animation pass
-    /*
-    scene.events.onPassStart(TameGame.UpdatePass.Animations, function (pass, milliseconds) {
-        rotation = (milliseconds/10000)*360;
-    });
-    */
 });

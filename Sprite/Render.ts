@@ -20,8 +20,8 @@ module TameGame {
             // Render it if it exists
             if (assetId !== -1) {
                 if (presence.rotation !== 0 || presence.location.x !== 0 || presence.location.y !== 0) {
-                    var presenceTransform   = transform(rotationMatrix(presence.rotation), presence.location);
-                    var transformedPos      = transformQuad(pos, presenceTransform);
+                    var presenceTransform   = multiplyMatrix(translateMatrix(presence.location), rotationMatrix(presence.rotation));
+                    var transformedPos      = transformQuad(presenceTransform, pos);
                     queue.drawSprite(assetId, pos.zIndex, transformedPos);
                 } else {
                     queue.drawSprite(assetId, pos.zIndex,  pos);
