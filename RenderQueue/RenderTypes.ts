@@ -43,6 +43,20 @@ module TameGame {
         return p1.x*p2.x + p1.y*p2.y;
     }
     
+    /**
+     * Adds two vectors
+     */
+    export function addVector(p1: Point2D, p2: Point2D) {
+        return { x: p1.x + p2.x, y: p1.y + p2.y };
+    }
+    
+    /**
+     * Scale a vector by a factor
+     */
+    export function scaleVector(p: Point2D, factor: number) {
+        return { x: p.x * factor, y: p.y * factor };
+    }
+    
     /** Converts a vector to a unit-length vector */
     export function unit(p1: Point2D): Point2D {
         var length = Math.sqrt(p1.x*p1.x + p1.y*p1.y);
