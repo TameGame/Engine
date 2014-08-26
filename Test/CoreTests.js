@@ -222,6 +222,20 @@ QUnit.asyncTest("CanLoadJSON", function (assert) {
     });
 });
 
+QUnit.test("BoundingBoxOverlap", function (assert) {
+    var bb1 = { x: -1, y:-1, width:1, height: 1 };
+    var bb2 = { x: -0.5, y:-0.5, width: 1.5, height: 1.5 };
+    var bb3 = { x: -2, y: -2, width: 4, height: 4 };
+    var bb4 = { x: -4, y: -4, width: 1, height: 1 };
+    
+    assert.ok(TameGame.bbOverlaps(bb1, bb2));
+    assert.ok(TameGame.bbOverlaps(bb2, bb1));
+    assert.ok(TameGame.bbOverlaps(bb1, bb3));
+    assert.ok(TameGame.bbOverlaps(bb3, bb1));
+    assert.ok(!TameGame.bbOverlaps(bb1, bb4));
+    assert.ok(!TameGame.bbOverlaps(bb4, bb1));
+});
+
 // =====================================
 //  Simple performance test of the core
 // =====================================
