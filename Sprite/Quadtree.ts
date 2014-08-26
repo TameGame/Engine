@@ -73,7 +73,7 @@ module TameGame {
                 }
             };
             
-            // A partition contains obejcts by default
+            // A leaf partition contains objects (these get deleted when child nodes are added)
             this.objects = [];
             
             // Leafnode behaviour for placeObject
