@@ -33,6 +33,13 @@ module TameGame {
     }
     
     /**
+     * Returns true if the two bounding boxes overlap
+     */
+    export function bbOverlaps(b1: BoundingBox, b2: BoundingBox): boolean {
+        return (Math.abs(b1.x-b2.x)*2 < (b1.width+b2.width)) && (Math.abs(b1.y-b2.y)*2 < (b1.height+b2.height));
+    }
+    
+    /**
      * Interface representing a bounding box
      */
     export interface BoundingBox extends Point2D, Size {
