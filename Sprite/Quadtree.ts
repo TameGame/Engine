@@ -1,6 +1,21 @@
 /// <reference path="../RenderQueue/RenderTypes.ts" />
+/// <reference path="../Core/Core.ts" />
 
 module TameGame {
+    /**
+     * Data stored for an object in the quadtree
+     */
+    interface QuadObject {
+        /** Identifier of this object */
+        id: number;
+        
+        /** Bounding box of this object */
+        bounds: BoundingBox;
+        
+        /** The object that exists within this bounding box */
+        obj: any;
+    }
+    
     /**
      * Class representing a quad tree partition
      */
@@ -13,6 +28,16 @@ module TameGame {
             
             if (!parent) {
                 parent = null;
+            }
+            
+            // After converting to a non-leaf node, distributes the objects in this object to the child objects
+            function distributeObjects() {
+                // Get the objects to distribute and remove from this object
+                var objects = this.objects;
+                delete this.objects;
+                
+                // Distribute each of the objects in turn
+                objects.forEach((obj) => this.placeObject(obj));
             }
             
             // Gives this partition non-leaf behavior
@@ -28,6 +53,16 @@ module TameGame {
                         sw.forAllOverlapping(targetRegion, callback);
                     }
                 };
+                
+                // Distribute an object to the child regions
+                this.placeObject = (quadObject) => {
+                    if (bbOverlaps(region, quadObject.bounds)) {
+                        ne.placeObject(quadObject);
+                        nw.placeObject(quadObject);
+                        se.placeObject(quadObject);
+                        sw.placeObject(quadObject);
+                    }
+                }
             }
             
             // Leafnode behaviour for forAllOverlapping
@@ -37,6 +72,17 @@ module TameGame {
                     callback(this);
                 }
             };
+            
+            // A partition contains obejcts by default
+            this.objects = [];
+            
+            // Leafnode behaviour for placeObject
+            this.placeObject = (quadObject) => {
+                // Add the object only if it overlaps the region represented by this partition
+                if (bbOverlaps(region, quadObject.bounds)) {
+                    this.objects.push(quadObject);
+                }
+            }
             
             // Create the functions for this partition
             this.subdivide = () => {
@@ -51,6 +97,7 @@ module TameGame {
                 
                 // We're not a leaf-node any more
                 nonLeafBehavior();
+                distributeObjects();
             };
             
             if (!parent) {
@@ -78,6 +125,7 @@ module TameGame {
                 // Switch to non-leaf behaviour
                 this.subdivide = () => {};
                 nonLeafBehavior();
+                distributeObjects();
             }
         }
         
@@ -89,6 +137,12 @@ module TameGame {
         
         /** Calls an iterator to find all the leaf partitions that overlap a particular bounding box */
         forAllOverlapping: (region: BoundingBox, callback: (partition: Partition) => void) => void;
+        
+        /** Places an object in this partition */
+        placeObject: (QuadObject) => void;
+        
+        /** The objects in this partition (unset for items with child nodes) */
+        objects: QuadObject[];
     }
     
     /**
