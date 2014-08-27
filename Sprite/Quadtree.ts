@@ -19,6 +19,10 @@ module TameGame {
         obj: any;
     }
     
+    enum QuadCorner {
+        NE, NW, SE, SW
+    }
+    
     interface PartitionChildren {
         ne?: Partition;
         nw?: Partition;
@@ -134,17 +138,26 @@ module TameGame {
             
             if (!parent) {
                 // Expand this partition
-                this.createParent = () => {
+                this.createParent = (corner) => {
+                    var parentChildren: PartitionChildren = {};
+                    
+                    switch (corner) {
+                        case QuadCorner.NE: parentChildren.ne = this; break;
+                        case QuadCorner.NW: parentChildren.nw = this; break;
+                        case QuadCorner.SE: parentChildren.se = this; break;
+                        case QuadCorner.SW: parentChildren.sw = this; break;
+                    }
+                    
                     // Create a new parent, with this partition in the north-east corner
-                    parent = new Partition({ x: region.x, y: region.y, width: region.width*2, height: region.height*2 }, null, { ne: this });
+                    parent = new Partition({ x: region.x, y: region.y, width: region.width*2, height: region.height*2 }, null, parentChildren);
                     
                     // createParent is a no-op after the first time
-                    this.createParent = () => parent;
+                    this.createParent = (corner) => parent;
                     return parent;
                 };
             } else {
                 // Parent already exists: we don't recreate it
-                this.createParent = () => parent;
+                this.createParent = (corner) => parent;
             }
             
             // If a north-east child is supplied then populate the subdivisions
@@ -165,7 +178,7 @@ module TameGame {
         subdivide: () => void;
         
         /** Creates a parent partition */
-        createParent: () => Partition;
+        createParent: (corner: QuadCorner) => Partition;
         
         /** Calls an iterator to find all the leaf partitions that overlap a particular bounding box */
         forAllOverlapping: (region: BoundingBox, callback: (partition: Partition) => void) => void;
@@ -212,7 +225,7 @@ module TameGame {
                 
                 // Expand the main partition if necessary
                 while (!bbContains(this._mainPartition.bounds, bounds)) {
-                    this._mainPartition = this._mainPartition.createParent();
+                    this._mainPartition = this._mainPartition.createParent(QuadCorner.NE);
                 }
                 
                 // Add the object to the main partition
