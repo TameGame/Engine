@@ -9,9 +9,6 @@ module TameGame {
      * Data stored for an object in the quadtree
      */
     interface QuadObject {
-        /** Identifier of this object */
-        id: number;
-        
         /** Bounding box of this object */
         bounds: BoundingBox;
         
@@ -63,11 +60,13 @@ module TameGame {
                 
                 // Distribute an object to the child regions
                 this.placeObject = (quadObject) => {
+                    var partition: Partition = this;
                     var objBounds = quadObject.bounds;
                     
                     // If one of the child quads can contain the object then place it there
                     var placed = [ ne, nw, se, sw ].some((child) => {
                         if (bbContains(child.bounds, objBounds)) {
+                            partition = child;
                             child.placeObject(quadObject);
                             return true;
                         } else {
@@ -79,6 +78,8 @@ module TameGame {
                     if (!placed) {
                         this.objects.push(quadObject);
                     }
+                    
+                    return partition;
                 }
             }
             
@@ -98,6 +99,8 @@ module TameGame {
             this.placeObject = (quadObject) => {
                 // Just add the object to this quad (assume that the caller checked that it's inside)
                 this.objects.push(quadObject);
+                
+                return this;
             }
             
             // Create the functions for this partition
@@ -154,8 +157,8 @@ module TameGame {
         /** Calls an iterator to find all the leaf partitions that overlap a particular bounding box */
         forAllOverlapping: (region: BoundingBox, callback: (partition: Partition) => void) => void;
         
-        /** Places an object in this partition: it must lie within the partion's bounds */
-        placeObject: (QuadObject) => void;
+        /** Places an object in this partition: it must lie within the partion's bounds. Returns the smallest partition that contains the object. */
+        placeObject: (QuadObject) => Partition;
         
         /** The bounds of this partition */
         bounds: BoundingBox;
@@ -181,6 +184,27 @@ module TameGame {
             
             // The initial partition covers the region from -1,-1 to 1,1
             this._mainPartition = new Partition({ x:-1, y:-1, width:2, height: 2});
+            
+            this.addObject = (bounds, obj) => {
+                // Create a quadObj
+                var quadObj: QuadObject = { bounds: bounds, obj: obj };
+                
+                // Expand the main partition if necessary
+                while (!bbContains(this._mainPartition.bounds, bounds)) {
+                    this._mainPartition = this._mainPartition.createParent();
+                }
+                
+                // Add the object to the main partition
+                var objectPartition = this._mainPartition.placeObject(obj);
+                
+                // Split the partition if there are too many objects in it
+                if (objectPartition.objects.length > maxObjects) {
+                    objectPartition.subdivide();
+                }
+            };
         }
+        
+        /** Places an object in this QuadTree */
+        addObject: (bounds: BoundingBox, obj: any) => void;
     }
 }
