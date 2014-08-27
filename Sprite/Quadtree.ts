@@ -19,12 +19,19 @@ module TameGame {
         obj: any;
     }
     
+    interface PartitionChildren {
+        ne?: Partition;
+        nw?: Partition;
+        se?: Partition;
+        sw?: Partition;
+    }
+    
     /**
      * Class representing a quad tree partition
      */
     class Partition {
         /** Creates a partition mapping a particular region */
-        constructor(region: BoundingBox, parent?: Partition, northEastChild?: Partition) {
+        constructor(region: BoundingBox, parent?: Partition, children?: PartitionChildren) {
             var that = this;
             var ne, nw, se, sw: Partition;
             var halfWidth   = region.width / 2.0;
@@ -129,7 +136,7 @@ module TameGame {
                 // Expand this partition
                 this.createParent = () => {
                     // Create a new parent, with this partition in the north-east corner
-                    parent = new Partition({ x: region.x, y: region.y, width: region.width*2, height: region.height*2 }, null, this);
+                    parent = new Partition({ x: region.x, y: region.y, width: region.width*2, height: region.height*2 }, null, { ne: this });
                     
                     // createParent is a no-op after the first time
                     this.createParent = () => parent;
@@ -141,11 +148,11 @@ module TameGame {
             }
             
             // If a north-east child is supplied then populate the subdivisions
-            if (northEastChild) {
-                ne = northEastChild;
-                nw = new Partition({ x: region.x+halfWidth, y: region.y,            width: halfWidth, height: halfHeight }, this);
-                se = new Partition({ x: region.x,           y: region.y+halfHeight, width: halfWidth, height: halfHeight }, this);
-                sw = new Partition({ x: region.x+halfWidth, y: region.y+halfHeight, width: halfWidth, height: halfHeight }, this);
+            if (children) {
+                ne = children.ne ||  new Partition({ x: region.x,           y: region.y,            width: halfWidth, height: halfHeight }, this);;
+                nw = children.nw ||  new Partition({ x: region.x+halfWidth, y: region.y,            width: halfWidth, height: halfHeight }, this);
+                se = children.se ||  new Partition({ x: region.x,           y: region.y+halfHeight, width: halfWidth, height: halfHeight }, this);
+                sw = children.sw ||  new Partition({ x: region.x+halfWidth, y: region.y+halfHeight, width: halfWidth, height: halfHeight }, this);
 
                 // Switch to non-leaf behaviour
                 this.subdivide = () => {};
