@@ -40,6 +40,21 @@ module TameGame {
     }
     
     /**
+     * Returns true if the inner bounding box is entirely inside the outer one
+     */
+    export function bbContains(outer: BoundingBox, inner: BoundingBox): boolean {
+        if (inner.x < outer.x || inner.y < outer.y) { 
+            return false;
+        }
+        
+        if (inner.x+inner.width > outer.x+outer.width || inner.y+inner.height > outer.y+outer.height) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
      * Interface representing a bounding box
      */
     export interface BoundingBox extends Point2D, Size {
