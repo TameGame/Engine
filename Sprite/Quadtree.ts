@@ -25,6 +25,7 @@ module TameGame {
     class Partition {
         /** Creates a partition mapping a particular region */
         constructor(region: BoundingBox, parent?: Partition, northEastChild?: Partition) {
+            var that = this;
             var ne, nw, se, sw: Partition;
             var halfWidth   = region.width / 2.0;
             var halfHeight  = region.height / 2.0;
@@ -36,13 +37,13 @@ module TameGame {
             // After converting to a non-leaf node, distributes the objects in this object to the child objects
             function distributeObjects() {
                 // Get the objects to distribute and remove from this object
-                var objects = this.objects;
+                var objects = that.objects;
                 
                 // Clear the list of objects
                 this.objects = [];
                 
                 // Distribute each of the objects in turn
-                objects.forEach((obj) => this.placeObject(obj));
+                objects.forEach((obj) => { this.placeObject(obj) });
             }
             
             // Gives this partition non-leaf behavior
