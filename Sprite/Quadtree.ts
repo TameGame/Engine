@@ -140,16 +140,29 @@ module TameGame {
                 // Expand this partition
                 this.createParent = (corner) => {
                     var parentChildren: PartitionChildren = {};
+                    var parentBounds: BoundingBox = { x: region.x, y: region.y, width: region.width*2, height: region.height*2 };
                     
                     switch (corner) {
-                        case QuadCorner.NE: parentChildren.ne = this; break;
-                        case QuadCorner.NW: parentChildren.nw = this; break;
-                        case QuadCorner.SE: parentChildren.se = this; break;
-                        case QuadCorner.SW: parentChildren.sw = this; break;
+                        case QuadCorner.NE: 
+                            parentChildren.ne = this; 
+                            break;
+                        case QuadCorner.NW:
+                            parentBounds.x -= region.width;
+                            parentChildren.nw = this; 
+                            break;
+                        case QuadCorner.SE: 
+                            parentBounds.y -= region.height;
+                            parentChildren.se = this; 
+                            break;
+                        case QuadCorner.SW: 
+                            parentBounds.x -= region.width;
+                            parentBounds.y -= region.height;
+                            parentChildren.sw = this; 
+                            break;
                     }
                     
                     // Create a new parent, with this partition in the north-east corner
-                    parent = new Partition({ x: region.x, y: region.y, width: region.width*2, height: region.height*2 }, null, parentChildren);
+                    parent = new Partition(parentBounds, null, parentChildren);
                     
                     // createParent is a no-op after the first time
                     this.createParent = (corner) => parent;
@@ -216,6 +229,22 @@ module TameGame {
                 maxObjects = defaultMaxObjects;
             }
             
+            // Expands the main partition until it fits the specified bounds
+            var expandToFit = (bounds: BoundingBox) => {
+                // Expand to the northeast until we enclose the x, y coordinate of the bounding box (that is, we become the SW child)
+                while (this._mainPartition.bounds.x > bounds.x || this._mainPartition.bounds.y > bounds.y) {
+                    this._mainPartition = this._mainPartition.createParent(QuadCorner.SW);
+                }
+                
+                // Expand to the southwest until we enclose the bottom corner of the bounding box
+                var boundsMaxX = bounds.x + bounds.width;
+                var boundsMaxY = bounds.y + bounds.height;
+                
+                while (this._mainPartition.bounds.x+this._mainPartition.bounds.width < boundsMaxX || this._mainPartition.bounds.y+this._mainPartition.bounds.height < boundsMaxY) {
+                    this._mainPartition = this._mainPartition.createParent(QuadCorner.NE);
+                }
+            }
+            
             // The initial partition covers the region from -1,-1 to 1,1
             this._mainPartition = new Partition({ x:-1, y:-1, width:2, height: 2});
             
@@ -224,8 +253,8 @@ module TameGame {
                 var quadObj: QuadObject = { bounds: bounds, obj: obj, location: null };
                 
                 // Expand the main partition if necessary
-                while (!bbContains(this._mainPartition.bounds, bounds)) {
-                    this._mainPartition = this._mainPartition.createParent(QuadCorner.NE);
+                if (!bbContains(this._mainPartition.bounds, bounds)) {
+                    expandToFit(bounds);
                 }
                 
                 // Add the object to the main partition
