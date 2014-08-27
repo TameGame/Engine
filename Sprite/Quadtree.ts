@@ -2,6 +2,9 @@
 /// <reference path="../Core/Core.ts" />
 
 module TameGame {
+    // Default maximum number of objects per quad
+    var defaultMaxObjects = 4;
+    
     /**
      * Data stored for an object in the quadtree
      */
@@ -34,7 +37,9 @@ module TameGame {
             function distributeObjects() {
                 // Get the objects to distribute and remove from this object
                 var objects = this.objects;
-                delete this.objects;
+                
+                // Clear the list of objects
+                this.objects = [];
                 
                 // Distribute each of the objects in turn
                 objects.forEach((obj) => this.placeObject(obj));
@@ -46,6 +51,8 @@ module TameGame {
                 this.forAllOverlapping = (targetRegion, callback) => {
                     // Recurse if the target region overlaps this object
                     if (bbOverlaps(region, targetRegion)) {
+                        callback(this);
+                        
                         // Search the child regions as well
                         ne.forAllOverlapping(targetRegion, callback);
                         nw.forAllOverlapping(targetRegion, callback);
@@ -56,14 +63,28 @@ module TameGame {
                 
                 // Distribute an object to the child regions
                 this.placeObject = (quadObject) => {
-                    if (bbOverlaps(region, quadObject.bounds)) {
-                        ne.placeObject(quadObject);
-                        nw.placeObject(quadObject);
-                        se.placeObject(quadObject);
-                        sw.placeObject(quadObject);
+                    var objBounds = quadObject.bounds;
+                    
+                    // If one of the child quads can contain the object then place it there
+                    var placed = [ ne, nw, se, sw ].some((child) => {
+                        if (bbContains(child.bounds, objBounds)) {
+                            child.placeObject(quadObject);
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    });
+                    
+                    // If none of the child objects could contain this object, place it in this quad
+                    if (!placed) {
+                        this.objects.push(quadObject);
                     }
                 }
             }
+            
+            // Set up the properties for this item
+            this.objects = [];
+            this.bounds = region;
             
             // Leafnode behaviour for forAllOverlapping
             this.forAllOverlapping = (targetRegion, callback) => {
@@ -73,15 +94,10 @@ module TameGame {
                 }
             };
             
-            // A leaf partition contains objects (these get deleted when child nodes are added)
-            this.objects = [];
-            
             // Leafnode behaviour for placeObject
             this.placeObject = (quadObject) => {
-                // Add the object only if it overlaps the region represented by this partition
-                if (bbOverlaps(region, quadObject.bounds)) {
-                    this.objects.push(quadObject);
-                }
+                // Just add the object to this quad (assume that the caller checked that it's inside)
+                this.objects.push(quadObject);
             }
             
             // Create the functions for this partition
@@ -138,8 +154,11 @@ module TameGame {
         /** Calls an iterator to find all the leaf partitions that overlap a particular bounding box */
         forAllOverlapping: (region: BoundingBox, callback: (partition: Partition) => void) => void;
         
-        /** Places an object in this partition */
+        /** Places an object in this partition: it must lie within the partion's bounds */
         placeObject: (QuadObject) => void;
+        
+        /** The bounds of this partition */
+        bounds: BoundingBox;
         
         /** The objects in this partition (unset for items with child nodes) */
         objects: QuadObject[];
@@ -154,7 +173,12 @@ module TameGame {
     export class QuadTree {
         private _mainPartition: Partition;
         
-        constructor() {
+        constructor(maxObjects?: number) {
+            // Set the maximum number of objects in this item
+            if (!maxObjects || maxObjects <= 0) {
+                maxObjects = defaultMaxObjects;
+            }
+            
             // The initial partition covers the region from -1,-1 to 1,1
             this._mainPartition = new Partition({ x:-1, y:-1, width:2, height: 2});
         }
