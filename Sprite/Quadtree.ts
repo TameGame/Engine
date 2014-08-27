@@ -9,6 +9,9 @@ module TameGame {
      * Data stored for an object in the quadtree
      */
     interface QuadObject {
+        /** The partition where this object is located */
+        location: Partition;
+        
         /** Bounding box of this object */
         bounds: BoundingBox;
         
@@ -79,6 +82,7 @@ module TameGame {
                         this.objects.push(quadObject);
                     }
                     
+                    quadObject.location = partition;
                     return partition;
                 }
             }
@@ -99,6 +103,7 @@ module TameGame {
             this.placeObject = (quadObject) => {
                 // Just add the object to this quad (assume that the caller checked that it's inside)
                 this.objects.push(quadObject);
+                quadObject.location = this;
                 
                 return this;
             }
@@ -168,6 +173,14 @@ module TameGame {
     }
     
     /**
+     * References an object in the quadtree
+     */
+    export class QuadTreeReference {
+        // The quadObject that this reference represents
+        quadObject: any;
+    };
+    
+    /**
      * A quadtree is a way of representing items in space.
      *
      * Its main use is finding objects that are on-camera as well as finding objects that are potentially
@@ -187,7 +200,7 @@ module TameGame {
             
             this.addObject = (bounds, obj) => {
                 // Create a quadObj
-                var quadObj: QuadObject = { bounds: bounds, obj: obj };
+                var quadObj: QuadObject = { bounds: bounds, obj: obj, location: null };
                 
                 // Expand the main partition if necessary
                 while (!bbContains(this._mainPartition.bounds, bounds)) {
@@ -201,10 +214,44 @@ module TameGame {
                 if (objectPartition.objects.length > maxObjects) {
                     objectPartition.subdivide();
                 }
+                
+                return { quadObject: quadObj };
+            };
+            
+            this.removeObject = (reference) => {
+                if (!reference || !reference.quadObject.location) {
+                    return;
+                }
+                
+                // Retrieve the quadObject data structure (fixes the type)
+                var quadObj: QuadObject = reference.quadObject;
+                
+                // Remove this obejct from its partition
+                var index = quadObj.location.objects.indexOf(quadObj);
+                quadObj.location.objects.splice(index, 1);
+                
+                // Indicate that it's partitionless now
+                quadObj.location = null;
+            };
+
+            this.forAllInBounds = (bounds, callback) => {
+                this._mainPartition.forAllOverlapping(bounds, (partition) => {
+                    partition.objects.forEach((quadObj) => {
+                        if (bbOverlaps(bounds, quadObj.bounds)) {
+                            callback(quadObj.obj, bounds, { quadObject: quadObj });
+                        }
+                    });
+                });
             };
         }
         
         /** Places an object in this QuadTree */
-        addObject: (bounds: BoundingBox, obj: any) => void;
+        addObject: (bounds: BoundingBox, obj: any) => QuadTreeReference;
+        
+        /** Removes an existing object */
+        removeObject: (reference: QuadTreeReference) => void;
+        
+        /** Perform an action for all objects in a particular bounding box */
+        forAllInBounds: (bounds: BoundingBox, callback: (obj: any, bounds: BoundingBox, reference: QuadTreeReference) => void) => void;
     }
 }
