@@ -208,7 +208,7 @@ module TameGame {
                 }
                 
                 // Add the object to the main partition
-                var objectPartition = this._mainPartition.placeObject(obj);
+                var objectPartition = this._mainPartition.placeObject(quadObj);
                 
                 // Split the partition if there are too many objects in it
                 if (objectPartition.objects.length > maxObjects) {
