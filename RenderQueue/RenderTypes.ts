@@ -35,8 +35,20 @@ module TameGame {
     /**
      * Returns true if the two bounding boxes overlap
      */
-    export function bbOverlaps(b1: BoundingBox, b2: BoundingBox): boolean {
-        return ((Math.abs(b1.x-b2.x)*2) <= (b1.width+b2.width)) && ((Math.abs(b1.y-b2.y)*2) <= (b1.height+b2.height));
+    export function bbOverlaps(a: BoundingBox, b: BoundingBox): boolean {
+        var aMaxX = a.x + a.width;
+        var bMaxX = b.x + b.width;
+        
+        if (aMaxX < b.x) return false;
+        if (bMaxX < a.x) return false;
+        
+        var aMaxY = a.y + a.height;
+        var bMaxY = b.y + b.height;
+        
+        if (aMaxY < b.y) return false;
+        if (bMaxY < a.y) return false;
+        
+        return true;
     }
     
     /**
