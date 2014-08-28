@@ -237,6 +237,10 @@ QUnit.test("BoundingBoxOverlap", function (assert) {
     
     assert.ok(TameGame.bbOverlaps({ x: 0, y: 0, width: .3, height: .3 }, { x: .2, y: .2, width: .1, height: .1 }));
     assert.ok(TameGame.bbOverlaps({ x: .2, y: .2, width: .1, height: .1 }, { x: 0, y: 0, width: .3, height: .3 }));
+
+    assert.ok(TameGame.bbOverlaps({ x: 0, y: 0, width: 1, height: 1 }, { x: .2, y: .2, width: .1, height: .1 }));
+    assert.ok(TameGame.bbOverlaps({ x: 0, y: 0, width: 1, height: 1 }, { x: .8, y: .8, width: .1, height: .1 }));
+    assert.ok(TameGame.bbOverlaps({ x: 0, y: 0, width: 1, height: 1 }, { x: .9, y: .9, width: .1, height: .1 }));
 });
 
 QUnit.test("BoundingBoxContains", function (assert) {
