@@ -59,7 +59,7 @@ function populateGrid(quadTree, width, height) {
     for (y=0; y<height; ++y) {
         xpos = 0;
         for (x=0; x<width; ++x) {
-            quadTree.addObject({ x: xpos, y: ypos, width: distX, height: distY }, {});
+            quadTree.addObject({ x: xpos, y: ypos, width: distX, height: distY }, { x: xpos, y: ypos });
             
             xpos += distX;
         }
