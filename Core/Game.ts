@@ -42,14 +42,14 @@ module TameGame {
         private _renderQueue:       RenderQueue;
         private _currentTime:       number;
 
-        constructor() {
+        constructor(initialSize: Size) {
             // Set up the variables
             this._nextIdentifier    = 0;
             this._watchers          = new RegisteredWatchers();
             this._recentChanges     = new Watcher();
             this._immediate         = {};
             this._immediateActions  = {};
-            this._renderQueue       = new StandardRenderQueue();
+            this._renderQueue       = new StandardRenderQueue(initialSize);
             this._currentTime       = 0;
             
             // Set up the events

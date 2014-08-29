@@ -63,7 +63,8 @@ module TameGame {
             var launchMessage: WorkerMessage = {
                 action: workerStartGame,
                 data: {
-                    gameScript: script
+                    gameScript: script,
+                    canvasSize: { width: canvas.width, height: canvas.height }
                 }
             };
             gameWorker.postMessage(launchMessage);
@@ -91,7 +92,7 @@ module TameGame {
             
             // Set up the game
             // TODO: some means to allow the user to specify modules, which get loaded before we create the game
-            game    = new StandardGame();
+            game    = new StandardGame(msg.data.canvasSize);
             sprites = new WorkerSpriteManager();
             data    = new AjaxDataManager();
             
@@ -153,6 +154,8 @@ module TameGame {
         var mostRecentRenderQueue: RenderQueue = null;
         
         messageHandler.renderQueue = (msg: WorkerMessage) => {
+            var canvasSize = { width: canvas.width, height: canvas.height };
+
             // Work out when the message was sent
             var time = msg.data.time;
 
@@ -161,7 +164,7 @@ module TameGame {
 
             if (mostRecentRenderQueue === null || time > mostRecentTime) {
                 // This message is more recent than the last render request: replace it
-                var newQueue = new StandardRenderQueue();
+                var newQueue = new StandardRenderQueue(canvasSize);
                 newQueue.fillQueue(msg);
 
                 mostRecentTime          = time;

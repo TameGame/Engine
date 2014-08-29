@@ -10,7 +10,7 @@ module TameGame {
      * The standard implementation of a render queue
      */
     export class StandardRenderQueue extends RenderQueueBase implements RenderQueue {
-        constructor() {
+        constructor(dimensions: Size) {
             super();
             
             var integers: Int32Array[]  = [];
@@ -280,6 +280,14 @@ module TameGame {
                 intPos      %= blockSize;
                 floatPos    %= blockSize;
             }
+            
+            this.getDimensions = () => dimensions;
+            this.setDimensions = (newSize) => {
+                this.getDimensions = () => newSize;
+            };
         }
+        
+        /** Updates the dimensions returned by getDimensions */
+        setDimensions: (newSize: Size) => void;
     }
 }
