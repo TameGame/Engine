@@ -2,6 +2,7 @@
 /// <reference path="../RenderQueue/RenderQueue.ts" />
 /// <reference path="../Physics/BasicProperties.ts" />
 /// <reference path="Properties.ts" />
+/// <reference path="Camera.ts" />
 
 module TameGame {
     /**
@@ -13,18 +14,23 @@ module TameGame {
          */
         render(obj: TameObject, queue: RenderQueue): void {
             // Get the position of this sprite
+            var cameraId    = 0;
             var assetId     = obj.get(Sprite).assetId;
             var pos         = obj.get(Position);
             var presence    = obj.get(Presence);
+            
+            if (obj.scene && obj.scene.cameraId) {
+                cameraId = obj.scene.cameraId;
+            }
             
             // Render it if it exists
             if (assetId !== -1) {
                 if (presence.rotation !== 0 || presence.location.x !== 0 || presence.location.y !== 0) {
                     var presenceTransform   = multiplyMatrix(translateMatrix(presence.location), rotationMatrix(presence.rotation));
                     var transformedPos      = transformQuad(presenceTransform, pos);
-                    queue.drawSprite(assetId, pos.zIndex, transformedPos);
+                    queue.drawSprite(cameraId, assetId, pos.zIndex, transformedPos);
                 } else {
-                    queue.drawSprite(assetId, pos.zIndex,  pos);
+                    queue.drawSprite(cameraId, assetId, pos.zIndex,  pos);
                 }
             }
         }

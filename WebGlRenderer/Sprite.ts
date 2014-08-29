@@ -52,6 +52,7 @@ module TameGame {
         return (item: RenderQueueItem) => {
             // The item should be a sprite action item
             var sprite      = spriteMap[item.intValues[0]] || noSprite;
+            var cameraId    = item.intValues[1];
             
             gl.useProgram(spriteShader);
             
@@ -82,7 +83,7 @@ module TameGame {
             gl.vertexAttribPointer(positionAttr, 2, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(positionAttr);
             
-            gl.uniformMatrix4fv(transformationUni, false, renderer.cameraMatrix);
+            gl.uniformMatrix4fv(transformationUni, false, renderer.cameraMatrix[cameraId]);
             
             // Draw the texture with pre-multiplied alpha
             gl.enable(gl.BLEND);

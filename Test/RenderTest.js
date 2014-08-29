@@ -9,7 +9,7 @@ var spriteIds   = TameGame.loadTpJsonSpriteSheet(sprites, data, 'Sprites/SpriteS
 
     // Set up the camera every time we get a render
     game.events.onRender(function(queue) {
-        queue.moveCamera(-1, { x:0, y: 0 }, 4.0, rotation);
+        queue.moveCamera(-1, 0, { x:0, y: 0 }, 4.0, rotation);
     });
 
     // Create a sprite object

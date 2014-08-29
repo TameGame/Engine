@@ -80,9 +80,10 @@ module TameGame {
             }
             
             // Ready to go
-            this._gl        = context;
-            this._canvas    = canvas;
-            this.sprites    = new WebGlSpriteManager(this._gl);
+            this._gl            = context;
+            this._canvas        = canvas;
+            this.sprites        = new WebGlSpriteManager(this._gl);
+            this.cameraMatrix   = {};
             
             // Initialise the actions
             this._actions   = {};
@@ -99,7 +100,7 @@ module TameGame {
         /**
          * The camera transformation matrix
          */
-        cameraMatrix: Float32Array;
+        cameraMatrix: { [cameraId: number]: Float32Array };
         
         /**
          * Compiles a shader from source
@@ -173,7 +174,7 @@ module TameGame {
         /**
          * Sets the camera position
          */
-        setCamera(centerX: number, centerY: number, height: number, rotationDegrees: number): void {
+        setCamera(cameraId: number, centerX: number, centerY: number, height: number, rotationDegrees: number): void {
             // Compute the width to use for the camera transform
             var canvasWidth     = this._canvas.width;
             var canvasHeight    = this._canvas.height;
@@ -199,7 +200,7 @@ module TameGame {
                 sinT*v*x-cosT*u*x,  -sinT*u*y-cosT*v*y,     0,  1]);
             
             // This becomes the new camera matrix
-            this.cameraMatrix = newMatrix;
+            this.cameraMatrix[cameraId] = newMatrix;
         }
 
         /**
@@ -216,7 +217,7 @@ module TameGame {
                 gl.clear(gl.COLOR_BUFFER_BIT);
 
                 // Set up the initial camera
-                this.setCamera(0, 0, 2.0, 0);
+                this.setCamera(0, 0, 0, 2.0, 0);
 
                 // Render the queue
                 queue.render((item) => {
