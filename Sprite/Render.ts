@@ -28,9 +28,9 @@ module TameGame {
                 if (presence.rotation !== 0 || presence.location.x !== 0 || presence.location.y !== 0) {
                     var presenceTransform   = multiplyMatrix(translateMatrix(presence.location), rotationMatrix(presence.rotation));
                     var transformedPos      = transformQuad(presenceTransform, pos);
-                    queue.drawSprite(cameraId, assetId, pos.zIndex, transformedPos);
+                    queue.drawSprite(assetId, cameraId, pos.zIndex, transformedPos);
                 } else {
-                    queue.drawSprite(cameraId, assetId, pos.zIndex,  pos);
+                    queue.drawSprite(assetId, cameraId, pos.zIndex,  pos);
                 }
             }
         }

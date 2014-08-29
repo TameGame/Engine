@@ -3,14 +3,8 @@ var sprites     = TameGame.sprites;
 var data        = TameGame.data;
 
 // Load a sprite
-var rotation    = 0;
 var spriteIds   = TameGame.loadTpJsonSpriteSheet(sprites, data, 'Sprites/SpriteSheet.json').then(function (spriteIds) {
     var someSprite  = spriteIds['TameGame.png'];
-
-    // Set up the camera every time we get a render
-    game.events.onRender(function(queue) {
-        queue.moveCamera(-1, 0, { x:0, y: 0 }, 4.0, rotation);
-    });
 
     // Create a sprite object
     var spriteObject = game.createObject();
@@ -29,6 +23,8 @@ var spriteIds   = TameGame.loadTpJsonSpriteSheet(sprites, data, 'Sprites/SpriteS
     // Put it in a scene
     var scene = game.createScene();
     scene.addObject(spriteObject);
+    
+    scene.camera = { center: { x: 0, y: 0 }, height: 4.0, rotation: 0 };
 
     game.startScene(scene);
 });

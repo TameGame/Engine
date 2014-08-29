@@ -322,6 +322,11 @@ module TameGame {
          * Starts running the specified scene
          */
         startScene(scene: Scene): void;
+        
+        /**
+         * Executes a callback for the running scene and any subscenes it may have
+         */
+        forAllActiveScenes(callback: (scene: Scene) => void): void;
 
         /**
          * Runs a game tick. Time is a time in milliseconds from an arbitrary

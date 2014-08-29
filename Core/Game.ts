@@ -366,6 +366,13 @@ module TameGame {
         }
         
         /**
+         * Executes a callback for the running scene and any subscenes it may have
+         */
+        forAllActiveScenes(callback: (scene: Scene) => void): void {
+            this.getActiveScenes().forEach(callback);
+        }
+        
+        /**
          * Runs a game tick. Time is a time in milliseconds from an arbitrary
          * fixed point (it should always increase)
          *
