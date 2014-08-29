@@ -51,6 +51,21 @@ module TameGame {
         return true;
     }
     
+    /** Converts a bounding box to a quad */
+    export function bbToQuad(bounds: BoundingBox): Quad {
+        var minX = bounds.x;
+        var minY = bounds.y;
+        var maxX = bounds.x+bounds.width;
+        var maxY = bounds.y+bounds.height;
+        
+        return {
+            x1: minX, y1: minY,
+            x2: maxX, y2: minY,
+            x3: maxX, y3: maxY,
+            x4: minX, y4: maxY
+        };
+    }
+    
     /**
      * Returns true if the inner bounding box is entirely inside the outer one
      */
@@ -70,6 +85,18 @@ module TameGame {
      * Interface representing a bounding box
      */
     export interface BoundingBox extends Point2D, Size {
+    }
+    
+    /**
+     * Computes the bounding box of a quad
+     */
+    export function quadBoundingBox(quad: Quad): BoundingBox {
+        var minX = Math.min(quad.x1, quad.x2, quad.x3, quad.x4);
+        var minY = Math.min(quad.y1, quad.y2, quad.y3, quad.y4);
+        var maxX = Math.min(quad.x1, quad.x2, quad.x3, quad.x4);
+        var maxY = Math.min(quad.y1, quad.y2, quad.y3, quad.y4);
+        
+        return { x: minX, y: minY, width: maxX-minX, height: maxY-minY };
     }
     
     /** Calculates the dot product of two vectors*/

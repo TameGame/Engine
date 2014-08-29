@@ -20,6 +20,9 @@ module TameGame {
         'tLiveObjects': liveObjectBehavior,
     
         // Objects that have Motion should become alive and move
-        'tSimpleMotion': simpleMotionBehavior
+        'tSimpleMotion': simpleMotionBehavior,
+    
+        // Objects are tracked in a quad tree in each scene
+        'tQuadTree': sceneQuadTreeBehavior
     }
 }
