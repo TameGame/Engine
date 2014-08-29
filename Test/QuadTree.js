@@ -84,6 +84,8 @@ QUnit.test("QuadTreeQuery100Objects", function (assert) {
     tree.forAllInBounds({ x: 0, y: 0, width:1, height: 1 }, function () { ++count; });
     assert.ok(count === 100, "100 objects overall");
     if (count !== 100) console.log('100 !== ', count);
+    
+    console.log('100 object badness: ', tree.calculateMaxBadness());
 });
 
 QUnit.test("QuadTreeQuery100ObjectsExpandTree", function (assert) {
@@ -105,6 +107,8 @@ QUnit.test("QuadTreeQuery100ObjectsExpandTree", function (assert) {
     tree.forAllInBounds({ x: 0, y: 0, width:1, height: 1 }, function () { ++count; });
     assert.ok(count === 100, "100 objects overall");
     if (count !== 100) console.log('100 !== ', count);
+    
+    console.log('100 object with expansion badness: ', tree.calculateMaxBadness());
 });
 
 QUnit.test("QuadTreeQuery800Objects", function (assert) {
@@ -125,6 +129,8 @@ QUnit.test("QuadTreeQuery800Objects", function (assert) {
     tree.forAllInBounds({ x: 0, y: 0, width:1, height: 1 }, function () { ++count; });
     assert.ok(count === 800, "800 objects overall");
     if (count !== 800) console.log('800 !== ', count);
+    
+    console.log('800 object badness: ', tree.calculateMaxBadness());
 });
 
 QUnit.test("QuadTreeQuery100ObjectsPlusSomeMore", function (assert) {
@@ -147,4 +153,6 @@ QUnit.test("QuadTreeQuery100ObjectsPlusSomeMore", function (assert) {
     tree.forAllInBounds({ x: 0, y: 0, width:1, height: 1 }, function () { ++count; });
     assert.ok(count === 102, "102 objects overall");
     if (count !== 102) console.log('102 !== ', count);
+    
+    console.log('100 object plus more badness: ', tree.calculateMaxBadness());
 });

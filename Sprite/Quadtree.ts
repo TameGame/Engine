@@ -37,7 +37,7 @@ module TameGame {
         /** Creates a partition mapping a particular region */
         constructor(region: BoundingBox, parent?: Partition, children?: PartitionChildren) {
             var that = this;
-            var ne, nw, se, sw: Partition;
+            var ne: Partition, nw: Partition, se: Partition, sw: Partition;
             var halfWidth   = region.width / 2.0;
             var halfHeight  = region.height / 2.0;
             
@@ -97,6 +97,9 @@ module TameGame {
                     quadObject.location = partition;
                     return partition;
                 }
+                
+                // Non leafnodes cannot be subdivided
+                this.subdivide = () => {};
             }
             
             // Set up the properties for this item
@@ -120,7 +123,7 @@ module TameGame {
                 return this;
             }
             
-            // Create the functions for this partition
+            // Leafnodes can be subdivided
             this.subdivide = () => {
                 // Divide this partition in four
                 ne = new Partition({ x: region.x,           y: region.y,            width: halfWidth, height: halfHeight }, this);
@@ -128,12 +131,23 @@ module TameGame {
                 se = new Partition({ x: region.x,           y: region.y+halfHeight, width: halfWidth, height: halfHeight }, this);
                 sw = new Partition({ x: region.x+halfWidth, y: region.y+halfHeight, width: halfWidth, height: halfHeight }, this);
                 
-                // Subdivide is a no-op after the first time
-                this.subdivide = () => {};
-                
                 // We're not a leaf-node any more
                 nonLeafBehavior();
                 distributeObjects();
+            };
+            
+            // The badness is the number of elements in the most populated sub-node
+            this.calculateMaxBadness = () => {
+                var badness = this.objects.length;
+                
+                [ ne, nw, se, sw ].forEach((corner) => {
+                    if (corner) {
+                        var cornerBadness = corner.calculateMaxBadness();
+                        if (cornerBadness > badness) badness = cornerBadness;
+                    }
+                });
+                
+                return badness;
             };
             
             if (!parent) {
@@ -181,7 +195,6 @@ module TameGame {
                 sw = children.sw ||  new Partition({ x: region.x+halfWidth, y: region.y+halfHeight, width: halfWidth, height: halfHeight }, this);
                 
                 // Switch to non-leaf behaviour
-                this.subdivide = () => {};
                 nonLeafBehavior();
                 distributeObjects();
             }
@@ -204,6 +217,14 @@ module TameGame {
         
         /** The objects in this partition (unset for items with child nodes) */
         objects: QuadObject[];
+        
+        /**
+         * Calculate the highest number of objects that share a node (aka, the badness of the tree). Higher is worse.
+         *
+         * A fairly slow operation that's useful for debugging. A quadtree that has a high number of objects in a single node
+         * is bad in that it's not dividing space very well.
+         */
+        calculateMaxBadness: () => number;
     }
     
     /**
@@ -294,7 +315,19 @@ module TameGame {
                     });
                 });
             };
+            
+            this.calculateMaxBadness = () => {
+                return this._mainPartition.calculateMaxBadness();
+            };
         }
+        
+        /**
+         * Calculate the highest number of objects that share a node (aka, the badness of the tree). Higher is worse.
+         *
+         * A fairly slow operation that's useful for debugging. A quadtree that has a high number of objects in a single node
+         * is bad in that it's not dividing space very well.
+         */
+        calculateMaxBadness: () => number;
         
         /** Places an object in this QuadTree */
         addObject: (bounds: BoundingBox, obj: any) => QuadTreeReference;
