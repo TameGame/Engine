@@ -46,7 +46,7 @@ module TameGame {
             }
             
             // After converting to a non-leaf node, distributes the objects in this object to the child objects
-            function distributeObjects() {
+            var distributeObjects = () => {
                 // Get the objects to distribute and remove from this object
                 var objects = that.objects;
                 
@@ -58,7 +58,7 @@ module TameGame {
             }
             
             // Gives this partition non-leaf behavior
-            function nonLeafBehavior() {
+            var nonLeafBehavior = () => {
                 // Non-leafnode (ne,nw,se,sw all populated) behaviour for forAllOverlapping
                 this.forAllOverlapping = (targetRegion, callback) => {
                     // Recurse if the target region overlaps this object
@@ -173,13 +173,13 @@ module TameGame {
                 this.createParent = (corner) => parent;
             }
             
-            // If a north-east child is supplied then populate the subdivisions
+            // If a child partition is supplied then populate the subdivisions
             if (children) {
-                ne = children.ne ||  new Partition({ x: region.x,           y: region.y,            width: halfWidth, height: halfHeight }, this);;
+                ne = children.ne ||  new Partition({ x: region.x,           y: region.y,            width: halfWidth, height: halfHeight }, this);
                 nw = children.nw ||  new Partition({ x: region.x+halfWidth, y: region.y,            width: halfWidth, height: halfHeight }, this);
                 se = children.se ||  new Partition({ x: region.x,           y: region.y+halfHeight, width: halfWidth, height: halfHeight }, this);
                 sw = children.sw ||  new Partition({ x: region.x+halfWidth, y: region.y+halfHeight, width: halfWidth, height: halfHeight }, this);
-
+                
                 // Switch to non-leaf behaviour
                 this.subdivide = () => {};
                 nonLeafBehavior();
@@ -240,7 +240,8 @@ module TameGame {
                 var boundsMaxX = bounds.x + bounds.width;
                 var boundsMaxY = bounds.y + bounds.height;
                 
-                while (this._mainPartition.bounds.x+this._mainPartition.bounds.width < boundsMaxX || this._mainPartition.bounds.y+this._mainPartition.bounds.height < boundsMaxY) {
+                while (this._mainPartition.bounds.x+this._mainPartition.bounds.width < boundsMaxX 
+                        || this._mainPartition.bounds.y+this._mainPartition.bounds.height < boundsMaxY) {
                     this._mainPartition = this._mainPartition.createParent(QuadCorner.NE);
                 }
             }
@@ -276,7 +277,7 @@ module TameGame {
                 // Retrieve the quadObject data structure (fixes the type)
                 var quadObj: QuadObject = reference.quadObject;
                 
-                // Remove this obejct from its partition
+                // Remove this object from its partition
                 var index = quadObj.location.objects.indexOf(quadObj);
                 quadObj.location.objects.splice(index, 1);
                 
