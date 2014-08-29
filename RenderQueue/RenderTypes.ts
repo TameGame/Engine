@@ -93,8 +93,8 @@ module TameGame {
     export function quadBoundingBox(quad: Quad): BoundingBox {
         var minX = Math.min(quad.x1, quad.x2, quad.x3, quad.x4);
         var minY = Math.min(quad.y1, quad.y2, quad.y3, quad.y4);
-        var maxX = Math.min(quad.x1, quad.x2, quad.x3, quad.x4);
-        var maxY = Math.min(quad.y1, quad.y2, quad.y3, quad.y4);
+        var maxX = Math.max(quad.x1, quad.x2, quad.x3, quad.x4);
+        var maxY = Math.max(quad.y1, quad.y2, quad.y3, quad.y4);
         
         return { x: minX, y: minY, width: maxX-minX, height: maxY-minY };
     }

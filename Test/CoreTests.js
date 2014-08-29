@@ -259,6 +259,17 @@ QUnit.test("BoundingBoxContains", function (assert) {
     assert.ok(!TameGame.bbContains(bb4, bb1));
 });
 
+QUnit.test("BoundingBoxToQuadAndBack", function (assert) {
+    var boundingBox = { x: -1, y: -1, width: 2, height: 2 };
+    var quad = TameGame.bbToQuad(boundingBox);
+    var back = TameGame.quadBoundingBox(quad);
+    
+    assert.ok(back.x === boundingBox.x);
+    assert.ok(back.y === boundingBox.y);
+    assert.ok(back.width === boundingBox.width);
+    assert.ok(back.height === boundingBox.height);
+});
+
 // =====================================
 //  Simple performance test of the core
 // =====================================
