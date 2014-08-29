@@ -81,8 +81,7 @@ module TameGame {
                     // If one of the child quads can contain the object then place it there
                     var placed = [ ne, nw, se, sw ].some((child) => {
                         if (bbContains(child.bounds, objBounds)) {
-                            partition = child;
-                            child.placeObject(quadObject);
+                            partition = child.placeObject(quadObject);
                             return true;
                         } else {
                             return false;

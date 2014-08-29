@@ -249,6 +249,7 @@ QUnit.test("BoundingBoxContains", function (assert) {
     var bb3 = { x: -2, y: -2, width: 4, height: 4 };
     var bb4 = { x: -4, y: -4, width: 1, height: 1 };
     
+    assert.ok(TameGame.bbContains(bb1, bb1));
     assert.ok(TameGame.bbContains(bb3, bb1));
     assert.ok(TameGame.bbContains(bb3, bb2));
     assert.ok(!TameGame.bbContains(bb1, bb3));
