@@ -7,3 +7,4 @@
 /// <reference path="QuadTree.ts" />
 /// <reference path="SceneQuadTree.ts" />
 /// <reference path="SetObjectTransform.ts" />
+/// <reference path="AabbCollision.ts" />

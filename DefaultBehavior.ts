@@ -24,6 +24,9 @@ module TameGame {
         
         // When the object's presence is updated, set its transformation matrix
         'tTransformationMatrix': setObjectTransformBehavior,
+        
+        // When two objects bounding boxes collide, invoke AABB collision behavior
+        'tAabbCollision': generateAabbCollisionBehavior,
     
         // Objects are tracked in a quad tree in each scene
         'tQuadTree': sceneQuadTreeBehavior
