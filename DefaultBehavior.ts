@@ -21,6 +21,9 @@ module TameGame {
     
         // Objects that have Motion should become alive and move
         'tSimpleMotion': simpleMotionBehavior,
+        
+        // When the object's presence is updated, set its transformation matrix
+        'tTransformationMatrix': setObjectTransformBehavior,
     
         // Objects are tracked in a quad tree in each scene
         'tQuadTree': sceneQuadTreeBehavior

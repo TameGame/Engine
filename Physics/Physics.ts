@@ -6,3 +6,4 @@
 /// <reference path="SimpleMotionBehavior.ts" />
 /// <reference path="QuadTree.ts" />
 /// <reference path="SceneQuadTree.ts" />
+/// <reference path="SetObjectTransform.ts" />

@@ -9,15 +9,13 @@ module TameGame {
      * Live objects have their presence updated during every tick
      */
     export function simpleMotionBehavior(game: Game) {
-        game.watch(Motion, UpdatePass.Immediate, (obj) => {
+        game.watch(Motion, UpdatePass.Immediate, (obj, objMotion) => {
             // We only execute this behaviour once per object
             if (obj['_hasMotion']) {
                 return;
             }
             
             // Object becomes alive if its motion is changed to a non-zero value
-            var objMotion = obj.get(Motion);
-            
             if (objMotion.rotationVelocity !== 0 ||
                 objMotion.velocity.x !== 0 ||
                 objMotion.velocity.y !== 0) {

@@ -17,7 +17,6 @@ module TameGame {
             var cameraId    = 0;
             var assetId     = obj.get(Sprite).assetId;
             var pos         = obj.get(Position);
-            var presence    = obj.get(Presence);
             
             if (obj.scene && obj.scene.cameraId) {
                 cameraId = obj.scene.cameraId;
@@ -25,9 +24,8 @@ module TameGame {
             
             // Render it if it exists
             if (assetId !== -1) {
-                if (presence.rotation !== 0 || presence.location.x !== 0 || presence.location.y !== 0) {
-                    var presenceTransform   = multiplyMatrix(translateMatrix(presence.location), rotationMatrix(presence.rotation));
-                    var transformedPos      = transformQuad(presenceTransform, pos);
+                if (obj.transformationMatrix) {
+                    var transformedPos      = transformQuad(obj.transformationMatrix, pos);
                     queue.drawSprite(assetId, cameraId, pos.zIndex, transformedPos);
                 } else {
                     queue.drawSprite(assetId, cameraId, pos.zIndex,  pos);

@@ -44,9 +44,8 @@ module TameGame {
                     }
                     
                     // Transform according to the presence settings
-                    if (presence) {
-                        var presenceTransform   = multiplyMatrix(translateMatrix(presence.location), rotationMatrix(presence.rotation));
-                        quad = transformQuad(presenceTransform, quad);
+                    if (obj.transformationMatrix) {
+                        quad = transformQuad(obj.transformationMatrix, quad);
                     }
                     
                     // Convert to a bounding box and return
