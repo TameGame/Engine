@@ -72,8 +72,11 @@ module TameGame {
         /** The mechanics pass, when the effects of game mechanics on properties are processed */
         Mechanics,
 
-        /** The physics pass, when the effects of any physics engine are applied */
-        Physics,
+        /** Physics pass where objects are moved */
+        PhysicsMotion,
+        
+        /** Physics pass where collisions are handled */
+        PhysicsCollision,
 
         // The pre-render update pass
         PreRender,
@@ -88,7 +91,7 @@ module TameGame {
     /**
      * The update passes that occur prior to rendering
      */
-    export var preRenderPasses  = [ UpdatePass.Animations, UpdatePass.Mechanics, UpdatePass.Physics, UpdatePass.PreRender ];
+    export var preRenderPasses  = [ UpdatePass.Animations, UpdatePass.Mechanics, UpdatePass.PhysicsMotion, UpdatePass.PhysicsCollision, UpdatePass.PreRender ];
     
     /**
      * The update passes that occur after rendering

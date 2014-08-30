@@ -27,7 +27,7 @@ module TameGame {
         });
         
         // During the physics tick, move the objects by 
-        game.events.onTick(UpdatePass.Physics, (tick) => {
+        game.events.onTick(UpdatePass.PhysicsMotion, (tick) => {
             var durationSeconds = tick.duration / 1000.0;
             var liveObjects     = tick.liveObjects;
             
