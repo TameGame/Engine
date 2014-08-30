@@ -395,12 +395,7 @@ module TameGame {
             });
             
             // Run the pre-render passes
-            [
-                UpdatePass.Animations, 
-                UpdatePass.Mechanics,
-                UpdatePass.Physics, 
-                UpdatePass.PreRender,
-            ].forEach((pass) => this.runPass(pass, milliseconds, sceneChanges));
+            preRenderPasses.forEach((pass) => this.runPass(pass, milliseconds, sceneChanges));
             
             // Run the render pass
             var queue = this._renderQueue;
@@ -416,9 +411,7 @@ module TameGame {
             });
             
             // Run the post-render passes
-            [
-                UpdatePass.PostRender
-            ].forEach((pass) => this.runPass(pass, milliseconds, sceneChanges));
+            postRenderPasses.forEach((pass) => this.runPass(pass, milliseconds, sceneChanges));
 
             // Clear out any property changes: they are now all handled
             this._recentChanges.clearChanges();

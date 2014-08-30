@@ -111,7 +111,7 @@ module TameGame {
             var tickObjects: TameObject[] = [];
             
             // Live objects run on the early passes of the engine
-            [ UpdatePass.Animations, UpdatePass.Mechanics, UpdatePass.Physics, UpdatePass.PreRender ].forEach((updatePass) => {
+            preRenderPasses.forEach((updatePass) => {
                 scene.events.onPassStart(updatePass, (pass, time: number) => {
                     // If no time has passed yet, we do nothing
                     if (lastTime < 0) return;

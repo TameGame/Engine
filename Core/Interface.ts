@@ -85,6 +85,16 @@ module TameGame {
         PostRender
     }
     
+    /**
+     * The update passes that occur prior to rendering
+     */
+    export var preRenderPasses  = [ UpdatePass.Animations, UpdatePass.Mechanics, UpdatePass.Physics, UpdatePass.PreRender ];
+    
+    /**
+     * The update passes that occur after rendering
+     */
+    export var postRenderPasses = [ UpdatePass.PostRender ];
+    
     /** The earliest update pass */
     export var firstUpdatePass = UpdatePass.Animations;
 
