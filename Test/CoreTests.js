@@ -15,7 +15,7 @@ QUnit.test("PhysicsPassIsDeferredUntilTick", function(assert) {
     var changeProcessed = false;
     
     someGame.watch(TameGame.ObjectDetails,
-                   TameGame.UpdatePass.Physics,
+                   TameGame.UpdatePass.PhysicsMotion,
                    (function (obj, newvalue) { changeProcessed = true; }));
     
     assert.ok(changeProcessed === false, "Initially false");
@@ -32,7 +32,7 @@ QUnit.test("PhysicsPassUpdatesOnlyOccurOnce", function(assert) {
     var numUpdates = 0;
     
     someGame.watch(TameGame.ObjectDetails,
-                   TameGame.UpdatePass.Physics,
+                   TameGame.UpdatePass.PhysicsMotion,
                    (function (obj, newvalue) { changeProcessed = true; numUpdates++; }));
     
     someObject.get(TameGame.ObjectDetails).objectName = "Test value";
@@ -93,7 +93,7 @@ QUnit.test("SceneWatchesOnlyOccurOnObjectsInThatScene", function(assert) {
     var nonSceneObjectChanged = false;
     
     someScene.watch(TameGame.ObjectDetails,
-                    TameGame.UpdatePass.Physics,
+                    TameGame.UpdatePass.PhysicsMotion,
                     (function (obj, newvalue) {
                         ++numUpdates;
                         if (obj === someObject) {
@@ -124,7 +124,7 @@ QUnit.test("SceneWatchesDontOccurWhenSceneIsInactive", function(assert) {
     var nonSceneObjectChanged = false;
     
     someScene.watch(TameGame.ObjectDetails,
-                    TameGame.UpdatePass.Physics,
+                    TameGame.UpdatePass.PhysicsMotion,
                     (function (obj, newvalue) {
                         ++numUpdates;
                         if (obj === someObject) {
@@ -279,7 +279,7 @@ console.log(someGame);
 var obj = someGame.createObject();
 
 someGame.watch(TameGame.ObjectDetails, 
-                TameGame.UpdatePass.Physics, 
+                TameGame.UpdatePass.PhysicsMotion, 
                 (function (obj, newValue) { console.log("ObjectDetails changed to ", newValue.objectName)}));
 
 var numItems = 1000000;

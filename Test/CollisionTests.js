@@ -83,3 +83,38 @@ QUnit.test("DoesCollideJustInsideMtv", function(assert) {
     
     assert.ok(collides2.collided === true, 'Triangles are in collision slightly inside the MTV');
 });
+
+QUnit.test("AabbCollisionDuringPass", function (assert) {
+    var someGame = new TameGame.StandardGame();
+    var someScene = someGame.createScene();
+
+    // Create two objects and move them into collision by changing their presence
+    var objPos = { x1: -1, y1: -1, x2: 1, y2: -1, x3: 1, y3: 1, x4: -1, y4: 1 };
+    
+    var obj1 = someGame.createObject();
+    var obj2 = someGame.createObject();
+    
+    someScene.addObject(obj1);
+    someScene.addObject(obj2);
+    someGame.startScene(someScene);
+    
+    obj1.get(TameGame.Position).set(objPos);
+    obj2.get(TameGame.Position).set(objPos);
+    
+    obj1.get(TameGame.Presence).location = { x: .5, y: .5 };
+    obj2.get(TameGame.Presence).location = { x: -.5, y: -.5 };
+    
+    // Count the number of collisions
+    var collideCount = 0;
+    obj1.attachBehavior(TameGame.AabbCollisionBehavior, { aabbCollision: function () { ++collideCount } });
+    
+    // Run the pass
+    someGame.tick(0);
+    someGame.tick(1);               // Nothing moves, so no more collisions
+    
+    if (collideCount !== 1) {
+        console.log('1 !==', collideCount);
+    }
+    
+    assert.ok(collideCount === 1, "Caused a single AABB collision");
+});
