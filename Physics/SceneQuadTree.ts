@@ -86,7 +86,7 @@ module TameGame {
                 updateObjectBounds(obj);
                 
                 // Add to the quadtree for this scene
-                scene.quadTree.addObject(obj.aabb, obj);
+                obj.quadTreeRef = scene.quadTree.addObject(obj.aabb, obj);
             });
             
             scene.events.onRemoveObject((obj) => {
