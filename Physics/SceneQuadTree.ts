@@ -42,7 +42,12 @@ module TameGame {
                         var shapeBounds = presence.shape.getBoundingBox();
                         quad = bbToQuad(shapeBounds);
                     }
-                    
+
+                    // TODO: this is done twice. Order of operations is a problem (SetObjectTransform needs to be done first!)
+                    if (presence) {
+                        obj.transformationMatrix = multiplyMatrix(translateMatrix(presence.location), rotationMatrix(presence.rotation));
+                    }
+
                     // Transform according to the presence settings
                     if (obj.transformationMatrix) {
                         quad = transformQuad(obj.transformationMatrix, quad);
