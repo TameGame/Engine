@@ -112,7 +112,6 @@ QUnit.test("AabbCollisionDuringPass", function (assert) {
     
     // Run the pass
     someGame.tick(0);
-    someGame.tick(1);               // Nothing moves, so no more collisions
     
     if (collideCount1 !== 1) {
         console.log('1 !==', collideCount1);
@@ -122,5 +121,50 @@ QUnit.test("AabbCollisionDuringPass", function (assert) {
     }
     
     assert.ok(collideCount1 === 1, "Caused a single AABB collision on first object");
-    assert.ok(collideCount1 === 1, "Caused a single AABB collision on second object");
+    assert.ok(collideCount2 === 1, "Caused a single AABB collision on second object");
+
+    someGame.tick(1);               // Nothing moves, so no more collisions
+
+    assert.ok(collideCount1 === 1 && collideCount2 === 1, "Collisions don't reoccur");
+});
+
+QUnit.test("NoCollisionIfNotOverlapping", function (assert) {
+    var someGame = new TameGame.StandardGame();
+    var someScene = someGame.createScene();
+
+    // Create two objects and move them into collision by changing their presence
+    var objPos = { x1: -1, y1: -1, x2: 1, y2: -1, x3: 1, y3: 1, x4: -1, y4: 1 };
+    
+    var obj1 = someGame.createObject();
+    var obj2 = someGame.createObject();
+    
+    someScene.addObject(obj1);
+    someScene.addObject(obj2);
+    someGame.startScene(someScene);
+    
+    obj1.get(TameGame.Position).set(objPos);
+    obj2.get(TameGame.Position).set(objPos);
+    
+    obj1.get(TameGame.Presence).location = { x: 2, y: 2 };
+    obj2.get(TameGame.Presence).location = { x: -2, y: -2 };
+    
+    // Count the number of collisions
+    var collideCount1 = 0;
+    var collideCount2 = 0;
+    obj1.attachBehavior(TameGame.AabbCollisionBehavior, { aabbCollision: function () { ++collideCount1; } });
+    obj2.attachBehavior(TameGame.AabbCollisionBehavior, { aabbCollision: function () { ++collideCount2; } });
+    
+    // Run the pass
+    someGame.tick(0);
+    someGame.tick(1);               // Nothing moves, so no more collisions
+    
+    if (collideCount1 !== 0) {
+        console.log('0 !==', collideCount1);
+    }
+    if (collideCount2 !== 0) {
+        console.log('0 !==', collideCount2);
+    }
+    
+    assert.ok(collideCount1 === 0, "No collisions on first object");
+    assert.ok(collideCount2 === 0, "No collisions on second object");
 });
