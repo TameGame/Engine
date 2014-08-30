@@ -44,7 +44,8 @@ module TameGame {
             
             // Find all of the objects that this one could have collided with
             scene.quadTree.forAllInBounds(aabb, (collideObj) => {
-                // This will return the original object
+                // This will return the original object as well as the objects it has collided with
+                // Only return collisions for other objects
                 if (collideObj === obj) {
                     return;
                 }

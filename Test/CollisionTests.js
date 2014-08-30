@@ -105,16 +105,22 @@ QUnit.test("AabbCollisionDuringPass", function (assert) {
     obj2.get(TameGame.Presence).location = { x: -.5, y: -.5 };
     
     // Count the number of collisions
-    var collideCount = 0;
-    obj1.attachBehavior(TameGame.AabbCollisionBehavior, { aabbCollision: function () { ++collideCount } });
+    var collideCount1 = 0;
+    var collideCount2 = 0;
+    obj1.attachBehavior(TameGame.AabbCollisionBehavior, { aabbCollision: function () { ++collideCount1; } });
+    obj2.attachBehavior(TameGame.AabbCollisionBehavior, { aabbCollision: function () { ++collideCount2; } });
     
     // Run the pass
     someGame.tick(0);
     someGame.tick(1);               // Nothing moves, so no more collisions
     
-    if (collideCount !== 1) {
-        console.log('1 !==', collideCount);
+    if (collideCount1 !== 1) {
+        console.log('1 !==', collideCount1);
+    }
+    if (collideCount2 !== 1) {
+        console.log('1 !==', collideCount2);
     }
     
-    assert.ok(collideCount === 1, "Caused a single AABB collision");
+    assert.ok(collideCount1 === 1, "Caused a single AABB collision on first object");
+    assert.ok(collideCount1 === 1, "Caused a single AABB collision on second object");
 });
