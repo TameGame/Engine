@@ -134,8 +134,13 @@ module TameGame {
          *
          * Watch notifications are generally not called immediately but when
          * a particular update pass is hit during a game tick.
+         *
+         * The priority value indicates the order in which the watch callbacks
+         * are made. Lower values are called earlier. Some well-known priorities
+         * are found in the Priority object. A priority of 0 is used if this
+         * parameter is not specified.
          */
-        watch<TPropertyType>(definition: TypeDefinition<TPropertyType>, updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>): Cancellable;
+        watch<TPropertyType>(definition: TypeDefinition<TPropertyType>, updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>, priority?: number): Cancellable;
 
         /**
          * When this object is part of the active scene and the game hits
@@ -150,6 +155,23 @@ module TameGame {
          */
         everyPass(updatePass: UpdatePass, callback: (milliseconds: number) => void) : Cancellable;
     }
+    
+    /**
+     * Well known action priorities
+     */
+    export var Priority = {
+        /**
+         * High-priority task that fills in values that are directly derived from the
+         * properties being set.
+         */
+        FillDerivedValues: -1.0,
+    
+        /**
+         * Medium-priority a task that fills in values that depend derived values from
+         * other tasks as well as the properties being set
+         */
+        UseDerivedValues: -0.5
+    };
     
     /**
      * A settable property is one which can replace its contents with the contents of another object

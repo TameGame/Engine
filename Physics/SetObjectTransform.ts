@@ -11,6 +11,6 @@ module TameGame {
     export function setObjectTransformBehavior(game: Game) {
         game.watch(Presence, UpdatePass.Immediate, (obj, presence) => {
             obj.transformationMatrix = multiplyMatrix(translateMatrix(presence.location), rotationMatrix(presence.rotation));
-        });
+        }, Priority.FillDerivedValues);
     }
 }

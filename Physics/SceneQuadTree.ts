@@ -102,7 +102,7 @@ module TameGame {
             });
         });
         
-        game.watch(Position, UpdatePass.Immediate, (obj) => updateAndMoveObject(obj));
-        game.watch(Presence, UpdatePass.Immediate, (obj) => updateAndMoveObject(obj));
+        game.watch(Position, UpdatePass.Immediate, (obj) => updateAndMoveObject(obj), Priority.UseDerivedValues);
+        game.watch(Presence, UpdatePass.Immediate, (obj) => updateAndMoveObject(obj), Priority.UseDerivedValues);
     }
 }

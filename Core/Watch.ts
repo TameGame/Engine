@@ -5,7 +5,7 @@ module TameGame {
      * Represents a set of registered watchers
      */
     export class RegisteredWatchers implements Watchable {
-        _registered: { [updatePass: number]: { [property: string]: any[] } };
+        _registered: { [updatePass: number]: { [property: string]: { priority: number; callback: any }[] } };
 
         constructor() {
             this._registered = {};
@@ -21,10 +21,14 @@ module TameGame {
          * Watch notifications are generally not called immediately but when
          * a particular update pass is hit during a game tick.
          */
-        watch<TPropertyType>(definition: TypeDefinition<TPropertyType>, updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>): Cancellable {
+        watch<TPropertyType>(definition: TypeDefinition<TPropertyType>, updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>, priority?: number): Cancellable {
             // This only deals with deferred updates
             if (updatePass === UpdatePass.Immediate) {
                 throw "Immediate updates are not supported by this object";
+            }
+            
+            if (typeof priority === 'undefined' || priority === null) {
+                priority = 0.0;
             }
 
             // Get/create the callback array for this pass
@@ -40,8 +44,18 @@ module TameGame {
             }
 
             // Register this callback
-            propertyCallbacks.push(callback);
-
+            propertyCallbacks.push({ priority: priority, callback: callback });
+            
+            propertyCallbacks.sort((a, b) => {
+                if (a.priority > b.priority) {
+                    return 1;
+                } else if (a.priority < b.priority) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            });
+            
             // TODO: cancelling
             return { cancel: () => { } };
         }
@@ -123,7 +137,7 @@ module TameGame {
                         var objCallback = callbackFunctions[objId];
 
                         // Make the call
-                        callbacks.forEach(callback => objCallback(callback));
+                        callbacks.forEach(callback => objCallback(callback.callback));
                     });
                 }
             });
