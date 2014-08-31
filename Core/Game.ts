@@ -30,7 +30,7 @@ module TameGame {
         private _watchers: RegisteredWatchers;
         private _recentChanges: Watcher;
         private _immediate: { [propertyName: string]: (TameObject) => void };
-        private _immediateActions: { [propertyName: string]: { (TameObject): void }[] };
+        private _immediateActions: { [propertyName: string]: { priority: number; callback: (TameObject) => void }[] };
         
         private _firePassStart:     FireFilteredEvent<UpdatePass, UpdatePass>;
         private _firePassFinish:    FireFilteredEvent<UpdatePass, UpdatePass>;
@@ -427,8 +427,12 @@ module TameGame {
          * Watch notifications are generally not called immediately but when
          * a particular update pass is hit during a game tick.
          */
-        watch<TPropertyType>(definition: TypeDefinition<TPropertyType>, updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>): Cancellable {
+        watch<TPropertyType>(definition: TypeDefinition<TPropertyType>, updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>, priority?: number): Cancellable {
             if (updatePass === UpdatePass.Immediate) {
+                if (typeof priority === 'undefined' || priority === null) {
+                    priority = 0;
+                }
+                
                 // Get the immediate actions for this property
                 var actions = this._immediateActions[definition.name];
 
@@ -439,14 +443,27 @@ module TameGame {
                     // When the action occurs, call each item in the actions array
                     this._immediate[definition.name] = (obj) => {
                         actions.forEach((action) => {
-                            action(obj);
+                            action.callback(obj);
                         });
                     };
                 }
 
                 // Append the action
-                actions.push((obj) => {
-                    callback(obj, obj.get(definition));
+                actions.push({ 
+                    priority: priority,
+                    callback: (obj) => {
+                        callback(obj, obj.get(definition));
+                    } 
+                });
+                
+                actions.sort((a, b) => {
+                    if (a.priority > b.priority) {
+                        return 1;
+                    } else if (a.priority < b.priority) {
+                        return -1;
+                    } else {
+                        return 0;
+                    }
                 });
 
                 // TODO: cancelling
