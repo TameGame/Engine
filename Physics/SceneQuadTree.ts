@@ -2,6 +2,7 @@
 /// <reference path="../Sprite/Sprite.ts" />
 /// <reference path="BasicProperties.ts" />
 /// <reference path="QuadTree.ts" />
+/// <reference path="SetObjectTransform.ts" />
 
 module TameGame {
     export interface Scene {
@@ -41,11 +42,6 @@ module TameGame {
                     if (presence.shape) {
                         var shapeBounds = presence.shape.getBoundingBox();
                         quad = bbToQuad(shapeBounds);
-                    }
-
-                    // TODO: this is done twice. Order of operations is a problem (SetObjectTransform needs to be done first!)
-                    if (presence) {
-                        obj.transformationMatrix = multiplyMatrix(translateMatrix(presence.location), rotationMatrix(presence.rotation));
                     }
 
                     // Transform according to the presence settings
