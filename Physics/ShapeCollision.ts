@@ -12,8 +12,8 @@ module TameGame {
         
         if (!aPresence.shape || !bPresence.shape) return null;
         
-        var aSat = <SatShape> aPresence.shape;
-        var bSat = <SatShape> bPresence.shape;
+        var aSat = <SatShape> aPresence.shape.transform(a.transformationMatrix);
+        var bSat = <SatShape> bPresence.shape.transform(b.transformationMatrix);
         
         return satCollision(aSat, bSat);
     }
