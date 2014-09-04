@@ -11,6 +11,8 @@ module TameGame {
     
     /**
      * Performs collision detection on two SAT shapes
+     *
+     * Returns null or an object describing the collision that occurred
      */
     export function satCollision(a: SatShape, b: SatShape): Collision {
         // Fetch the shape axes

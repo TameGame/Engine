@@ -3,6 +3,7 @@
 /// <reference path="SetObjectTransform.ts" />
 /// <reference path="QuadTree.ts" />
 /// <reference path="SceneQuadTree.ts" />
+/// <reference path="ShapeCollision.ts" />
 
 module TameGame {
     /**
@@ -25,7 +26,14 @@ module TameGame {
     export var AabbCollisionBehavior: TypeDefinition<IAabbCollisionBehavior> = {
         name: createTypeName(),
         createDefault: () => {
-            return { aabbCollision: () => {} };
+            return { aabbCollision: (collidedWith, thisObject) => {
+                    var collision = areCollided(thisObject, collidedWith);
+                
+                    if (collision) {
+                        thisObject.getBehavior(ShapeCollisionBehavior).shapeCollision(collision, collidedWith, thisObject);
+                    }
+                }
+            };
         }
     };
     

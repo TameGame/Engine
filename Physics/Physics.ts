@@ -8,3 +8,4 @@
 /// <reference path="SceneQuadTree.ts" />
 /// <reference path="SetObjectTransform.ts" />
 /// <reference path="AabbCollision.ts" />
+/// <reference path="ShapeCollision.ts" />
