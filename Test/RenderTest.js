@@ -31,7 +31,7 @@ var spriteIds   = TameGame.loadTpJsonSpriteSheet(sprites, data, 'Sprites/SpriteS
     spriteObject.get(TameGame.Motion).rotationVelocity = 20.0;
     
     secondObj.get(TameGame.Presence).location = { x: -5, y: 0 };
-    secondObj.get(TameGame.Motion).rotationVelocity = 10.0;
+    //secondObj.get(TameGame.Motion).rotationVelocity = 10.0;
     secondObj.get(TameGame.Motion).velocity = { x: 0.5, y: 0 };
 
     // Put it in a scene
