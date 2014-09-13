@@ -79,7 +79,30 @@ module TameGame {
         if (checkAxes(aAxes) || checkAxes(bAxes)) {
             return result;
         } else {
-            return { collided: true, getMtv: () => getMtvFromAxesCollided(a.getAxes(), b.getAxes()) };
+            return { 
+                collided: true, 
+                getMtv: () => {
+                    // Work out the vector between the two centers
+                    var aCenter = a.getCenter();
+                    var bCenter = b.getCenter();
+                    var sepVector: Point2D = { x: bCenter.x - aCenter.x, y: bCenter.y - aCenter.y };
+                        
+                    // Calculate the MTV
+                    // The result is in an arbitrary direction
+                    var mtv = getMtvFromAxesCollided(a.getAxes(), b.getAxes());
+                    
+                    // See which direction the MTV is moving in
+                    var direction = dot(sepVector, mtv);
+                    
+                    if (direction > 0) {
+                        // If the MTV is moving towards object A, reverse it
+                        mtv.x *= -1;
+                        mtv.y *= -1;
+                    }
+            
+                    return mtv;
+                }
+            };
         }
     }
 }
