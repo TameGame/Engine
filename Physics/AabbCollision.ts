@@ -57,8 +57,8 @@ module TameGame {
                         var thatCollide = collidedWith.getBehavior(ShapeCollisionBehavior);
                         
                         // Get the priority for the two objects
-                        var thisPriority = thisCollide.priority?thisCollide.priority(collidedWith):0;
-                        var thatPriority = thatCollide.priority?thatCollide.priority(thisObject):0;
+                        var thisPriority = thisCollide.priority?thisCollide.priority(collidedWith): (thisObject.collisionPriority || 0);
+                        var thatPriority = thatCollide.priority?thatCollide.priority(thisObject): (collidedWith.collisionPriority || 0);
                         
                         // Call the behaviours in the appropriate orders
                         if (thisPriority >= thatPriority) {

@@ -3,6 +3,16 @@
 /// <reference path="SatCollision.ts" />
 
 module TameGame {
+    export interface TameObject {
+        /** 
+         * Optional default priority for processing collisions 
+         *
+         * This is the value used for the collision priority for this object if the shape
+         * collision behaviour does not implement a priority method.
+         */
+        collisionPriority?: number;
+    }
+    
     /** 
      * Returns true if two objects have collided
      */
