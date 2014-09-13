@@ -25,13 +25,19 @@ var spriteIds   = TameGame.loadTpJsonSpriteSheet(sprites, data, 'Sprites/SpriteS
     }
     
     var spriteObject = createSprite();
+    var secondObj = createSprite();
     
     // Rotate at 20 degress/second
     spriteObject.get(TameGame.Motion).rotationVelocity = 20.0;
+    
+    secondObj.get(TameGame.Presence).location = { x: -5, y: 0 };
+    secondObj.get(TameGame.Motion).rotationVelocity = 10.0;
+    secondObj.get(TameGame.Motion).velocity = { x: 0.5, y: 0 };
 
     // Put it in a scene
     var scene = game.createScene();
     scene.addObject(spriteObject);
+    scene.addObject(secondObj);
     
     scene.camera = { center: { x: 0, y: 0 }, height: 4.0, rotation: 0 };
 
