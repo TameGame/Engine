@@ -47,7 +47,26 @@ module TameGame {
         name: createTypeName(),
         
         createDefault: () => {
-            return { shapeCollision: () => { return false; } };
+            return { 
+                shapeCollision: (collision, withObject, thisObject) => { 
+                    // The basic collision behaviour is to move the objects so that they are no longer colliding
+
+                    // Get the object presence
+                    var presence = thisObject.get(Presence);
+
+                    // The MTV is the minimum distance the objects need to move so that they no longer overlap
+                    var mtv = collision.getMtv();
+
+                    // Move the object so that it's no longer collided
+                    var oldPos = presence.location;
+                    var newPos = { x: presence.location.x + mtv.x, y: presence.location.y + mtv.y };
+
+                    presence.location = newPos;
+
+                    // This effectively handles the collision
+                    return true;
+                } 
+            };
         }
     }
 }
