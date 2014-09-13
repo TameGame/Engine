@@ -28,7 +28,8 @@ var spriteIds   = TameGame.loadTpJsonSpriteSheet(sprites, data, 'Sprites/SpriteS
     var secondObj = createSprite();
     
     // Rotate at 20 degress/second
-    spriteObject.get(TameGame.Motion).rotationVelocity = 20.0;
+    //spriteObject.get(TameGame.Motion).rotationVelocity = 20.0;
+    spriteObject.get(TameGame.Motion).velocity = { x: -0.25, y: 0 };
     
     secondObj.get(TameGame.Presence).location = { x: -5, y: 0 };
     //secondObj.get(TameGame.Motion).rotationVelocity = 10.0;
