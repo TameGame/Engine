@@ -59,7 +59,7 @@ module TameGame {
 
                     // Move the object so that it's no longer collided
                     var oldPos = presence.location;
-                    var newPos = { x: presence.location.x + mtv.x, y: presence.location.y + mtv.y };
+                    var newPos = { x: presence.location.x - mtv.x, y: presence.location.y - mtv.y };
 
                     presence.location = newPos;
 
