@@ -72,7 +72,7 @@ module TameGame {
      * A polygon with a transformation
      */
     class TransformedPolygon implements PolygonShape {
-        constructor(initVertices: Point2D[], matrix: Float32Array) {
+        constructor(initVertices: Point2D[], initCenter: Point2D, matrix: Float32Array) {
             var vertices: Point2D[];
             
             var getVertices = () => {
@@ -80,10 +80,13 @@ module TameGame {
                 getVertices = () => vertices;
                 return vertices;
             };
+            
+            var center = transform(matrix, initCenter);
 
+            this.getCenter          = () => center;
             this.getAxes            = () => getAxes(getVertices());
             this.projectOntoAxis    = (axis) => projectOntoAxis(getVertices(), axis);
-            this.transform          = (transformMatrix) => new TransformedPolygon(initVertices, multiplyMatrix(matrix, transformMatrix));
+            this.transform          = (transformMatrix) => new TransformedPolygon(initVertices, center, multiplyMatrix(matrix, transformMatrix));
             this.getVertices        = () => getVertices();
             this.getBoundingBox     = () => {
                 var boundingBox = getBoundingBox(getVertices());
@@ -97,6 +100,9 @@ module TameGame {
         
         /** The axes to test (the normals of this shape) */
         getAxes: () => Point2D[];
+        
+        /** The center of this shape */
+        getCenter: () => Point2D;
         
         /** Projects the points of this shape onto the specified axis */
         projectOntoAxis: (axis: Point2D) => Projection;
@@ -120,14 +126,22 @@ module TameGame {
                 throw "A polygon must have at least 3 sides";
             }
             
+            // The center is at the average of all the vertices
+            var center = { x: 0, y: 0 };
+            initVertices.forEach((vertex) => { center.x += vertex.x; center.y += vertex.y });
+            
+            center.x /= initVertices.length;
+            center.y /= initVertices.length;
+            
             // Make a copy of the vertices in case the caller tries to modify them
             var numVertices = initVertices.length;
             var vertices    = initVertices.map((vertex) => { return { x: vertex.x, y: vertex.y } });
             
             // Create the functions
+            this.getCenter          = () => { return center; };
             this.getAxes            = () => getAxes(vertices);
             this.projectOntoAxis    = (axis) => projectOntoAxis(vertices, axis);
-            this.transform          = (matrix) => new TransformedPolygon(vertices, matrix);
+            this.transform          = (matrix) => new TransformedPolygon(vertices, center, matrix);
             this.getVertices        = () => vertices;
             this.getBoundingBox     = () => {
                 var boundingBox = getBoundingBox(vertices);
@@ -141,6 +155,9 @@ module TameGame {
         
         /** The axes to test (the normals of this shape) */
         getAxes: () => Point2D[];
+        
+        /** The center of this shape */
+        getCenter: () => Point2D;
         
         /** Projects the points of this shape onto the specified axis */
         projectOntoAxis: (axis: Point2D) => Projection;

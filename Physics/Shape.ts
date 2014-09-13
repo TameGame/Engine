@@ -16,6 +16,9 @@ module TameGame {
         
         /** Retrieves the bounding box for this shape */
         getBoundingBox(): BoundingBox;
+        
+        /** Finds the center of this shape */
+        getCenter(): Point2D;
     }
     
     /** 
