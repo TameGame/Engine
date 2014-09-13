@@ -65,6 +65,9 @@ module TameGame {
     export enum UpdatePass {
         /** Not a pass: indicates events that must be generated immediately */
         Immediate,
+        
+        /** The preparation pass, where values can be set up for the future passes */
+        Preparation,
 
         /** The animation pass, when animated properties are updated */
         Animations,
@@ -91,7 +94,7 @@ module TameGame {
     /**
      * The update passes that occur prior to rendering
      */
-    export var preRenderPasses  = [ UpdatePass.Animations, UpdatePass.Mechanics, UpdatePass.PhysicsMotion, UpdatePass.PhysicsCollision, UpdatePass.PreRender ];
+    export var preRenderPasses  = [ UpdatePass.Preparation, UpdatePass.Animations, UpdatePass.Mechanics, UpdatePass.PhysicsMotion, UpdatePass.PhysicsCollision, UpdatePass.PreRender ];
     
     /**
      * The update passes that occur after rendering
