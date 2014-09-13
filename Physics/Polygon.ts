@@ -19,7 +19,7 @@ module TameGame {
         minX = vertices[0].x;
         minY = vertices[0].y;
         maxX = minX;
-        maxY = maxY;
+        maxY = minY;
         
         vertices.slice(1).forEach((vertex) => {
             if (vertex.x < minX) minX = vertex.x;
