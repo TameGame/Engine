@@ -36,8 +36,8 @@ module TameGame {
      * The property manager is a class that manages 'watchable' properties on an object: that is, those
      * that can be watched via IWatchable.
      */
-    export class PropertyManager<TObj> {
-        constructor(immediateActions: { [propertyName: string]: (TObj) => void }) {
+    export class PropertyManager {
+        constructor(immediateActions: { [propertyName: string]: (TameObject) => void }) {
             // Properties for this object
             var properties = globalProperties;
 
@@ -45,7 +45,7 @@ module TameGame {
             var recentChanges = new Watcher();
 
             // Function that creates property values that notify us of any changes
-            var watchify = (propertyObj: any, sourceObj: TObj, propertyTypeName: string) => {
+            var watchify = (propertyObj: any, sourceObj: TameObject, propertyTypeName: string) => {
                 // propertyObj but with properties that trigger when changed
                 var watchObj = {};
 
@@ -91,7 +91,7 @@ module TameGame {
             };
 
             // Function to initialise properties for an object
-            this.initObject = (obj: TObj) => {
+            this.initObject = (obj: TameObject) => {
                 var propertyValues = {};            // Property storage for this object
 
                 // Function to retrieve the current value of a particular property
