@@ -135,11 +135,19 @@ module TameGame {
                     });
                 })
             };
+
+            // Add a way to retrieve the recent changes for this object
+            this.getRecentChanges = () => recentChanges;
         }
 
         /**
          * Initialises the properties for an object
          */
         initObject: (obj: any) => void;
+
+        /**
+         * Retrieves the recent changes for this object
+         */
+        getRecentChanges: () => Watcher;
     };
 }
