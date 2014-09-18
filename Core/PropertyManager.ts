@@ -4,10 +4,13 @@
 module TameGame {
     /**
      * Information stored for a property
+     *
+     * Interface matches TypeDefinition and is sometimes used interchangably; this doesn't have the need to
+     * specify a type in the same way.
      */
     interface PropertyDefinition {
         createDefault: () => any;
-        typeName: string;
+        name: string;
     }
     
     // The set of properties that will be managed by a property manager
@@ -22,7 +25,7 @@ module TameGame {
         // Add to the list of known properties
         globalProperties[propertyName] = {
             createDefault: createDefault,
-            typeName: typeName
+            name: typeName
         };
 
         // Create a type definition for this property
@@ -45,9 +48,10 @@ module TameGame {
             var recentChanges = new Watcher();
 
             // Function that creates property values that notify us of any changes
-            var watchify = (propertyObj: any, sourceObj: TameObject, propertyTypeName: string) => {
+            var watchify = (propertyObj: any, sourceObj: TameObject, propertyDefn: PropertyDefinition) => {
                 // propertyObj but with properties that trigger when changed
                 var watchObj = {};
+                var propertyTypeName = propertyDefn.name;
 
                 // Stores the actual values for this property
                 var backing = {};
@@ -68,7 +72,7 @@ module TameGame {
                         get: () => backing[prop],
                         set: (newValue) => {
                             backing[prop] = newValue;
-                            recentChanges.noteChange(sourceObj, propertyTypeName);
+                            recentChanges.noteChange(sourceObj, propertyDefn);              // Takes advantage of the fact that the property definition type matches the type definition type
                             immediateActions[propertyTypeName](sourceObj);
                         }
                     });
@@ -82,7 +86,7 @@ module TameGame {
                     });
 
                     // Indicate that the property has changed
-                    recentChanges.noteChange(sourceObj, propertyTypeName);
+                    recentChanges.noteChange(sourceObj, propertyDefn);
                     immediateActions[propertyTypeName](sourceObj);
                 }
 
@@ -103,7 +107,7 @@ module TameGame {
                         return val;
                     } else {
                         // If the value is unset, then replace with the default value
-                        val = watchify(properties[propertyName].createDefault(), obj, properties[propertyName].typeName);
+                        val = watchify(properties[propertyName].createDefault(), obj, properties[propertyName]);
                         properties[propertyName] = val;
                         return val;
                     }
