@@ -30,6 +30,13 @@ module TameGame {
     };
     
     /**
+     * Create a 'sprite' behavior to describe how an object with an attached sprite behaves
+     */
+    declareBehaviorClass('sprite', {
+        render: theSpriteRenderBehavior
+    });
+    
+    /**
      * Behaviour, used by default as the 'tSpriteRender' behaviour
      */
     export function spriteRenderBehavior(game: Game) {
@@ -41,7 +48,7 @@ module TameGame {
             
             if (obj.sprite.assetId !== -1) {
                 // Attach the behaviour
-                obj.behavior.render = theSpriteRenderBehavior;
+                obj.details.behaviorClass.push('sprite');
             } else {
                 // Asset ID is -1, so try again next update
                 delete obj['_sRender'];
