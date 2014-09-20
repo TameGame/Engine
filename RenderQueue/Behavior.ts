@@ -22,6 +22,7 @@ module TameGame {
         name: createTypeName(),
         createDefault() {
             return { render: () => {} };
-        }
+        },
+        readFrom: (obj: TameObject) => obj.getBehavior(RenderBehavior)
     };
 }
