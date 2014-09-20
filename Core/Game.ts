@@ -458,6 +458,7 @@ module TameGame {
                 }
 
                 // Append the action
+                // TODO: the get here is the old way of getting the definition; we don't currently have a new way
                 actions.push({ 
                     priority: priority,
                     callback: (obj) => {
