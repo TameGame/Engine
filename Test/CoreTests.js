@@ -19,7 +19,7 @@ QUnit.test("PhysicsPassIsDeferredUntilTick", function(assert) {
                    (function (obj, newvalue) { changeProcessed = true; }));
     
     assert.ok(changeProcessed === false, "Initially false");
-    someObject.get(TameGame.ObjectDetails).objectName = "Test value";
+    someObject.details.objectName = "Test value";
     assert.ok(changeProcessed === false, "Watch update doesn't occur immediately");
     someGame.tick(0);
     assert.ok(changeProcessed === true, "Watch update occurs during game tick");
@@ -35,7 +35,7 @@ QUnit.test("PhysicsPassUpdatesOnlyOccurOnce", function(assert) {
                    TameGame.UpdatePass.PhysicsMotion,
                    (function (obj, newvalue) { changeProcessed = true; numUpdates++; }));
     
-    someObject.get(TameGame.ObjectDetails).objectName = "Test value";
+    someObject.details.objectName = "Test value";
     someGame.tick(0);
     assert.ok(changeProcessed === true, "Watch update occurs during game tick");
     assert.ok(numUpdates === 1, "Update occurs once only");
@@ -55,7 +55,7 @@ QUnit.test("CallingSetGeneratesUpdate", function(assert) {
                        assert.ok(newvalue.objectName === 'UpdatedObject', "Updated value correctly");
                    }));
     
-    someObject.get(TameGame.ObjectDetails).set({ objectName: "UpdatedObject" });
+    someObject.details = { objectName: "UpdatedObject" };
     assert.ok(numUpdates === 1, "Only one update");
 });
 
@@ -70,7 +70,7 @@ QUnit.test("ImmediateIsImmediate", function(assert) {
                    (function (obj, newvalue) { changeProcessed = true; ++numUpdates; }));
     
     assert.ok(changeProcessed === false, "Initially false");
-    someObject.get(TameGame.ObjectDetails).objectName = "Test value";
+    someObject.details.objectName = "Test value";
     assert.ok(changeProcessed === true, "Watch update occurs immediately");
     someGame.tick(0);
     assert.ok(numUpdates === 1, "Update only occurs once");
@@ -105,8 +105,8 @@ QUnit.test("SceneWatchesOnlyOccurOnObjectsInThatScene", function(assert) {
     someScene.addObject(someObject);
     someGame.startScene(someScene);
                     
-    someObject.get(TameGame.ObjectDetails).objectName = "Test";
-    someOtherObject.get(TameGame.ObjectDetails).objectName = "Test";
+    someObject.details.objectName = "Test";
+    someOtherObject.details.objectName = "Test";
     someGame.tick(0);
     
     assert.ok(sceneObjectChanged, "Object in scene changed");
@@ -135,8 +135,8 @@ QUnit.test("SceneWatchesDontOccurWhenSceneIsInactive", function(assert) {
                     }));
     someScene.addObject(someObject);
                     
-    someObject.get(TameGame.ObjectDetails).objectName = "Test";
-    someOtherObject.get(TameGame.ObjectDetails).objectName = "Test";
+    someObject.details.objectName = "Test";
+    someOtherObject.details.objectName = "Test";
     someGame.tick(0);
     
     assert.ok(!sceneObjectChanged, "Object in scene should not be changed");
@@ -284,7 +284,7 @@ someGame.watch(TameGame.ObjectDetails,
 
 var numItems = 1000000;
 var start = Date.now();
-var props = obj.get(TameGame.ObjectDetails);
+var props = obj.details;
 for (var x=0; x<numItems; ++x) {
     props.objectName = "Speed test";
 }
@@ -295,7 +295,7 @@ console.log(numItems + " property-only updates in " + timeMs + "ms (" + (numItem
 
 var start = Date.now();
 for (var x=0; x<numItems; ++x) {
-    obj.get(TameGame.ObjectDetails).objectName = "Speed test";
+    obj.details.objectName = "Speed test";
 }
 var end = Date.now();
 var timeMs = end - start;
