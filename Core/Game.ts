@@ -2,6 +2,7 @@
 /// <reference path="Watch.ts" />
 /// <reference path="Event.ts" />
 /// <reference path="PropertyManager.ts" />
+/// <reference path="BehaviorManager.ts" />
 /// <reference path="../RenderQueue/RenderQueue.ts"/>
 
 module TameGame {
@@ -30,6 +31,7 @@ module TameGame {
         private _nextIdentifier: number;
         private _watchers: RegisteredWatchers;
         private _propertyManager: PropertyManager;
+        private _behaviorManager: BehaviorManager;
         private _immediate: { [propertyName: string]: (obj: TameObject) => void };
         private _immediateActions: { [propertyName: string]: { priority: number; callback: (obj: TameObject) => void }[] };
         
@@ -52,6 +54,7 @@ module TameGame {
             this._renderQueue       = new StandardRenderQueue(initialSize);
             this._currentTime       = 0;
             this._propertyManager   = new PropertyManager(this._immediate);
+            this._behaviorManager   = new BehaviorManager();
             
             // Set up the events
             var passStartEvent      = createFilteredEvent<UpdatePass, UpdatePass>();
@@ -112,35 +115,15 @@ module TameGame {
             var identifier = this._nextIdentifier;
             this._nextIdentifier++;
 
-            // Declare the functions for retrieving and altering the behaviors
-            var that = this;
-
-            function getBehavior<TBehaviorType>(definition: TypeDefinition<TBehaviorType>): TBehaviorType {
-                var name = definition.name;
-
-                if (name in behaviors) {
-                    return behaviors[name];
-                } else {
-                    behaviors[name] = definition.createDefault();
-                    return behaviors[name];
-                }
-            }
-
-            function attachBehavior<TBehaviorType>(definition: TypeDefinition<TBehaviorType>, newBehavior: TBehaviorType) : TameObject {
-                behaviors[definition.name] = newBehavior;
-
-                return this;
-            }
-
             // Create basic object
             obj = {
                 identifier:     identifier,
-                getBehavior:    getBehavior,
-                attachBehavior: attachBehavior,
+                behavior:       {},
                 scene:          null
             };
             
-            // Set up the watchable properties
+            // Set up the watchable properties and behaviors
+            this._behaviorManager.initObject(obj);
             this._propertyManager.initObject(obj);
             return obj;
         }

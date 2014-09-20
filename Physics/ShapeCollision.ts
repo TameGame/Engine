@@ -53,42 +53,40 @@ module TameGame {
         shapeCollision(collision: Collision, withObject: TameObject, thisObject: TameObject): boolean;
     }
     
-    export var ShapeCollisionBehavior: TypeDefinition<IShapeCollisionBehavior> = {
-        name: createTypeName(),
-        
-        createDefault: () => {
-            return { 
-                shapeCollision: (collision, withObject, thisObject) => { 
-                    // The basic collision behaviour is to move the objects so that they are no longer colliding
-
-                    // Get the object presence
-                    var thisPresence = thisObject.presence;
-                    var thatPresence = withObject.presence;
-
-                    // The MTV is the minimum distance the objects need to move so that they no longer overlap
-                    var mtv = collision.getMtv();
-                    
-                    // Both objects move by half the mtv
-                    mtv.x /= 2.0;
-                    mtv.y /= 2.0;
-
-                    // Move the objects so that they're no longer collided
-                    var oldPos = thisPresence.location;
-                    var newPos = { x: oldPos.x + mtv.x, y: oldPos.y + mtv.y };
-
-                    thisPresence.location = newPos;
-
-                    oldPos = thatPresence.location;
-                    var newPos = { x: oldPos.x - mtv.x, y: oldPos.y - mtv.y };
-
-                    thatPresence.location = newPos;
-
-                    // This effectively handles the collision
-                    return true;
-                } 
-            };
-        },
-
-        readFrom: (obj: TameObject) => obj.getBehavior(ShapeCollisionBehavior)
+    export interface Behavior {
+        shapeCollision?: IShapeCollisionBehavior;
     }
+    
+    export var ShapeCollisionBehavior = declareBehavior<IShapeCollisionBehavior>('shapeCollision', () => {
+        return { 
+            shapeCollision: (collision: Collision, withObject: TameObject, thisObject: TameObject) => { 
+                // The basic collision behaviour is to move the objects so that they are no longer colliding
+
+                // Get the object presence
+                var thisPresence = thisObject.presence;
+                var thatPresence = withObject.presence;
+
+                // The MTV is the minimum distance the objects need to move so that they no longer overlap
+                var mtv = collision.getMtv();
+
+                // Both objects move by half the mtv
+                mtv.x /= 2.0;
+                mtv.y /= 2.0;
+
+                // Move the objects so that they're no longer collided
+                var oldPos = thisPresence.location;
+                var newPos = { x: oldPos.x + mtv.x, y: oldPos.y + mtv.y };
+
+                thisPresence.location = newPos;
+
+                oldPos = thatPresence.location;
+                newPos = { x: oldPos.x - mtv.x, y: oldPos.y - mtv.y };
+
+                thatPresence.location = newPos;
+
+                // This effectively handles the collision
+                return true;
+            } 
+        };
+    });
 }

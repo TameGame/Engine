@@ -26,44 +26,42 @@ module TameGame {
         calculateBounds(obj: TameObject): BoundingBox;
     }
     
+    export interface Behavior {
+        aabb?: IAabbBehavior;
+    }
+    
     /**
      * Type definition for object render behaviour
      */
-    export var AabbBehavior: TypeDefinition<IAabbBehavior> = {
-        name: createTypeName(),
-        createDefault() {
-            return { 
-                calculateBounds: (obj) => {
-                    var pos         = obj.position;
-                    var presence    = obj.presence;
-                    var quad: Quad  = pos;
-                    
-                    // If there's a shape, use the shape to get the quad instead
-                    if (presence.shape) {
-                        var shapeBounds = presence.shape.getBoundingBox();
-                        quad = bbToQuad(shapeBounds);
-                    }
+    export var AabbBehavior: TypeDefinition<IAabbBehavior> = declareBehavior<IAabbBehavior>('aabb', () => {
+        return { 
+            calculateBounds: (obj) => {
+                var pos         = obj.position;
+                var presence    = obj.presence;
+                var quad: Quad  = pos;
 
-                    // Transform according to the presence settings
-                    if (obj.transformationMatrix) {
-                        quad = transformQuad(obj.transformationMatrix, quad);
-                    }
-                    
-                    // Convert to a bounding box and return
-                    return quadBoundingBox(quad);
+                // If there's a shape, use the shape to get the quad instead
+                if (presence.shape) {
+                    var shapeBounds = presence.shape.getBoundingBox();
+                    quad = bbToQuad(shapeBounds);
                 }
-            };
-        },
-        readFrom(obj: TameObject) {
-            return obj.getBehavior(AabbBehavior)
-        }
-    };
+
+                // Transform according to the presence settings
+                if (obj.transformationMatrix) {
+                    quad = transformQuad(obj.transformationMatrix, quad);
+                }
+
+                // Convert to a bounding box and return
+                return quadBoundingBox(quad);
+            }
+        };
+    });
     
     /** Attaches scene quadtree tracking behaviour to an existing game */
     export function sceneQuadTreeBehavior(game: Game) {
         // Function to update the aabb of an object
         var updateObjectBounds = (obj: TameObject) => {
-            obj.aabb = obj.getBehavior(AabbBehavior).calculateBounds(obj);
+            obj.aabb = obj.behavior.aabb.calculateBounds(obj);
         };
 
         // Function to remove an object, update its AABB and then put it back in its scene

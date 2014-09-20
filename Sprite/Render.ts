@@ -8,33 +8,26 @@ module TameGame {
     /**
      * Rendering behaviour for objects that are simple sprites
      */
-    class SpriteRenderBehavior implements IRenderBehavior {
-        /**
-         * Adds rendering actions to the supplied render queue
-         */
-        render(obj: TameObject, queue: RenderQueue): void {
-            // Get the position of this sprite
-            var cameraId    = 0;
-            var assetId     = obj.sprite.assetId;
-            var pos         = obj.position;
-            
-            if (obj.scene && obj.scene.cameraId) {
-                cameraId = obj.scene.cameraId;
-            }
-            
-            // Render it if it exists
-            if (assetId !== -1) {
-                if (obj.transformationMatrix) {
-                    var transformedPos      = transformQuad(obj.transformationMatrix, pos);
-                    queue.drawSprite(assetId, cameraId, pos.zIndex, transformedPos);
-                } else {
-                    queue.drawSprite(assetId, cameraId, pos.zIndex,  pos);
-                }
+    var theSpriteRenderBehavior = (obj: TameObject, queue: RenderQueue) => {
+        // Get the position of this sprite
+        var cameraId    = 0;
+        var assetId     = obj.sprite.assetId;
+        var pos         = obj.position;
+
+        if (obj.scene && obj.scene.cameraId) {
+            cameraId = obj.scene.cameraId;
+        }
+
+        // Render it if it exists
+        if (assetId !== -1) {
+            if (obj.transformationMatrix) {
+                var transformedPos      = transformQuad(obj.transformationMatrix, pos);
+                queue.drawSprite(assetId, cameraId, pos.zIndex, transformedPos);
+            } else {
+                queue.drawSprite(assetId, cameraId, pos.zIndex,  pos);
             }
         }
-    }
-    
-    var theSpriteRenderBehavior = new SpriteRenderBehavior();
+    };
     
     /**
      * Behaviour, used by default as the 'tSpriteRender' behaviour
@@ -48,7 +41,7 @@ module TameGame {
             
             if (obj.sprite.assetId !== -1) {
                 // Attach the behaviour
-                obj.attachBehavior(RenderBehavior, theSpriteRenderBehavior);
+                obj.behavior.render = theSpriteRenderBehavior;
             } else {
                 // Asset ID is -1, so try again next update
                 delete obj['_sRender'];

@@ -40,20 +40,18 @@ module TameGame {
         var readFrom = (obj) => {
             return obj[propertyName];
         };
+        
+        var newProperty: PropertyDefinition = {
+            createDefault:  createDefault,
+            name:           typeName,
+            readFrom:       readFrom
+        };
 
         // Add to the list of known properties
-        globalProperties[propertyName] = {
-            createDefault:  createDefault,
-            name:           typeName,
-            readFrom:       readFrom
-        };
+        globalProperties[propertyName] = newProperty;
 
         // Create a type definition for this property
-        return {
-            name:           typeName,
-            createDefault:  createDefault,
-            readFrom:       readFrom
-        };
+        return newProperty;
     }
 
     /**

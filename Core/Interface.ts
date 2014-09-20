@@ -238,6 +238,11 @@ module TameGame {
     }
 
     /**
+     * The behavior interface defines the possible behaviours of an object
+     */
+    export interface Behavior { }
+    
+    /**
      * A TameObject provides the base functionality for all game objects
      */
     export interface TameObject /* extends Watchable */ {
@@ -247,27 +252,14 @@ module TameGame {
         identifier: number;
         
         /**
+         * The behaviors of this object
+         */
+        behavior: Behavior;
+        
+        /**
          * Every object can belong to at most once scene
          */
         scene: Scene;
-
-        /**
-         * Retrieves this object's implementation of a particular behaviour
-         * interface. If no behaviour has been set, then this will return
-         * the default value for this object.
-         *
-         * Behaviours are how objects send messages to one another.
-         */
-        getBehavior<TBehaviorType>(definition: TypeDefinition<TBehaviorType>): TBehaviorType;
-
-        /**
-         * Attaches a behaviour to this object, replacing whatever was
-         * there before.
-         *
-         * This function returns the object it was called on: this allows
-         * for chained attaches.
-         */
-        attachBehavior<TBehaviorType>(definition: TypeDefinition<TBehaviorType>, behavior: TBehaviorType): TameObject;
     }
 
     /**

@@ -46,14 +46,14 @@ module TameGame {
                     if (scene.quadTree) {
                         // Render only the objects that intersect the camera bounding box
                         scene.quadTree.forAllInBounds(cameraBB, (obj) => {
-                            var renderBehavior = obj.getBehavior(RenderBehavior);
-                            renderBehavior.render(obj, renderQueue);
+                            var renderBehavior = obj.behavior.render;
+                            renderBehavior(obj, renderQueue);
                         });
                     } else {
                         // Just render all the objects in this scene - don't bother to try to optimise anything
                         scene.forAllObjects((obj) => {
-                            var renderBehavior = obj.getBehavior(RenderBehavior);
-                            renderBehavior.render(obj, renderQueue);
+                            var renderBehavior = obj.behavior.render;
+                            renderBehavior(obj, renderQueue);
                         });
                     }
                 }
