@@ -358,7 +358,8 @@ module TameGame {
             sceneChanges.forEach((change) => change.scene._firePassStart(pass, pass, milliseconds));
 
             // Dispatch the changes for this pass to the watchers - both global and for each scene in turn
-            this._recentChanges.dispatchChanges(pass, this._watchers);
+            var recentChanges = this._propertyManager.getRecentChanges();
+            recentChanges.dispatchChanges(pass, this._watchers);
 
             sceneChanges.forEach((change) => {
                 change.changes.dispatchChanges(pass, change.watchers);
@@ -397,8 +398,9 @@ module TameGame {
             var activeScenes = this.getActiveScenes();
             
             // Get the watchers and filter the change list for each of the scenes
+            var recentChanges = this._propertyManager.getRecentChanges();
             var sceneChanges = activeScenes.map((scene) => { 
-                return { scene: scene, watchers: scene._watchers, changes: this._recentChanges.filter(scene.objectInScene) }
+                return { scene: scene, watchers: scene._watchers, changes: recentChanges.filter(scene.objectInScene) }
             });
             
             // Run the pre-render passes
@@ -421,7 +423,7 @@ module TameGame {
             postRenderPasses.forEach((pass) => this.runPass(pass, milliseconds, sceneChanges));
 
             // Clear out any property changes: they are now all handled
-            this._recentChanges.clearChanges();
+            recentChanges.clearChanges();
         }
 
         /**
