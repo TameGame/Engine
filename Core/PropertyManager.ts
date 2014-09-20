@@ -32,6 +32,8 @@ module TameGame {
      *
      *     export interface IMyProp { hello: string }
      *     module TameGame { export interface TameObject { myProp?: IMyProp } }
+     *
+     * See StandardProperties.ts for an example
      */
     export function declareProperty<TPropertyType>(propertyName: string, createDefault: () => TPropertyType): TypeDefinition<TPropertyType> {
         var typeName = createTypeName();

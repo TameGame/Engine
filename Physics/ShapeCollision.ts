@@ -62,16 +62,26 @@ module TameGame {
                     // The basic collision behaviour is to move the objects so that they are no longer colliding
 
                     // Get the object presence
-                    var presence = thisObject.presence;
+                    var thisPresence = thisObject.presence;
+                    var thatPresence = withObject.presence;
 
                     // The MTV is the minimum distance the objects need to move so that they no longer overlap
                     var mtv = collision.getMtv();
+                    
+                    // Both objects move by half the mtv
+                    mtv.x /= 2.0;
+                    mtv.y /= 2.0;
 
-                    // Move the object so that it's no longer collided
-                    var oldPos = presence.location;
-                    var newPos = { x: presence.location.x + mtv.x, y: presence.location.y + mtv.y };
+                    // Move the objects so that they're no longer collided
+                    var oldPos = thisPresence.location;
+                    var newPos = { x: oldPos.x + mtv.x, y: oldPos.y + mtv.y };
 
-                    presence.location = newPos;
+                    thisPresence.location = newPos;
+
+                    oldPos = thatPresence.location;
+                    var newPos = { x: oldPos.x - mtv.x, y: oldPos.y - mtv.y };
+
+                    thatPresence.location = newPos;
 
                     // This effectively handles the collision
                     return true;
