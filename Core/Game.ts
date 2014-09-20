@@ -29,10 +29,9 @@ module TameGame {
         private _currentScene: Scene;
         private _nextIdentifier: number;
         private _watchers: RegisteredWatchers;
-        private _recentChanges: Watcher;
         private _propertyManager: PropertyManager;
-        private _immediate: { [propertyName: string]: (TameObject) => void };
-        private _immediateActions: { [propertyName: string]: { priority: number; callback: (TameObject) => void }[] };
+        private _immediate: { [propertyName: string]: (obj: TameObject) => void };
+        private _immediateActions: { [propertyName: string]: { priority: number; callback: (obj: TameObject) => void }[] };
         
         private _firePassStart:     FireFilteredEvent<UpdatePass, UpdatePass>;
         private _firePassFinish:    FireFilteredEvent<UpdatePass, UpdatePass>;
@@ -48,7 +47,6 @@ module TameGame {
             // Set up the variables
             this._nextIdentifier    = 0;
             this._watchers          = new RegisteredWatchers();
-            this._recentChanges     = new Watcher();
             this._immediate         = {};
             this._immediateActions  = {};
             this._renderQueue       = new StandardRenderQueue(initialSize);
@@ -103,61 +101,6 @@ module TameGame {
         }
 
         /**
-         * Attaches watchers to the specified object
-         *
-         * This means that any get/set operation will end up in the 
-         * _recentChanges object for this game
-         */
-        watchify<T>(propertyObj: T, sourceObj: TameObject, propertyType: TypeDefinition<T>): SettableProperty<T> {
-            var result  = {};
-            var backing = {};
-
-            var immediate           = this._immediate;
-            var propertyTypeName    = propertyType.name;
-
-            // Ensure that there is an immediate action for this property type name
-            if (!immediate[propertyTypeName]) {
-                immediate[propertyTypeName] = () => {};
-            }
-
-            // Set up a backing store
-            Object.getOwnPropertyNames(propertyObj).forEach((prop) => {
-                backing[prop] = propertyObj[prop];
-            });
-            
-            // Setting the property should trigger any attached watchers
-            Object.getOwnPropertyNames(propertyObj).forEach((prop) => {
-                // Add get/set accessors to the result for this property
-                (() => {
-                    var p = prop;
-
-                    Object.defineProperty(result, prop, {
-                        get: () => backing[p],
-                        set: (newValue) => {
-                            backing[p] = newValue;
-                            this._recentChanges.noteChange(sourceObj, propertyType);
-                            immediate[propertyTypeName](sourceObj);
-                        }
-                    });
-                })();
-            });
-            
-            // Calling setValue updates the backing store and fires a single event
-            result['set'] = (newValue) => {
-                // Update everything in the backing store
-                Object.getOwnPropertyNames(backing).forEach((prop) => {
-                    backing[prop] = newValue[prop];
-                });
-                
-                // Fire the event once
-                this._recentChanges.noteChange(sourceObj, propertyType);
-                immediate[propertyTypeName](sourceObj);
-            };
-
-            return <SettableProperty<T>> result;
-        }
-
-        /**
          * Creates a new TameObject that will participate in this game
          */
         createObject(): TameObject {
@@ -169,21 +112,8 @@ module TameGame {
             var identifier = this._nextIdentifier;
             this._nextIdentifier++;
 
-            // Declare the functions for retrieving and altering the properties and behaviors
+            // Declare the functions for retrieving and altering the behaviors
             var that = this;
-            function getProp<TPropertyType>(definition: TypeDefinition<TPropertyType>): TPropertyType {
-                var name = definition.name;
-                var val = properties[name];
-
-                if (val) {
-                    // Use the existing value if there is one
-                    return val;
-                } else {
-                    // Create a new value if there isn't
-                    properties[name] = that.watchify(definition.createDefault(), obj, definition);
-                    return properties[name];
-                }
-            }
 
             function getBehavior<TBehaviorType>(definition: TypeDefinition<TBehaviorType>): TBehaviorType {
                 var name = definition.name;
@@ -205,7 +135,6 @@ module TameGame {
             // Create basic object
             obj = {
                 identifier:     identifier,
-                get:            getProp,
                 getBehavior:    getBehavior,
                 attachBehavior: attachBehavior,
                 scene:          null
@@ -458,11 +387,10 @@ module TameGame {
                 }
 
                 // Append the action
-                // TODO: the get here is the old way of getting the definition; we don't currently have a new way
                 actions.push({ 
                     priority: priority,
-                    callback: (obj) => {
-                        callback(obj, obj.get(definition));
+                    callback: (obj: TameObject) => {
+                        callback(obj, definition.readFrom(obj));
                     } 
                 });
                 

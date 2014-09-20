@@ -11,6 +11,7 @@ module TameGame {
     interface PropertyDefinition {
         createDefault: () => any;
         name: string;
+        readFrom: (obj: any) => any;
     }
     
     // The set of properties that will be managed by a property manager
@@ -21,17 +22,22 @@ module TameGame {
      */
     export function declareProperty<TPropertyType>(propertyName: string, createDefault: () => TPropertyType): TypeDefinition<TPropertyType> {
         var typeName = createTypeName();
+        var readFrom = (obj) => {
+            return obj[propertyName];
+        };
 
         // Add to the list of known properties
         globalProperties[propertyName] = {
-            createDefault: createDefault,
-            name: typeName
+            createDefault:  createDefault,
+            name:           typeName,
+            readFrom:       readFrom
         };
 
         // Create a type definition for this property
         return {
-            name: typeName,
-            createDefault: createDefault
+            name:           typeName,
+            createDefault:  createDefault,
+            readFrom:       readFrom
         };
     }
 

@@ -121,6 +121,9 @@ module TameGame {
 
         // Creates a new default value for this property
         createDefault(): TType;
+        
+        // Reads the value of a property of this type from a particular object
+        readFrom: (obj: any) => TType;
     }
 
     /**
@@ -247,22 +250,6 @@ module TameGame {
          * Every object can belong to at most once scene
          */
         scene: Scene;
-
-        /**
-         * Retrieves this object's implementation of a particular property
-         * interface.
-         *
-         * If this object does not yet have properties of the specified
-         * type, then the properties are registered with their default
-         * values.
-         *
-         * Behind the scenes, property objects are made 'watchable' so that
-         * updates to properties causes appropriate side-effects elsewhere
-         * in the game engine.
-         *
-         * Property objects can't be replaced.
-         */
-        get<TPropertyType>(definition: TypeDefinition<TPropertyType>): TPropertyType;
 
         /**
          * Retrieves this object's implementation of a particular behaviour
