@@ -34,8 +34,8 @@ module TameGame {
         createDefault() {
             return { 
                 calculateBounds: (obj) => {
-                    var pos         = obj.get(Position);
-                    var presence    = obj.get(Presence);
+                    var pos         = obj.position;
+                    var presence    = obj.presence;
                     var quad: Quad  = pos;
                     
                     // If there's a shape, use the shape to get the quad instead
@@ -53,6 +53,9 @@ module TameGame {
                     return quadBoundingBox(quad);
                 }
             };
+        },
+        readFrom(obj: TameObject) {
+            return obj.getBehavior(AabbBehavior)
         }
     };
     

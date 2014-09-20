@@ -13,7 +13,7 @@ QUnit.test("CanGetLiveTicks", function(assert) {
         ++numTicks;
     });
     
-    someObject.get(TameGame.AliveStatus).isAlive = true;
+    someObject.aliveStatus.isAlive = true;
     someGame.startScene(someScene);
     
     someGame.tick(0);

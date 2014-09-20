@@ -15,17 +15,18 @@ module TameGame {
         /** The angle at which this object is rotated (clockwise, in degrees) */
         rotation: number;
     }
+    
+    export interface TameObject {
+        presence?: IPresence;
+    }
 
-    export var Presence: TypeDefinition<IPresence> = {
-        name: createTypeName(),
-        createDefault: () => {
-            return {
-                shape: null,
-                location: { x: 0, y: 0 },
-                rotation: 0
-            }
+    export var Presence: TypeDefinition<IPresence> = declareProperty("presence", () => {
+        return {
+            shape: null,
+            location: { x: 0, y: 0 },
+            rotation: 0
         }
-    };
+    });
     
     /**
      * Motion represents how an object is moving
@@ -37,14 +38,15 @@ module TameGame {
         /** The rotational velocity of this object (in degrees/second) */
         rotationVelocity: number;
     }
+    
+    export interface TameObject {
+        motion?: IMotion;
+    }
 
-    export var Motion: TypeDefinition<IMotion> = {
-        name: createTypeName(),
-        createDefault: () => {
-            return {
-                velocity: { x:0, y:0 },
-                rotationVelocity: 0
-            }
+    export var Motion: TypeDefinition<IMotion> = declareProperty("motion", () => {
+        return {
+            velocity: { x:0, y:0 },
+            rotationVelocity: 0
         }
-    };
+    });
 }

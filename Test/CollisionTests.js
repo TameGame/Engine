@@ -98,11 +98,11 @@ QUnit.test("AabbCollisionDuringPass", function (assert) {
     someScene.addObject(obj2);
     someGame.startScene(someScene);
     
-    obj1.get(TameGame.Position).set(objPos);
-    obj2.get(TameGame.Position).set(objPos);
+    obj1.position = objPos;
+    obj2.position = objPos;
     
-    obj1.get(TameGame.Presence).location = { x: .5, y: .5 };
-    obj2.get(TameGame.Presence).location = { x: -.5, y: -.5 };
+    obj1.presence.location = { x: .5, y: .5 };
+    obj2.presence.location = { x: -.5, y: -.5 };
     
     // Count the number of collisions
     var collideCount1 = 0;
@@ -142,11 +142,11 @@ QUnit.test("NoCollisionIfNotOverlapping", function (assert) {
     someScene.addObject(obj2);
     someGame.startScene(someScene);
     
-    obj1.get(TameGame.Position).set(objPos);
-    obj2.get(TameGame.Position).set(objPos);
+    obj1.position = objPos;
+    obj2.position = objPos;
     
-    obj1.get(TameGame.Presence).location = { x: 2, y: 2 };
-    obj2.get(TameGame.Presence).location = { x: -2, y: -2 };
+    obj1.presence.location = { x: 2, y: 2 };
+    obj2.presence.location = { x: -2, y: -2 };
     
     // Count the number of collisions
     var collideCount1 = 0;

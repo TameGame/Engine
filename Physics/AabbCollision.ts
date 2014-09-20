@@ -73,7 +73,8 @@ module TameGame {
                     }
                 }
             };
-        }
+        },
+        readFrom: (obj: TameObject) => { return obj.getBehavior(AabbCollisionBehavior); }
     };
     
     /**

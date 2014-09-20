@@ -15,8 +15,8 @@ module TameGame {
         render(obj: TameObject, queue: RenderQueue): void {
             // Get the position of this sprite
             var cameraId    = 0;
-            var assetId     = obj.get(Sprite).assetId;
-            var pos         = obj.get(Position);
+            var assetId     = obj.sprite.assetId;
+            var pos         = obj.position;
             
             if (obj.scene && obj.scene.cameraId) {
                 cameraId = obj.scene.cameraId;
@@ -46,7 +46,7 @@ module TameGame {
             if (obj['_sRender']) return;
             obj['_sRender'] = true;
             
-            if (obj.get(Sprite).assetId !== -1) {
+            if (obj.sprite.assetId !== -1) {
                 // Attach the behaviour
                 obj.attachBehavior(RenderBehavior, theSpriteRenderBehavior);
             } else {

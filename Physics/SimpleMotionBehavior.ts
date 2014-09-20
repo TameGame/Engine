@@ -20,7 +20,7 @@ module TameGame {
                 objMotion.velocity.x !== 0 ||
                 objMotion.velocity.y !== 0) {
                 // Mark the object as alive
-                obj.get(AliveStatus).isAlive = true;
+                obj.aliveStatus.isAlive = true;
                 
                 obj['_hasMotion'] = true;
             }
@@ -33,8 +33,8 @@ module TameGame {
             
             // Apply motion to each of the live objects
             liveObjects.forEach((obj) => {
-                var motion      = obj.get(Motion);
-                var presence    = obj.get(Presence);
+                var motion      = obj.motion;
+                var presence    = obj.presence;
                 
                 presence.location = addVector(presence.location, scaleVector(motion.velocity, durationSeconds));
                 presence.rotation = presence.rotation + motion.rotationVelocity*durationSeconds;

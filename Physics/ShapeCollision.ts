@@ -17,8 +17,8 @@ module TameGame {
      * Returns true if two objects have collided
      */
     export function areCollided(a: TameObject, b: TameObject): Collision {
-        var aPresence = a.get(Presence);
-        var bPresence = b.get(Presence);
+        var aPresence = a.presence;
+        var bPresence = b.presence;
         
         if (!aPresence.shape || !bPresence.shape) return null;
         
@@ -62,7 +62,7 @@ module TameGame {
                     // The basic collision behaviour is to move the objects so that they are no longer colliding
 
                     // Get the object presence
-                    var presence = thisObject.get(Presence);
+                    var presence = thisObject.presence;
 
                     // The MTV is the minimum distance the objects need to move so that they no longer overlap
                     var mtv = collision.getMtv();
@@ -77,6 +77,8 @@ module TameGame {
                     return true;
                 } 
             };
-        }
+        },
+
+        readFrom: (obj: TameObject) => obj.getBehavior(ShapeCollisionBehavior)
     }
 }

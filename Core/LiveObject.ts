@@ -47,12 +47,14 @@ module TameGame {
     export interface IAliveStatus {
         isAlive: boolean;
     }
-    export var AliveStatus: TypeDefinition<IAliveStatus> = {
-        name: createTypeName(),
-        createDefault: () => {
-            return { isAlive: false };
-        }
-    };
+    
+    export interface TameObject {
+        aliveStatus?: IAliveStatus;
+    }
+    
+    export var AliveStatus: TypeDefinition<IAliveStatus> = declareProperty("aliveStatus", () => {
+        return { isAlive: false };
+    });
     
     // Tick at 60fps
     var tickDuration = 1000.0 / 60.0;
@@ -102,7 +104,7 @@ module TameGame {
             
             // Adding an object to the scene adds it to the live objects list if it's not there already
             scene.events.onAddObject((obj) => {
-                if (obj.get(AliveStatus).isAlive) {
+                if (obj.aliveStatus.isAlive) {
                     scene.liveObjects[obj.identifier] = obj;
                 }
             });
