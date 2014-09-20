@@ -9,17 +9,17 @@ var spriteIds   = TameGame.loadTpJsonSpriteSheet(sprites, data, 'Sprites/SpriteS
     // Create a sprite object
     function createSprite() {
         var spriteObject = game.createObject();
-        spriteObject.get(TameGame.Sprite).assetId = someSprite;
-        spriteObject.get(TameGame.Position).set({
+        spriteObject.sprite.assetId = someSprite;
+        spriteObject.position = {
             zIndex: 0,
             x1: -1, y1: 1,
             x2: 1,  y2: 1,
             x3: -1, y3: -1,
             x4: 1,  y4: -1
-        });
+        };
         
         var spriteShape = new TameGame.Polygon([ { x:-1, y:1 }, { x:1, y:1 }, { x:1,y:-1 }, { x:-1,y:-1 } ]);
-        spriteObject.get(TameGame.Presence).shape = spriteShape;
+        spriteObject.presence.shape = spriteShape;
         
         return spriteObject;
     }
@@ -28,12 +28,12 @@ var spriteIds   = TameGame.loadTpJsonSpriteSheet(sprites, data, 'Sprites/SpriteS
     var secondObj = createSprite();
     
     // Rotate at 20 degress/second
-    spriteObject.get(TameGame.Motion).rotationVelocity = 20.0;
+    spriteObject.motion.rotationVelocity = 20.0;
     
-    secondObj.get(TameGame.Presence).location = { x: -5, y: 0 };
-    //secondObj.get(TameGame.Motion).rotationVelocity = 10.0;
-    secondObj.get(TameGame.Motion).velocity = { x: 0.5, y: 0 };
-    secondObj.get(TameGame.Presence).rotation = 45;
+    secondObj.presence.location = { x: -5, y: 0 };
+    //secondObj.motion.rotationVelocity = 10.0;
+    secondObj.motion.velocity = { x: 0.5, y: 0 };
+    secondObj.presence.rotation = 45;
     
     spriteObject.collisionPriority = -1;
 
