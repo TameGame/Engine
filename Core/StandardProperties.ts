@@ -1,4 +1,5 @@
 /// <reference path="Interface.ts" />
+/// <reference path="PropertyManager.ts" />
 
 module TameGame {
     /**
@@ -10,17 +11,16 @@ module TameGame {
     export interface IObjectDetails {
         objectName: string;
     };
+    
+    export interface TameObject {
+        details?: IObjectDetails;
+    }
 
     /**
      * The type definition is used to store/retrieve these properties when
      * associated with an object 
      */
-    export var ObjectDetails: TypeDefinition<IObjectDetails> = {
-        name: createTypeName(),
-        createDefault: () => {
-            return {
-                objectName: "object"
-            }
-        }
-    };
+    export var ObjectDetails: TypeDefinition<IObjectDetails> = declareProperty("details", () => {
+        return { objectName: "object" };
+    });
 }

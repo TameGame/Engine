@@ -1,6 +1,7 @@
 /// <reference path="Interface.ts"/>
 /// <reference path="Watch.ts" />
 /// <reference path="Event.ts" />
+/// <reference path="PropertyManager.ts" />
 /// <reference path="../RenderQueue/RenderQueue.ts"/>
 
 module TameGame {
@@ -29,6 +30,7 @@ module TameGame {
         private _nextIdentifier: number;
         private _watchers: RegisteredWatchers;
         private _recentChanges: Watcher;
+        private _propertyManager: PropertyManager;
         private _immediate: { [propertyName: string]: (TameObject) => void };
         private _immediateActions: { [propertyName: string]: { priority: number; callback: (TameObject) => void }[] };
         
@@ -51,6 +53,7 @@ module TameGame {
             this._immediateActions  = {};
             this._renderQueue       = new StandardRenderQueue(initialSize);
             this._currentTime       = 0;
+            this._propertyManager   = new PropertyManager(this._immediate);
             
             // Set up the events
             var passStartEvent      = createFilteredEvent<UpdatePass, UpdatePass>();
@@ -199,6 +202,7 @@ module TameGame {
                 return this;
             }
 
+            // Create basic object
             obj = {
                 identifier:     identifier,
                 get:            getProp,
@@ -206,6 +210,9 @@ module TameGame {
                 attachBehavior: attachBehavior,
                 scene:          null
             };
+            
+            // Set up the watchable properties
+            this._propertyManager.initObject(obj);
             return obj;
         }
 

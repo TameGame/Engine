@@ -14,7 +14,7 @@ module TameGame {
     }
     
     // The set of properties that will be managed by a property manager
-    var globalProperties: { [propertyName: string]: PropertyDefinition };
+    var globalProperties: { [propertyName: string]: PropertyDefinition } = {};
 
     /**
      * Declares a new property that can be used in objects managed by the property manager
