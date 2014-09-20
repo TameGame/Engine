@@ -108,7 +108,7 @@ module TameGame {
                     } else {
                         // If the value is unset, then replace with the default value
                         val = watchify(properties[propertyName].createDefault(), obj, properties[propertyName]);
-                        properties[propertyName] = val;
+                        propertyValues[propertyName] = val;
                         return val;
                     }
                 }
