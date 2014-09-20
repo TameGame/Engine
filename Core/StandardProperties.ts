@@ -28,13 +28,12 @@ module TameGame {
     }
     
     var defaultObjectName = "object";
-    var defaultBehaviorClass = [ ];
 
     /**
      * The type definition is used to store/retrieve these properties when
      * associated with an object 
      */
     export var ObjectDetails: TypeDefinition<IObjectDetails> = declareProperty("details", () => {
-        return { objectName: defaultObjectName, behaviorClass: defaultBehaviorClass };
+        return { objectName: defaultObjectName, behaviorClass: [] };
     });
 }

@@ -1,4 +1,5 @@
 /// <reference path="Interface.ts" />
+/// <reference path="StandardProperties.ts" />
 
 module TameGame {
     /**
@@ -24,6 +25,9 @@ module TameGame {
     
     /** The standard set of behaviors */
     var globalBehaviors: { [ name: string ]: BehaviorDefinition } = {};
+    
+    /** The behavior classes that we know about */
+    var behaviorClasses: { [ name: string ]: Behavior } = {};
     
     /**
      * Declares a new behavior type with a particular default behavior
@@ -61,6 +65,19 @@ module TameGame {
     }
     
     /**
+     * Declares a behavior class
+     *
+     * Behavior classes can be specified for an object using the details.behaviorClass property:
+     * they make it possible to quickly re-use behaviors across a wide variety of objects.
+     *
+     * Behaviors can be left as null or undefined in a behavior class: the behavior from lower
+     * priority or the default will be used instead if this is done.
+     */
+    export function declareBehaviorClass(behaviorClassName: string, behaviors: Behavior) {
+        behaviorClasses[behaviorClassName] = behaviors;
+    }
+    
+    /**
      * The BehaviorManager handles registering and creating the behaviors of objects.
      *
      * Behaviors are simply collections functions that objects use to communicate with one another.
@@ -74,10 +91,37 @@ module TameGame {
             
             this.initObject = (obj) => {
                 var objBehavior = obj.behavior;
+                var backing: Behavior = {};
+                var behaviorProperties: PropertyDescriptorMap = {};
                 
                 Object.keys(behaviors).forEach((behaviorName) => {
-                    objBehavior[behaviorName] = behaviors[behaviorName].defaultValue;
+                    var behaviorDefn = behaviors[behaviorName];
+                    
+                    behaviorProperties[behaviorName] = {
+                        get: () => {
+                            // Try the backing first
+                            var behavior = backing[behaviorName];
+                            if (behavior) return behavior;
+                            
+                            // Try the classes
+                            var classes = obj.details.behaviorClass;
+                            classes.some((behaviorClass) => {
+                                behavior = behaviorClasses[behaviorClass][behaviorName];
+                                
+                                return behavior?true:false;
+                            });
+                            if (behavior) return behavior;
+                            
+                            // Use the default value
+                            return behaviorDefn.defaultValue;
+                        },
+                        set: (value) => {
+                            backing[behaviorName] = value;
+                        }
+                    };
                 });
+                
+                Object.defineProperties(objBehavior, behaviorProperties);
             }
         }
         
