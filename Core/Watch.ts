@@ -102,15 +102,13 @@ module TameGame {
                 propertyChanges = this._changes[name] = {};
             }
 
-            // Nothing to do if the object has already been noted as changed
-            if (propertyChanges[id]) {
-                return;
+            // Create a default callback if none is yet registered for this object
+            if (!propertyChanges[id]) {
+                // Create a callback function for this object
+                propertyChanges[id] = (callback) => {
+                    callback(o, property.readFrom(o));
+                };
             }
-
-            // Create a callback function for this object
-            propertyChanges[id] = (callback) => {
-                callback(o, o.get(property));
-            };
         }
 
         /**

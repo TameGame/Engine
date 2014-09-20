@@ -10,12 +10,14 @@ module TameGame {
         zIndex: number
     }
     
+    export interface TameObject {
+        position?: IPosition;
+    }
+    
     /**
      * The position property describes where a sprite is on screen
      */
-    export var Position: TypeDefinition<IPosition> = {
-        name: createTypeName(),
-        createDefault() {
+    export var Position: TypeDefinition<IPosition> = declareProperty("position", () => {
             return {
                 x1: 0, y1: 0,
                 x2: 0, y2: 0,
@@ -24,9 +26,8 @@ module TameGame {
                 
                 zIndex: 0
             };
-        }
-    };
-    
+    });
+            
     /**
      * The sprite property describes the sprite that should be displayed by a particular object
      */
@@ -35,16 +36,17 @@ module TameGame {
         assetId: number;
     }
     
+    export interface TameObject {
+        sprite?: ISprite;
+    }
+    
     /**
      * The sprite property describes the sprite that should be displayed by a particular object
      */
-    export var Sprite: TypeDefinition<ISprite> = {
-        name: createTypeName(),
-        createDefault() {
-            return {
-                // Asset ID -1 indicates no sprite
-                assetId: -1
-            };
+    export var Sprite: TypeDefinition<ISprite> = declareProperty("sprite", () => {
+        return {
+            // Asset ID -1 indicates no sprite
+            assetId: -1
         }
-    }
+    });
 }
