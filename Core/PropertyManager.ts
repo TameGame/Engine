@@ -19,6 +19,19 @@ module TameGame {
 
     /**
      * Declares a new property that can be used in objects managed by the property manager
+     *
+     * After this call is made, any new object that uses the property manager (ie, any TameObject) will have
+     * this property added to it.
+     *
+     * When using typescript, you can add the property to the interface. For example, declare a new property
+     * like this:
+     *
+     *     var MyProp = TameGame.declareProperty('myProp', () => { return { hello: 'world' }});
+     *
+     * and add it to the TameObject type definition like this:
+     *
+     *     export interface IMyProp { hello: string }
+     *     module TameGame { export interface TameObject { myProp?: IMyProp } }
      */
     export function declareProperty<TPropertyType>(propertyName: string, createDefault: () => TPropertyType): TypeDefinition<TPropertyType> {
         var typeName = createTypeName();
@@ -44,6 +57,15 @@ module TameGame {
     /**
      * The property manager is a class that manages 'watchable' properties on an object: that is, those
      * that can be watched via IWatchable.
+     *
+     * This will attach every property declared with declareProperty to the object. Properties look like 
+     * standard javascript properties but a few aspects of their behavior is different and may be 
+     * surprising. The most obvious is that they are copy-on-assign, so doing obj.prop = value actually
+     * takes a copy of value instead of assigning it as a reference.
+     *
+     * A slightly more subtle issue is that subproperties are watched. This means that obj.prop = value
+     * will generate a watch event, and obj.prop.x = value2 will also generate an event but 
+     * obj.prop.x.y = value3 will not.
      */
     export class PropertyManager {
         constructor(immediateActions: { [propertyName: string]: (TameObject) => void }) {
