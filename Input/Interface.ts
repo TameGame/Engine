@@ -27,6 +27,13 @@ module TameGame {
          */
         location?: number[];
     }
+
+    /**
+     * Interface that describes an object that specifies how in-game actions map to controls
+     */
+    export interface ControlBinding {
+        [name: string]: Control
+    }
     
     /**
      * The control devices known about by TameGame
