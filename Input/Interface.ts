@@ -111,7 +111,8 @@ module TameGame {
     /**
      * A control binding scheme that can be used to control a menu
      *
-     * This is the arrow keys or WASD to move around and change values, plus enter or space to select things.
+     * This is the arrow keys or WASD to move around and change values, plus enter or space to select things. Additionally,
+     * it supports the use of the mouse to select things.
      */
     export var menuControlBinding = {
         nextItem: [ { device: controlDevice.keyboard, control: keyControl.arrowdown }, { device: controlDevice.keyboard, control: 's' } ],
@@ -119,6 +120,8 @@ module TameGame {
         nextValue: [ { device: controlDevice.keyboard, control: keyControl.arrowright }, { device: controlDevice.keyboard, control: 'd' } ],
         lastValue: [ { device: controlDevice.keyboard, control: keyControl.arrowleft }, { device: controlDevice.keyboard, control: 'a' } ],
         
-        select: [ { device: controlDevice.keyboard, control: keyControl.enter }, { device: controlDevice.keyboard, control: keyControl.space } ]
+        select: [ { device: controlDevice.keyboard, control: keyControl.enter }, { device: controlDevice.keyboard, control: keyControl.space }, { device: controlDevice.mouse, control: mouseControl.button1 } ],
+        
+        point: [ { device: controlDevice.mouse, control: mouseControl.pointer } ]
     };
 }
