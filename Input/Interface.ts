@@ -32,7 +32,7 @@ module TameGame {
      * Interface that describes an object that specifies how in-game actions map to controls
      */
     export interface ControlBinding {
-        [name: string]: Control
+        [name: string]: Control[]
     }
     
     /**
@@ -61,7 +61,7 @@ module TameGame {
         wheeldown: 'wheeldown'
 
         /** mouselookup, mouselookdown, mouselookleft, mouselookright - alternative to the pointer if we want 'mouse look' style controls */
-    }
+    };
 
     /**
      * Keyboard controls
@@ -87,6 +87,7 @@ module TameGame {
         insert:     'insert',
         backspace:  'backspace',
         enter:      'enter',
+        space:      ' ',
 
         arrowup:    'arrowup',
         arrowleft:  'arrowleft',
@@ -105,5 +106,19 @@ module TameGame {
         f10: 'f10',
         f11: 'f11',
         f12: 'f12'
-     }
+    };
+    
+    /**
+     * A control binding scheme that can be used to control a menu
+     *
+     * This is the arrow keys or WASD to move around and change values, plus enter or space to select things.
+     */
+    export var menuControlBinding = {
+        nextItem: [ { device: controlDevice.keyboard, control: keyControl.arrowdown }, { device: controlDevice.keyboard, control: 's' } ],
+        lastItem: [ { device: controlDevice.keyboard, control: keyControl.arrowup }, { device: controlDevice.keyboard, control: 'w' } ],
+        nextValue: [ { device: controlDevice.keyboard, control: keyControl.arrowright }, { device: controlDevice.keyboard, control: 'd' } ],
+        lastValue: [ { device: controlDevice.keyboard, control: keyControl.arrowleft }, { device: controlDevice.keyboard, control: 'a' } ],
+        
+        select: [ { device: controlDevice.keyboard, control: keyControl.enter }, { device: controlDevice.keyboard, control: keyControl.space } ]
+    };
 }
