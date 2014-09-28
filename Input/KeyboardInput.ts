@@ -91,6 +91,7 @@ module TameGame {
         0x27: keyControl.arrowright,
         0x26: keyControl.arrowup,
         0x1b: keyControl.escape,
+        0x08: keyControl.backspace,
         
         0x70: keyControl.f1,
         0x71: keyControl.f2,
