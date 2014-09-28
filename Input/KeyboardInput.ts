@@ -1,6 +1,7 @@
 /// <reference path="Interface.ts" />
 /// <reference path="../Core/Interface.ts" />
 /// <reference path="../Core/Worker.ts" />
+/// <reference path="../Core/GameLauncher.ts" />
 
 module TameGame {
     // See https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent.keyCode
@@ -156,10 +157,22 @@ module TameGame {
             return control;
         }
         
-        // Function to convert a key to a Control object
+        // Converts a key to a Control object
         var keyEventToControl = (event: KeyboardEvent) => {
             // Decode keyCode
             return keyCodeToControl(event);
+        };
+        
+        // Converts a Control to a ControlInput occuring now with a particular pressure
+        var controlToInput = (control: Control, pressure: number) => {
+            var result: ControlInput = {
+                device:     control.device,
+                control:    control.control,
+                pressure:   pressure,
+                when:       perf.now()
+            };
+            
+            return result;
         };
         
         // Attach to key down and key up events events
@@ -170,17 +183,42 @@ module TameGame {
         // Attach on the window; assume that the game is the only input target
         // Preventing the default action stops the window from scrolling when the user uses the arrow keys
         window.onkeydown = (keyEvent) => {
+            // Convert the event into a 'Control'
             var control = keyEventToControl(keyEvent);
-            console.log('Keydown', control);
-            if (!control) console.log(keyEvent);
+            if (!control) {
+                // For debugging, indicate when the key is one we don't know about
+                console.log('Unknown key down:', keyEvent);
+            }
+
+            if (control) {
+                // Post the key event to the worker
+                var keyMessage: WorkerMessage = {
+                    action: workerInputControl,
+                    data: {
+                        input: controlToInput(control, 1.0)
+                    }
+                };
+                targetWorker.postMessage(keyMessage);
+            }
             
             keyEvent.preventDefault();
             return true;
         };
         
         window.onkeyup = (keyEvent) => {
+            // Convert the event into a 'Control'
             var control = keyEventToControl(keyEvent);
-            console.log('Keyup', control);
+            
+            if (control) {
+                // Post the key event to the worker
+                var keyMessage: WorkerMessage = {
+                    action: workerInputControl,
+                    data: {
+                        input: controlToInput(control, 0.0)
+                    }
+                };
+                targetWorker.postMessage(keyMessage);
+            }
             
             keyEvent.preventDefault();
             return true;
