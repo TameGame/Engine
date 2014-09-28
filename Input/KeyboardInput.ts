@@ -54,6 +54,7 @@ module TameGame {
         0xdc: '\\',
         0xbb: '=',
         0xbf: '/',
+        0xbd: '-',
         
         0x60: keyControl.numpad0,
         0x61: keyControl.numpad1,
