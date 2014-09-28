@@ -3,6 +3,7 @@
 /// <reference path="Game.ts" />
 /// <reference path="../Assets/Assets.ts" />
 /// <reference path="../WebGlRenderer/WebGlRenderer.ts" />
+/// <reference path="../Input/Input.ts" />
 
 module TameGame {
     /** The current game */
@@ -69,9 +70,13 @@ module TameGame {
             };
             gameWorker.postMessage(launchMessage);
             
+            // Set up for keyboard input
+            var detachKeyboardInput = attachKeyboardInput(canvas, gameWorker);
+            
             // Create a way to cancel/stop the game: this is the value that we return
             var result: Cancellable = {
                 cancel: () => {
+                    detachKeyboardInput.cancel();
                     gameWorker.terminate();
                 }
             };
