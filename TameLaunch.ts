@@ -16,5 +16,14 @@ onmessage = (event: MessageEvent) => {
         case TameGame.workerStartGame:
             TameGame.GameLauncher.finishLaunch(msg);
             break;
+            
+        case TameGame.workerInputControl:
+            console.log(msg.data.input.control);
+            console.log(TameGame.perf.now() - msg.data.input.when);
+            break;
+            
+        default:
+            console.log('TameLaunch: ignoring unknown message action ' + msg.action);
+            break;
     }
 };
