@@ -110,7 +110,25 @@ module TameGame {
         f9: 'f9',
         f10: 'f10',
         f11: 'f11',
-        f12: 'f12'
+        f12: 'f12',
+        
+        numpad1: 'numpad1',
+        numpad2: 'numpad2',
+        numpad3: 'numpad3',
+        numpad4: 'numpad4',
+        numpad5: 'numpad5',
+        numpad6: 'numpad6',
+        numpad7: 'numpad7',
+        numpad8: 'numpad8',
+        numpad9: 'numpad9',
+        numpad0: 'numpad0',
+        numpadComma: 'numpad,',
+        numpadPeriod: 'numpad.',
+        numpadAdd: 'numpad+',
+        numpadDivide: 'numpad/',
+        numpadMultiply: 'numpad*',
+        numpadMinus: 'numpad-',
+        numpadEnter: 'numpadEnter',
     };
     
     /**
