@@ -4,3 +4,4 @@
 TameGame.d.ts
 TameLaunch.d.ts
 *.tps
+node_modules
