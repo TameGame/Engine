@@ -22,6 +22,11 @@ module TameGame {
         pressure: number;
         
         /**
+         * The time that this control input occurred
+         */
+        when: number;
+        
+        /**
          * For controls that represent a pointer (eg, the mouse or the touch controls) this
          * will be the location of the control.
          */

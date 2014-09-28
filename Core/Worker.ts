@@ -10,8 +10,11 @@ module TameGame {
         data?: any;
     }
 
-    /** Instruction to the webworker to start a game defined in a JavaScript file */
+    /** Instruction to the webworker: to start a game defined in a JavaScript file */
     export var workerStartGame          = "start-game";
+    
+    /** Instruction to the webworker: the state of an input control has changed */
+    export var workerInputControl       = "input-control";
     
     /** Instruction to the main thread: render a frame */
     export var workerRenderQueue        = "render-queue";

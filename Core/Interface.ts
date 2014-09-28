@@ -68,6 +68,9 @@ module TameGame {
         
         /** The preparation pass, where values can be set up for the future passes */
         Preparation,
+        
+        /** Pass where changes caused by player input are handled */
+        PlayerInput,
 
         /** The animation pass, when animated properties are updated */
         Animations,
@@ -94,7 +97,7 @@ module TameGame {
     /**
      * The update passes that occur prior to rendering
      */
-    export var preRenderPasses  = [ UpdatePass.Preparation, UpdatePass.Animations, UpdatePass.Mechanics, UpdatePass.PhysicsMotion, UpdatePass.PhysicsCollision, UpdatePass.PreRender ];
+    export var preRenderPasses  = [ UpdatePass.Preparation, UpdatePass.PlayerInput, UpdatePass.Animations, UpdatePass.Mechanics, UpdatePass.PhysicsMotion, UpdatePass.PhysicsCollision, UpdatePass.PreRender ];
     
     /**
      * The update passes that occur after rendering
