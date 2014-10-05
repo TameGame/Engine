@@ -1,7 +1,7 @@
-*.js
 *.map
 !Test/*.js
 TameGame.d.ts
 TameLaunch.d.ts
 *.tps
+dist
 node_modules
