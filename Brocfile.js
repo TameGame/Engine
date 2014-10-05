@@ -3,24 +3,45 @@ var mergeTrees          = require('broccoli-merge-trees');
 var uglifyJs            = require('broccoli-uglify-js');
 var pickFiles           = require('broccoli-static-compiler');
 
-var tameGame    = 'TameGame';
-var tameLaunch  = 'TameLaunch';
+// Location of the various files
+var engine      = 'TameGame';
+var launch      = 'TameLaunch';
+var thirdParty  = 'ThirdParty';
 
-var engineTs = compileTypeScript(tameGame, {
+// 'ThirdParty' should end up in a folder called 'ThirdParty'
+thirdParty = pickFiles(thirdParty, {
+    srcDir:     '/',
+    destDir:    '/ThirdParty'
+});
+
+// The engine will depend on the third party components
+engine = mergeTrees([engine, thirdParty]);
+
+// Compile the engine typescript
+var engineJs = compileTypeScript(engine, {
     out: 'TameGame.js',
     sourcemap: true,
     declaration: true
 });
-engineTs = uglifyJs(engineTs, {
+
+// ... and minify it
+var engineMinified = uglifyJs(engineJs, {
 });
 
-/*
-var launcherAndEngine = mergeTrees([engineTs, tameLaunchTs]);
-var tameLaunchTs = compileTypeScript(launcherAndEngine, {
+// We'll need the definition files to compile some other bits
+var engineDefinitions = pickFiles(engineJs, {
+    srcDir:     '/',
+    files:       ['**/*.d.ts'],
+    destDir:    '/'
+});
+
+// The launcher requires the TameGame engine definition
+launch = mergeTrees([launch, engineDefinitions]);
+
+var tameLaunchJs = compileTypeScript(launch, {
     out: 'TameLaunch.js',
     sourcemap: true,
     declaration: true
 });
-*/
 
-module.exports = engineTs, tameLaunchTs;
+module.exports = mergeTrees([ engineJs, tameLaunchJs ]);
