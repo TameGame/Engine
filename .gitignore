@@ -4,4 +4,5 @@ TameGame.d.ts
 TameLaunch.d.ts
 *.tps
 dist
+tmp
 node_modules

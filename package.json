@@ -20,6 +20,9 @@
   "homepage": "https://github.com/TameGame/Engine",
   "devDependencies": {
     "broccoli": "^0.12.3",
-    "broccoli-typescript": "^0.4.0"
+    "broccoli-merge-trees": "^0.2.0",
+    "broccoli-static-compiler": "^0.2.0",
+    "broccoli-typescript": "^0.4.0",
+    "broccoli-uglify-js": "^0.1.3"
   }
 }
