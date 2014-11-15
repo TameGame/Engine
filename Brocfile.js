@@ -1,4 +1,4 @@
-var compileTypeScript   = require('broccoli-typescript'); 
+var compileTypeScript   = require('broccoli-typescript');
 var mergeTrees          = require('broccoli-merge-trees');
 var uglifyJs            = require('broccoli-uglify-js');
 var pickFiles           = require('broccoli-static-compiler');
@@ -25,10 +25,6 @@ var engineJs = compileTypeScript(engine, {
     declaration: true
 });
 
-// ... and minify it
-var engineMinified = uglifyJs(engineJs, {
-});
-
 // We'll need the definition files to compile some other bits
 var engineDefinitions = pickFiles(engineJs, {
     srcDir:     '/',
@@ -51,4 +47,18 @@ var tameLaunchJs = compileTypeScript(launch, {
     declaration: true
 });
 
-module.exports = mergeTrees([ engineJs, tameLaunchJs, test ]);
+// Minify the engine and launcher
+var launchMinSource = pickFiles(tameLaunchJs, {
+    srcDir: '/',
+    destDir: '/min'
+});
+var engineMinSource = pickFiles(engineJs, {
+    srcDir: '/',
+    files: [ '**/*' ],
+    destDir: '/min'
+});
+var minifySource = mergeTrees([launchMinSource, engineMinSource]);
+var engineMinified = uglifyJs(minifySource, {
+});
+
+module.exports = mergeTrees([ engineJs, engineMinified, tameLaunchJs, test ]);
