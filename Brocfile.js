@@ -6,6 +6,7 @@ var pickFiles           = require('broccoli-static-compiler');
 // Location of the various files
 var engine      = 'TameGame';
 var launch      = 'TameLaunch';
+var test        = 'Test';
 var thirdParty  = 'ThirdParty';
 
 // 'ThirdParty' should end up in a folder called 'ThirdParty'
@@ -35,6 +36,12 @@ var engineDefinitions = pickFiles(engineJs, {
     destDir:    '/'
 });
 
+// Test just gets copied into the appropriate folder
+test = pickFiles(test, {
+    srcDir:     '/',
+    destDir:    '/Test'
+});
+
 // The launcher requires the TameGame engine definition
 launch = mergeTrees([launch, engineDefinitions]);
 
@@ -44,4 +51,4 @@ var tameLaunchJs = compileTypeScript(launch, {
     declaration: true
 });
 
-module.exports = mergeTrees([ engineJs, tameLaunchJs ]);
+module.exports = mergeTrees([ engineJs, tameLaunchJs, test ]);
