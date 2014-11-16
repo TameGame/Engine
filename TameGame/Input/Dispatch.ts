@@ -10,6 +10,9 @@ module TameGame {
 
     /**
      * Creates a function that maps a control input to its action name
+     *
+     * If a control is bound to multiple action names, only the first is used. No warning is generated
+     * as this is considered an occasionally useful feature.
      */
     export function createInputBinder(bindings: ControlBinding[]): InputBinder {
         // Maps devices to controls to actions
@@ -59,5 +62,25 @@ module TameGame {
 
             return actionName;
         };
+    }
+
+    /**
+     * Dispatches control input via a binder to whatever actions are available. If a particular action name appears
+     * multiple times in the actions array, it is dispatched multiple times.
+     */
+    export function dispatchInput(input: ControlInput[], binder: InputBinder, actions: ActionBinding[]) {
+        input.forEach(controlInput => {
+            // Bind the control
+            var actionName = binder(controlInput);
+
+            // Dispatch it
+            if (actionName) {
+                actions.forEach(action => {
+                    if (typeof actions[actionName] !== 'undefined') {
+                        actions[actionName](controlInput);
+                    }
+                })
+            }
+        });
     }
 }
