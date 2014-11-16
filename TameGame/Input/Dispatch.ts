@@ -2,13 +2,6 @@
 
 module TameGame {
     /**
-     * Function that maps a control input to an action
-     */
-    export interface InputBinder {
-        (input: ControlInput): string;
-    }
-
-    /**
      * Creates a function that maps a control input to its action name
      *
      * If a control is bound to multiple action names, only the first is used. No warning is generated

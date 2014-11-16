@@ -39,6 +39,13 @@ module TameGame {
     export interface ControlBinding {
         [actionName: string]: Control[];
     }
+
+    /**
+     * Function that maps a control input to an action
+     */
+    export interface InputBinder {
+        (input: ControlInput): string;
+    }
     
     /**
      * Describes a function that describes what to do when a control input is active
