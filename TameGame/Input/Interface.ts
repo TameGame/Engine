@@ -37,9 +37,23 @@ module TameGame {
      * Interface that describes an object that specifies how in-game actions map to controls
      */
     export interface ControlBinding {
-        [name: string]: Control[]
+        [actionName: string]: Control[];
     }
     
+    /**
+     * Describes a function that describes what to do when a control input is active
+     */
+    export interface ControlAction {
+        (input: ControlInput): void;
+    }
+
+    /**
+     * Interface that descibes an object that specifies how 
+     */
+    export interface ActionBinding {
+        [actionName: string]: ControlAction;
+    }
+
     /**
      * The control devices known about by TameGame
      */
