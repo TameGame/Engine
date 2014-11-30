@@ -6,6 +6,13 @@ This is a 2D game engine written in TypeScript.
 I'm writing this mainly for my own amusement, but also as the basis for some
 actual game ideas.
 
+Building
+========
+
+    npm install -g broccoli-cli
+    npm install
+    broccoli build dist
+
 Status
 ======
 
