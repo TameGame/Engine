@@ -11,6 +11,24 @@ module TameGame {
     }
     
     /**
+     * Quick way to declare an object that maps a control to a value
+     */
+    export interface ControlMap<TMapTo> {
+        [device: string] : { [control: string]: TMapTo }
+    }
+
+    /**
+     * Iterates over every value in a control map
+     */
+    export function forEachControlMap<TMapTo>(map: ControlMap<TMapTo>, iterate: (control: Control, value: TMapTo) => void) {
+        Object.keys(map).forEach(device => {
+            Object.keys(map[device]).forEach(control => {
+                iterate({ device: device, control: control }, map[device][control]);
+            });
+        });
+    }
+
+    /**
      * Interface implemented by objects that describe a control input
      */
     export interface ControlInput extends Control {
@@ -44,7 +62,7 @@ module TameGame {
      * Function that maps a control input to an action
      */
     export interface InputBinder {
-        (input: ControlInput): string;
+        (input: Control): string;
     }
     
     /**
@@ -106,7 +124,7 @@ module TameGame {
         /**
          * Called once per tick with the status of every control that is 'down' (has a pressure of greater than 0)
          */
-        tickInputs: (inputs: ControlInput[]) => void;
+        tickInputs: (inputs: ControlInput[], milliseconds: number) => void;
 
         /**
          * Registers an event handler for a particular action, called on the tick when the control is pressed down (pressure reaches greater than 0.5)

@@ -3,3 +3,4 @@
 /// <reference path="Dispatch.ts" />
 /// <reference path="DefaultControlRouter.ts" />
 /// <reference path="GameInput.ts" />
+/// <reference path="DefaultControlEvents.ts" />
