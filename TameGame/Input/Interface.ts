@@ -48,20 +48,6 @@ module TameGame {
     }
     
     /**
-     * Describes a function that describes what to do when a control input is active
-     */
-    export interface ControlAction {
-        (input: ControlInput): void;
-    }
-
-    /**
-     * Interface that descibes an object that specifies how 
-     */
-    export interface ActionBinding {
-        [actionName: string]: ControlAction;
-    }
-
-    /**
      * The control devices known about by TameGame
      */
     export var controlDevice = {
@@ -111,6 +97,31 @@ module TameGame {
          * Can be used to query for clashing bindings as well as when dispatching new ones.
          */
         actionForInput: InputBinder;
+    }
+
+    /**
+     * Interface implemented by objects that can register and receive events from controls
+     */
+    export interface ControlEvents {
+        /**
+         * Called once per tick with the status of every control that is 'down' (has a pressure of greater than 0)
+         */
+        tickInputs: (inputs: ControlInput[]) => void;
+
+        /**
+         * Registers an event handler for a particular action, called on the tick when the control is pressed down (pressure reaches greater than 0.5)
+         */
+        onActionDown: FilteredEventRegistration<string, ControlInput>;
+
+        /**
+         * Registers an event handler for a particular action, called on the tick when the control is released (pressure dips below 0.5)
+         */
+        onActionUp: FilteredEventRegistration<string, ControlInput>;
+
+        /**
+         * Registers an event handler for a particular action, called once a tick while a control has a pressure of greater than 0.5
+         */
+        onDuringAction: FilteredEventRegistration<string, ControlInput>;
     }
 
     /**
