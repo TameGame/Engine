@@ -9,7 +9,7 @@ module TameGame {
      */
     export function createInputBinder(bindings: ControlBinding[]): InputBinder {
         // Maps devices to controls to actions
-        var deviceToControlToAction: { [device: string]: { [control: string]: string } } = {};
+        var deviceToControlToAction: ControlMap<string> = {};
 
         // For each binding...
         bindings.forEach(bindingSet => {
