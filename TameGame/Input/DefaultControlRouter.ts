@@ -98,23 +98,11 @@ module TameGame {
                 }
             };
 
-            // When a control is changed, remember the new state so we can dispatch to any action handlers that are registered
-            var controlChanged = (input) => {
-            };
-
             // Set up this object
-            this.controlChanged     = controlChanged;
             this.addControlBinding  = addControlBinding;
             this.addInputBinder     = addInputBinder;
             this.actionForInput     = actionForInput;
         }
-
-        /**
-         * The input state of a particular control has changed
-         *
-         * This stores the new control state and prepares to dispatch any events that it generates
-         */
-        controlChanged: (input: ControlInput) => void;
 
         /**
          * Adds a control binding

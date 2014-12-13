@@ -83,11 +83,6 @@ module TameGame {
      */
     export interface ControlRouter {
         /**
-         * The input state of a particular control has changed
-         */
-        controlChanged: (input: ControlInput) => void;
-
-        /**
          * Adds a control binding
          *
          * Bindings with high priorities are processed first. If no priority is specified, then the binding
