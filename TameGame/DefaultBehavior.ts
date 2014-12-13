@@ -1,6 +1,7 @@
 /// <reference path="Core/Core.ts" />
 /// <reference path="Sprite/Sprite.ts" />
 /// <reference path="Physics/Physics.ts" />
+/// <reference path="Input/Input.ts" />
 
 module TameGame {
     //
@@ -29,6 +30,9 @@ module TameGame {
         'tAabbCollision': generateAabbCollisionBehavior,
     
         // Objects are tracked in a quad tree in each scene
-        'tQuadTree': sceneQuadTreeBehavior
+        'tQuadTree': sceneQuadTreeBehavior,
+
+        // Control input is routed using the standard behavior
+        'tInput': defaultInputBehavior
     }
 }
