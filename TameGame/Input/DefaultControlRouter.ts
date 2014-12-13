@@ -95,6 +95,8 @@ module TameGame {
 
                 if (foundAction) {
                     return action;
+                } else {
+                    return null;
                 }
             };
 
