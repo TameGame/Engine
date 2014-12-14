@@ -406,4 +406,23 @@ module TameGame {
      * registered first.
      */
     export var behaviorDependencies: { [behaviorName: string]: string[] } = {};
+
+    /**
+     * Form of a message passed in to or from a TameGame web worker
+     */
+    export interface WorkerMessage {
+        /** The action to take */
+        action: string;
+        
+        /** The data for this message */
+        data?: any;
+    }
+
+    /**
+     * Interface implmented by objects that can dispatch messages sent to a web worker
+     */
+    export interface WorkerMessageDispatcher {
+        /** Registers a handler to be fired when a particular message is received */
+        onMessage: FilteredEventRegistration<string, WorkerMessage>;
+    }
 }
