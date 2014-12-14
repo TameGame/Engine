@@ -18,8 +18,33 @@ module TameGame {
      *
      * Input is dispatched through the default control router to the default control events object
      */
-     export function defaultInputBehavior(game: Game) {
+     export function defaultInputBehavior(game: Game, dispatcher: WorkerMessageDispatcher) {
+        // Controls that have active pressure on them
+        var activeControls: ControlMap<ControlInput> = {};
+
+        // Give the game the default control router and events objects
         game.controlRouter = new DefaultControlRouter();
         game.controlEvents = new DefaultControlEvents(game.controlRouter.actionForInput);
+
+        // When the worker sends control events, update the list of controls
+        dispatcher.onMessage(workerMessages.inputControl, (msg) => {
+            var input: ControlInput = msg.data.input;
+
+            if (input.pressure > 0) {
+                setControlMap(activeControls, input, input);
+            } else {
+                deleteControlMap(activeControls, input);
+            }
+        });
+
+        // Every game tick, dispatch the player input
+        game.events.onPassStart(UpdatePass.PlayerInput, (pass, time) => {
+            // Collect all the control inputs into a single array
+            var allInput: ControlInput[] = [];
+            forEachControlMap(activeControls, (control, input) => allInput.push(input));
+
+            // Dispatch the input
+            game.controlEvents.tickInputs(allInput, time);
+        });
      }
 }
