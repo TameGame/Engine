@@ -46,6 +46,12 @@ module TameGame {
         private _currentTime:       number;
 
         constructor(initialSize: Size, messageDispatcher: WorkerMessageDispatcher) {
+            // Display a warning and use an empty message dispatcher if none is passed in
+            if (!messageDispatcher) {
+                console.warn('No message dispatcher set');
+                messageDispatcher = { onMessage: () => { return { cancel: () => {} } } };
+            }
+
             // Set up the variables
             this._nextIdentifier    = 0;
             this._watchers          = new RegisteredWatchers();
