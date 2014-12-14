@@ -37,6 +37,21 @@ var spriteIds   = TameGame.loadTpJsonSpriteSheet(sprites, data, 'Sprites/SpriteS
     
     spriteObject.collisionPriority = -1;
 
+    // Allow the user to change the second object's velocity
+    var wasd = { 
+        up: [ { device: TameGame.controlDevice.keyboard, control: 'W' } ],
+        down: [ { device: TameGame.controlDevice.keyboard, control: 'S' } ],
+        left: [ { device: TameGame.controlDevice.keyboard, control: 'A' } ],
+        right: [ { device: TameGame.controlDevice.keyboard, control: 'D' } ]
+    };
+
+    game.controlRouter.addControlBinding(wasd);
+
+    game.controlEvents.onDuringAction('up', function () { secondObj.motion.velocity.y += 0.02; });
+    game.controlEvents.onDuringAction('down', function () { secondObj.motion.velocity.y -= 0.02; });
+    game.controlEvents.onDuringAction('left', function () { secondObj.motion.velocity.x -= 0.02; });
+    game.controlEvents.onDuringAction('right', function () { secondObj.motion.velocity.x += 0.02; });
+
     // Put it in a scene
     var scene = game.createScene();
     scene.addObject(spriteObject);
