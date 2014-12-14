@@ -45,7 +45,7 @@ module TameGame {
         private _renderQueue:       RenderQueue;
         private _currentTime:       number;
 
-        constructor(initialSize: Size) {
+        constructor(initialSize: Size, messageDispatcher: WorkerMessageDispatcher) {
             // Set up the variables
             this._nextIdentifier    = 0;
             this._watchers          = new RegisteredWatchers();
@@ -97,7 +97,7 @@ module TameGame {
                 }
                 
                 // Initialise this behavior
-                defaultBehavior[name](this);
+                defaultBehavior[name](this, messageDispatcher);
             }
             
             Object.keys(defaultBehavior).sort().forEach((behaviorName) => initBehavior(behaviorName));

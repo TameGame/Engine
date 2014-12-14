@@ -90,14 +90,14 @@ module TameGame {
         /**
          * This callback is made by TameLaunch when it receives the message to start the game (in the worker thread)
          */
-        finishLaunch: (msg: WorkerMessage) => {
+        finishLaunch: (msg: WorkerMessage, dispatcher: WorkerMessageDispatcher) => {
             if (msg.action !== workerMessages.startGame) {
                 throw "finishLaunch must be called with a start game request";
             }
             
             // Set up the game
             // TODO: some means to allow the user to specify modules, which get loaded before we create the game
-            game    = new StandardGame(msg.data.canvasSize);
+            game    = new StandardGame(msg.data.canvasSize, dispatcher);
             sprites = new WorkerSpriteManager();
             data    = new AjaxDataManager();
             

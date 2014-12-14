@@ -395,7 +395,7 @@ module TameGame {
      * whenever a new Game is set up, as well as for the engine to supply default behaviours
      * that can be overridden (for example, to provide a choice of physics engines)
      */
-    export var defaultBehavior: { [ behaviorName: string ]: (newGame: Game) => void } = {};
+    export var defaultBehavior: { [ behaviorName: string ]: (newGame: Game, messageDispatcher: WorkerMessageDispatcher) => void } = {};
     
     /**
      * Specifies which behaviors must be initialised before a particular behavior
