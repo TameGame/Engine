@@ -472,7 +472,7 @@ module TameGame {
          * are found in the Priority object. A priority of 0 is used if this
          * parameter is not specified.
          */
-        watch: (definition: any, updatePass: UpdatePass, callback: any, priority?: number) => Cancellable;
+        watch: (definition: any, updatePass: UpdatePass, callback: any, priority?: number) => Cancellable;              // Prototype is not correct, but TypeScript doesn't seem to allow the generic syntax to be used in lambda definitions
 
         /**
          * When this object is part of the active scene and the game hits
