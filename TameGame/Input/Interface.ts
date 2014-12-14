@@ -28,6 +28,28 @@ module TameGame {
         });
     }
 
+    /** 
+     * Updates a value in a control map 
+     */
+    export function setControlMap<TMapTo>(map: ControlMap<TMapTo>, control: Control, value: TMapTo) {
+        var controlsForDevice = map[control.device];
+        if (!controlsForDevice) {
+            controlsForDevice = map[control.device] = {};
+        }
+
+        controlsForDevice[control.control] = value;
+    }
+
+    /**
+     * Removes a value from a control map
+     */
+    export function deleteControlMap<TMapTo>(map: ControlMap<TMapTo>, control: Control) {
+        var controlsForDevice = map[control.device];
+        if (controlsForDevice) {
+            delete controlsForDevice[control.control];
+        }
+    }
+
     /**
      * Interface implemented by objects that describe a control input
      */
