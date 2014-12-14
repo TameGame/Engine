@@ -1,0 +1,24 @@
+/// <reference path="Interface.ts" />
+
+module TameGame {
+    /**
+     * Some well-known control bindings used in many different types of game
+     */
+    export var standardControls: { [name: string]: ControlBinding } = {
+        /** The WASD control layout. Provides up, down, left, right control actions */
+        wasd: {
+            up: [ { device: controlDevice.keyboard, control: 'W' } ],
+            down: [ { device: controlDevice.keyboard, control: 'S' } ],
+            left: [ { device: controlDevice.keyboard, control: 'A' } ],
+            right: [ { device: controlDevice.keyboard, control: 'D' } ],
+        },
+
+        /** The arrow keys control layout. Provides up, down, left, right control actions */
+        arrows: {
+            up: [ { device: controlDevice.keyboard, control: keyControl.arrowup } ],
+            down: [ { device: controlDevice.keyboard, control: keyControl.arrowdown } ],
+            left: [ { device: controlDevice.keyboard, control: keyControl.arrowleft } ],
+            right: [ { device: controlDevice.keyboard, control: keyControl.arrowright } ],
+        }
+    };
+}

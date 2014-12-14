@@ -4,3 +4,4 @@
 /// <reference path="DefaultControlRouter.ts" />
 /// <reference path="GameInputBehavior.ts" />
 /// <reference path="DefaultControlEvents.ts" />
+/// <reference path="StandardControlBindings.ts" />
