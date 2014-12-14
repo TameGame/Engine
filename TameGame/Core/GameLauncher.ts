@@ -62,7 +62,7 @@ module TameGame {
         
             // Tell it which script to run
             var launchMessage: WorkerMessage = {
-                action: workerStartGame,
+                action: workerMessages.startGame,
                 data: {
                     gameScript: script,
                     canvasSize: { width: canvas.width, height: canvas.height }
@@ -91,7 +91,7 @@ module TameGame {
          * This callback is made by TameLaunch when it receives the message to start the game (in the worker thread)
          */
         finishLaunch: (msg: WorkerMessage) => {
-            if (msg.action !== workerStartGame) {
+            if (msg.action !== workerMessages.startGame) {
                 throw "finishLaunch must be called with a start game request";
             }
             
@@ -149,7 +149,7 @@ module TameGame {
      */
     function runBrowserGameLoop(gameWorker: Worker, canvas: HTMLCanvasElement) {
         // Handle the worker messages
-        var messageHandler = new WorkerMessageHandler(gameWorker);
+        var messageHandler = new DefaultWorkerMessageDispatcher(gameWorker);
 
         // Create the renderer for this game
         var renderer: Renderer = new WebGlRenderer(canvas);
@@ -158,7 +158,7 @@ module TameGame {
         var mostRecentTime: number = 0;
         var mostRecentRenderQueue: RenderQueue = null;
         
-        messageHandler.renderQueue = (msg: WorkerMessage) => {
+        messageHandler.onMessage(workerMessages.renderQueue, (msg: WorkerMessage) => {
             var canvasSize = { width: canvas.width, height: canvas.height };
 
             // Work out when the message was sent
@@ -188,21 +188,21 @@ module TameGame {
                     }
                 });
             }
-        }
+        });
         
-        messageHandler.loadSprite = (msg: WorkerMessage) => {
+        messageHandler.onMessage(workerMessages.loadSprite, (msg: WorkerMessage) => {
             var assetName   = msg.data.assetName;
             var id          = msg.data.id;
             
             // Pass on to the renderer
             renderer.sprites.loadSprite(assetName, id);
-        };
+        });
         
-        messageHandler.loadSpriteSheet = (msg: WorkerMessage) => {
+        messageHandler.onMessage(workerMessages.loadSpriteSheet, (msg: WorkerMessage) => {
             var assetName   = msg.data.assetName;
             var sheet       = msg.data.sheet;
             
             renderer.sprites.loadSpriteSheet(assetName, sheet);
-        }
+        });
     }
 }

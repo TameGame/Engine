@@ -193,7 +193,7 @@ module TameGame {
             if (control) {
                 // Post the key event to the worker
                 var keyMessage: WorkerMessage = {
-                    action: workerInputControl,
+                    action: workerMessages.inputControl,
                     data: {
                         input: controlToInput(control, 1.0)
                     }
@@ -212,7 +212,7 @@ module TameGame {
             if (control) {
                 // Post the key event to the worker
                 var keyMessage: WorkerMessage = {
-                    action: workerInputControl,
+                    action: workerMessages.inputControl,
                     data: {
                         input: controlToInput(control, 0.0)
                     }

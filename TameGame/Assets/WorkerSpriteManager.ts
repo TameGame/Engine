@@ -38,7 +38,7 @@ module TameGame {
             });
             
             var msg: WorkerMessage = {
-                action: workerLoadSpriteSheet,
+                action: workerMessages.loadSpriteSheet,
                 data: {
                     assetName: assetName,
                     sheet: sheet
@@ -63,7 +63,7 @@ module TameGame {
             
             // Post a request
             var msg: WorkerMessage = {
-                action: workerLoadSprite,
+                action: workerMessages.loadSprite,
                 data: {
                     assetName: assetName,
                     id: id

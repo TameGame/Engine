@@ -13,11 +13,11 @@ onmessage = (event: MessageEvent) => {
     
     // Finish the launch once we receive a suitable event
     switch (msg.action) {
-        case TameGame.workerStartGame:
+        case TameGame.workerMessages.startGame:
             TameGame.GameLauncher.finishLaunch(msg);
             break;
             
-        case TameGame.workerInputControl:
+        case TameGame.workerMessages.inputControl:
             console.log(msg.data.input.control);
             console.log(TameGame.perf.now() - msg.data.input.when);
             break;

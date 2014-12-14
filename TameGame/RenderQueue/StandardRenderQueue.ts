@@ -250,7 +250,7 @@ module TameGame {
                 
                 // Post the message to the owner of this worker
                 var message: WorkerMessage = {
-                    action: workerRenderQueue,
+                    action: workerMessages.renderQueue,
                     data: {
                         time:           perf.now(),
                         integers:       lastInts,
