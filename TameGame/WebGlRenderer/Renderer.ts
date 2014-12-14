@@ -43,15 +43,16 @@ module TameGame {
      * code.
      */
     export class WebGlRenderer implements Renderer {
-        private _gl: WebGLRenderingContext;
-        private _canvas: HTMLCanvasElement;
-        private _actions: WebGlActionMap;
-        
         constructor(canvas: HTMLCanvasElement) {
             // Sanity check
             if (!canvas) {
                 throw ERR_NeedACanvas;
             }
+
+            // Private variables
+            var _gl: WebGLRenderingContext;
+            var _canvas: HTMLCanvasElement;
+            var _actions: WebGlActionMap;
             
             // Try to create a WebGL context
             var possibleContextNames            = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
@@ -78,164 +79,196 @@ module TameGame {
             if (!context) {
                 throw ERR_WebGlNotAvailable;
             }
+
+            // Declare the functions for this object
+            
+            /**
+             * Returns the GL context for this renderer
+             */
+            function getGl() { return _gl; }
+            
+            /**
+             * Compiles a shader from source
+             */
+            function compileShader(type: number, source: string): WebGLShader {
+                var gl      = _gl;
+                
+                // Create a new shader
+                var shader  = gl.createShader(type);
+                if (!shader) {
+                    console.error('Failed to create shader');
+                    throw ERR_CantCreateShader;
+                }
+                
+                // Supply the source
+                gl.shaderSource(shader, source);
+                
+                // Compile it and check for errors
+                gl.compileShader(shader);
+                
+                var compiledOk = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+                if (!compiledOk) {
+                    gl.deleteShader(shader);
+                    
+                    var error = gl.getShaderInfoLog(shader);
+                    console.error('Failed to compile shader: ', error);
+                    throw ERR_CantCompileShader;
+                }
+                
+                return shader;
+            }
+            
+            /**
+             * Compilers a shader program
+             */
+            function compileShaderProgram(vertexSource: string, fragmentSource: string): WebGLProgram {
+                var gl              = _gl;
+                
+                // Compile the shaders
+                var vertexShader    = compileShader(gl.VERTEX_SHADER, vertexSource);
+                var fragmentShader  = compileShader(gl.FRAGMENT_SHADER, fragmentSource);
+                
+                // Create a program
+                var program = gl.createProgram();
+                if (!program) {
+                    console.error('Failed to create shader program');
+                    throw ERR_CantCreateShaderProgram;
+                }
+                
+                // Attach the shaders
+                gl.attachShader(program, vertexShader);
+                gl.attachShader(program, fragmentShader);
+                
+                gl.linkProgram(program);
+                
+                // Check for errors
+                var linkedOk = gl.getProgramParameter(program, gl.LINK_STATUS);
+                if (!linkedOk) {
+                    gl.deleteShader(vertexShader);
+                    gl.deleteShader(fragmentShader);
+                    gl.deleteProgram(program);
+                    
+                    var error = gl.getProgramInfoLog(program);
+                    console.error('Failed to link shader: ', error);
+                    throw ERR_CantLinkShaderProgram;
+                }
+                
+                return program;
+            }
+            
+            /**
+             * Sets the camera position
+             */
+            var setCamera = (cameraId: number, centerX: number, centerY: number, height: number, rotationDegrees: number) => {
+                // Compute the width to use for the camera transform
+                var canvasWidth     = _canvas.width;
+                var canvasHeight    = _canvas.height;
+                var canvasRatio     = canvasWidth / canvasHeight;
+                
+                var width           = height * canvasRatio;
+                
+                // Generate rotation
+                var rotationRadians = rotationDegrees * Math.PI / 180.0;
+                var cosT = Math.cos(rotationRadians);
+                var sinT = Math.sin(rotationRadians);
+                
+                // Generate the matrix
+                var x = 2.0/width;
+                var y = 2.0/height;
+                var u = centerX;
+                var v = centerY;
+                
+                var newMatrix = new Float32Array([
+                    cosT*x,             sinT*y,                 0,  0,
+                    -sinT*x,            cosT*y,                 0,  0,
+                    0,                  0,                      1,  0,
+                    sinT*v*x-cosT*u*x,  -sinT*u*y-cosT*v*y,     0,  1]);
+                
+                // This becomes the new camera matrix
+                this.cameraMatrix[cameraId] = newMatrix;
+            };
+
+            /**
+             * Renders a queue and performs an optional callback once finished
+             */
+            var performRender = (queue: RenderQueue): Promise<void> => {
+                return new Promise<void>((resolve, reject) => {
+                    // Clear the screen
+                    var gl      = _gl;
+                    var actions = _actions;
+
+                    // Default background colour is an bluish off-white
+                    gl.clearColor(0.95,0.98,1,1);
+                    gl.clear(gl.COLOR_BUFFER_BIT);
+
+                    // Set up the initial camera
+                    setCamera(0, 0, 0, 2.0, 0);
+
+                    // Render the queue
+                    queue.render((item) => {
+                        var action = actions[item.action];
+                        if (action) {
+                            // Perform the action
+                            action(item);
+                        } else {
+                            // Notify the user there's a problem. Replace the action with a default one so we only notify once
+                            console.error("Unknown render queue action: " + item.action);
+                            actions[item.action] = () => {};
+                        }
+                    });
+
+                    // Signal 'done'
+                    resolve();
+                });
+            };
             
             // Ready to go
-            this._gl            = context;
-            this._canvas        = canvas;
-            this.sprites        = new WebGlSpriteManager(this._gl);
-            this.cameraMatrix   = {};
-            
+            _gl                         = context;
+            _canvas                     = canvas;
+            this.cameraMatrix           = {};
+            this.getGl                  = getGl;
+            this.compileShader          = compileShader;
+            this.compileShaderProgram   = compileShaderProgram;
+            this.setCamera              = setCamera;
+            this.performRender          = performRender;
+            this.sprites                = new WebGlSpriteManager(_gl);
+
             // Initialise the actions
-            this._actions   = {};
+            _actions   = {};
             Object.keys(webGlRenderAction).forEach((actionName) => {
-                this._actions[actionName] = webGlRenderAction[actionName](this);
+                _actions[actionName] = webGlRenderAction[actionName](this);
             });
         }
         
         /**
          * Returns the GL context for this renderer
          */
-        getGl() { return this._gl; }
+        getGl: () => WebGLRenderingContext;
         
         /**
-         * The camera transformation matrix
+         * Maps camera IDs to the corresponding transformation matrix
          */
         cameraMatrix: { [cameraId: number]: Float32Array };
         
         /**
          * Compiles a shader from source
          */
-        compileShader(type: number, source: string): WebGLShader {
-            var gl      = this._gl;
-            
-            // Create a new shader
-            var shader  = gl.createShader(type);
-            if (!shader) {
-                console.error('Failed to create shader');
-                throw ERR_CantCreateShader;
-            }
-            
-            // Supply the source
-            gl.shaderSource(shader, source);
-            
-            // Compile it and check for errors
-            gl.compileShader(shader);
-            
-            var compiledOk = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
-            if (!compiledOk) {
-                gl.deleteShader(shader);
-                
-                var error = gl.getShaderInfoLog(shader);
-                console.error('Failed to compile shader: ', error);
-                throw ERR_CantCompileShader;
-            }
-            
-            return shader;
-        }
+        compileShader: (type: number, source: string) => WebGLShader;
         
         /**
          * Compilers a shader program
          */
-        compileShaderProgram(vertexSource: string, fragmentSource: string): WebGLProgram {
-            var gl              = this._gl;
-            
-            // Compile the shaders
-            var vertexShader    = this.compileShader(gl.VERTEX_SHADER, vertexSource);
-            var fragmentShader  = this.compileShader(gl.FRAGMENT_SHADER, fragmentSource);
-            
-            // Create a program
-            var program = gl.createProgram();
-            if (!program) {
-                console.error('Failed to create shader program');
-                throw ERR_CantCreateShaderProgram;
-            }
-            
-            // Attach the shaders
-            gl.attachShader(program, vertexShader);
-            gl.attachShader(program, fragmentShader);
-            
-            gl.linkProgram(program);
-            
-            // Check for errors
-            var linkedOk = gl.getProgramParameter(program, gl.LINK_STATUS);
-            if (!linkedOk) {
-                gl.deleteShader(vertexShader);
-                gl.deleteShader(fragmentShader);
-                gl.deleteProgram(program);
-                
-                var error = gl.getProgramInfoLog(program);
-                console.error('Failed to link shader: ', error);
-                throw ERR_CantLinkShaderProgram;
-            }
-            
-            return program;
-        }
+        compileShaderProgram: (vertexSource: string, fragmentSource: string) => WebGLProgram;
         
         /**
          * Sets the camera position
          */
-        setCamera(cameraId: number, centerX: number, centerY: number, height: number, rotationDegrees: number): void {
-            // Compute the width to use for the camera transform
-            var canvasWidth     = this._canvas.width;
-            var canvasHeight    = this._canvas.height;
-            var canvasRatio     = canvasWidth / canvasHeight;
-            
-            var width           = height * canvasRatio;
-            
-            // Generate rotation
-            var rotationRadians = rotationDegrees * Math.PI / 180.0;
-            var cosT = Math.cos(rotationRadians);
-            var sinT = Math.sin(rotationRadians);
-            
-            // Generate the matrix
-            var x = 2.0/width;
-            var y = 2.0/height;
-            var u = centerX;
-            var v = centerY;
-            
-            var newMatrix = new Float32Array([
-                cosT*x,             sinT*y,                 0,  0,
-                -sinT*x,            cosT*y,                 0,  0,
-                0,                  0,                      1,  0,
-                sinT*v*x-cosT*u*x,  -sinT*u*y-cosT*v*y,     0,  1]);
-            
-            // This becomes the new camera matrix
-            this.cameraMatrix[cameraId] = newMatrix;
-        }
+        setCamera: (cameraId: number, centerX: number, centerY: number, height: number, rotationDegrees: number) => void;
 
         /**
          * Renders a queue and performs an optional callback once finished
          */
-        performRender(queue: RenderQueue) : Promise<void> {
-            return new Promise<void>((resolve, reject) => {
-                // Clear the screen
-                var gl = this._gl;
-                var actions = this._actions;
-
-                // Default background colour is an bluish off-white
-                gl.clearColor(0.95,0.98,1,1);
-                gl.clear(gl.COLOR_BUFFER_BIT);
-
-                // Set up the initial camera
-                this.setCamera(0, 0, 0, 2.0, 0);
-
-                // Render the queue
-                queue.render((item) => {
-                    var action = actions[item.action];
-                    if (action) {
-                        // Perform the action
-                        action(item);
-                    } else {
-                        // Notify the user there's a problem. Replace the action with a default one so we only notify once
-                        console.error("Unknown render queue action: " + item.action);
-                        actions[item.action] = () => {};
-                    }
-                });
-
-                // Signal 'done'
-                resolve();
-            });
-        }
+        performRender: (queue: RenderQueue) => Promise<void>;
         
         /**
          * The sprite asset manager for this object
