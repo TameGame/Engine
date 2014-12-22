@@ -72,11 +72,13 @@ module TameGame {
             
             // Set up for keyboard input
             var detachKeyboardInput = attachKeyboardInput(canvas, gameWorker);
+            var detachMouseInput    = attachMouseInput(canvas, gameWorker);
             
             // Create a way to cancel/stop the game: this is the value that we return
             var result: Cancellable = {
                 cancel: () => {
                     detachKeyboardInput.cancel();
+                    detachMouseInput.cancel();
                     gameWorker.terminate();
                 }
             };
