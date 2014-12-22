@@ -19,6 +19,14 @@ module TameGame {
             down: [ { device: controlDevice.keyboard, control: keyControl.arrowdown } ],
             left: [ { device: controlDevice.keyboard, control: keyControl.arrowleft } ],
             right: [ { device: controlDevice.keyboard, control: keyControl.arrowright } ],
+        },
+
+        /** The mouse control layout: makes it possible to track the pointer and respond to clicks */
+        mouse: {
+            point: [ { device: controlDevice.mouse, control: mouseControl.pointer }],
+            click: [ { device: controlDevice.mouse, control: mouseControl.button1 }],
+            rightclick: [ { device: controlDevice.mouse, control: mouseControl.button3 } ],
+            middleclick: [ { device: controlDevice.mouse, control: mouseControl.button3 } ]
         }
     };
 }
