@@ -19,6 +19,58 @@ QUnit.test("MapControlBindingsThroughDefaultRouter", function (assert) {
     assert.ok(routedTo === 'testAction', 'ControlMapsToAction');
 });
 
+QUnit.test("BindTwice", function (assert) {
+    // As before, but bound the same control twice (eg, because it needs to multiple things in different scenes)
+    var defaultRouter = new TameGame.DefaultControlRouter();
+    defaultRouter.addControlBinding({ testAction: [ { device: 'test', control: 'someControl' } ] });
+    defaultRouter.addControlBinding({ testAction: [ { device: 'test', control: 'someControl' } ] });
+
+    // Routing that control should go to the test action
+    var routedTo = defaultRouter.actionForInput({ device: 'test', control: 'someControl' });
+    assert.ok(routedTo === 'testAction', 'ControlMapsToAction');
+});
+
+
+QUnit.test("BindTwiceCancelFirst", function (assert) {
+    // Bind twice, but cancel one binding
+    var defaultRouter = new TameGame.DefaultControlRouter();
+    var first = defaultRouter.addControlBinding({ testAction: [ { device: 'test', control: 'someControl' } ] });
+    var second = defaultRouter.addControlBinding({ testAction: [ { device: 'test', control: 'someControl' } ] });
+
+    first.cancel();
+
+    // Routing that control should go to the test action
+    var routedTo = defaultRouter.actionForInput({ device: 'test', control: 'someControl' });
+    assert.ok(routedTo === 'testAction', 'ControlMapsToAction');
+});
+
+QUnit.test("BindTwiceCancelSecond", function (assert) {
+    // Bind twice, but cancel one binding
+    var defaultRouter = new TameGame.DefaultControlRouter();
+    var first = defaultRouter.addControlBinding({ testAction: [ { device: 'test', control: 'someControl' } ] });
+    var second = defaultRouter.addControlBinding({ testAction: [ { device: 'test', control: 'someControl' } ] });
+
+    second.cancel();
+
+    // Routing that control should go to the test action
+    var routedTo = defaultRouter.actionForInput({ device: 'test', control: 'someControl' });
+    assert.ok(routedTo === 'testAction', 'ControlMapsToAction');
+});
+
+QUnit.test("BindTwiceCancelBoth", function (assert) {
+    // Bind twice, but cancel everything
+    var defaultRouter = new TameGame.DefaultControlRouter();
+    var first = defaultRouter.addControlBinding({ testAction: [ { device: 'test', control: 'someControl' } ] });
+    var second = defaultRouter.addControlBinding({ testAction: [ { device: 'test', control: 'someControl' } ] });
+
+    first.cancel();
+    second.cancel();
+
+    // Routing that control should go to the test action
+    var routedTo = defaultRouter.actionForInput({ device: 'test', control: 'someControl' });
+    assert.ok(routedTo === null, 'ControlMapsToAction');
+});
+
 QUnit.test("MapMultipleActions", function (assert) {
     // Simple router with a single control in it
     var defaultRouter = new TameGame.DefaultControlRouter();
