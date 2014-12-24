@@ -20,7 +20,7 @@ module TameGame {
      * Callback representing an event
      */
     export interface Event<TParameterType> {
-        (param: TParameterType, millseconds: number): void;
+        (param: TParameterType, milliseconds: number): void;
     }
     
     /**
