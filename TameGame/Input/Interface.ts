@@ -70,7 +70,7 @@ module TameGame {
          * For controls that represent a pointer (eg, the mouse or the touch controls) this
          * will be the location of the control.
          */
-        location?: number[];
+        location?: Point2D;
     }
 
     /**

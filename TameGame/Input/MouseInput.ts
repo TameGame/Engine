@@ -24,7 +24,7 @@ module TameGame {
                         device:     controlDevice.mouse,
                         control:    control,
                         pressure:   pressure,
-                        location:   location,
+                        location:   { x: location[0], y: location[1] },
                         when:       perf.now()
                     }
                 }
