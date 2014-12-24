@@ -118,7 +118,9 @@ module TameGame {
         return { x: p.x * factor, y: p.y * factor };
     }
     
-    /** Converts a vector to a unit-length vector */
+    /**
+     * Converts a vector to a unit-length vector 
+     */
     export function unit(p1: Point2D): Point2D {
         var length = Math.sqrt(p1.x*p1.x + p1.y*p1.y);
         if (length === 0) return p1;
@@ -136,7 +138,9 @@ module TameGame {
         };
     }
     
-    /** Multiplies two matrices */
+    /** 
+     * Multiplies two matrices 
+     */
     export function multiplyMatrix(a: Float32Array, b: Float32Array) {
         return new Float32Array([
             a[0]*b[0]+a[1]*b[3]+a[2]*b[6], a[0]*b[1]+a[1]*b[4]+a[2]*b[7], a[0]*b[2]+a[1]*b[5]+a[2]*b[8],
@@ -145,7 +149,9 @@ module TameGame {
         ]);
     }
     
-    /** Transforms a quad with a matrix */
+    /** 
+     * Transforms a quad with a matrix 
+     */
     export function transformQuad(matrix: Float32Array, quad: Quad): Quad {
         var p1 = transform(matrix, { x: quad.x1, y: quad.y1 });
         var p2 = transform(matrix, { x: quad.x2, y: quad.y2 });
@@ -160,17 +166,23 @@ module TameGame {
         };
     }
     
-    /** Creates the identity matrix */
+    /** 
+     * Creates the identity matrix 
+     */
     export function identityMatrix(): Float32Array {
         return new Float32Array([1,0,0, 0,1,0, 0,0,1]);
     }
     
-    /** Creates a translation matrix */
+    /**
+     * Creates a translation matrix 
+     */
     export function translateMatrix(distance: Point2D): Float32Array {
         return new Float32Array([1,0,distance.x, 0,1,distance.y, 0,0,1]);
     }
     
-    /** Creates a rotation matrix */
+    /** 
+     * Creates a rotation matrix 
+     */
     export function rotationMatrix(angleDegrees: number): Float32Array {
         var angleRadians = angleDegrees * Math.PI / 180.0;
         var cosT = Math.cos(angleRadians);

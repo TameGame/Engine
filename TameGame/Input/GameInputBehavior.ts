@@ -2,6 +2,7 @@
 /// <reference path="../Core/Interface.ts" />
 /// <reference path="DefaultControlRouter.ts" />
 /// <reference path="DefaultControlEvents.ts" />
+/// <reference path="SceneInputBehavior.ts" />
 
 module TameGame {
     // Extensions to the game interface to support input
@@ -26,7 +27,10 @@ module TameGame {
         game.controlRouter = new DefaultControlRouter();
         game.controlEvents = new DefaultControlEvents(game.controlRouter.actionForInput);
 
-        // When the worker sends control events, update the list of controls
+        // Register the scene input behavior as well
+        sceneInputBehavior(game);
+
+        // When th  worker sends control events, update the list of controls
         dispatcher.onMessage(workerMessages.inputControl, (msg) => {
             var input: ControlInput = msg.data.input;
 
@@ -43,8 +47,15 @@ module TameGame {
             var allInput: ControlInput[] = [];
             forEachControlMap(activeControls, (control, input) => allInput.push(input));
 
-            // Dispatch the input
+            // Dispatch the input to the game events object
             game.controlEvents.tickInputs(allInput, time);
+
+            // Also dispatch the input to all the active scenes
+            game.forAllActiveScenes((scene) => {
+                if (scene.controlEvents && scene.controlEvents.tickInputs) {
+                    scene.controlEvents.tickInputs(allInput, time);
+                }
+            });
         });
      }
 }
