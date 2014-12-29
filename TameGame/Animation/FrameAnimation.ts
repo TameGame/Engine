@@ -32,9 +32,11 @@ module TameGame {
             // Updates the various action functions
             var onTransition = (action: AnimationAction) => {
                 transitionFns.push(action);
+                return this;
             }
             var onFinish = (action: AnimationAction) => {
                 finishFns.push(action);
+                return this;
             }
 
             // Calls the various action functions
@@ -117,12 +119,12 @@ module TameGame {
         /**
          * Performs an action when this animation reaches its transition point (the point at which it can be replaced by another animation)
          */
-        onTransition: (action: AnimationAction) => void;
+        onTransition: (action: AnimationAction) => Animation;
 
         /**
          * Performs an action after this animation has finished
          */
-        onFinish: (action: AnimationAction) => void;
+        onFinish: (action: AnimationAction) => Animation;
 
         /**
          * If this is a repeating animation, runs until the final frame and then stops
