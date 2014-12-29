@@ -29,6 +29,9 @@ module TameGame {
             var start = (milliseconds: number) => {
                 startTime = milliseconds;
                 lastTime = milliseconds;
+
+                // Can only start an animation once
+                this.start = () => {};
             };
 
             // Updates the various action functions

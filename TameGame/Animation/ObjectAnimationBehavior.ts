@@ -40,10 +40,19 @@ module TameGame {
      * Attaches the standard animated object behavior to a game object
      */
     export function objectAnimationBehavior(game: Game) {
+        // Keep track of time
+        var started: boolean = false;
+        var currentTick: number = -1;
+        game.events.onPassStart(UpdatePass.Preparation, (pass, milliseconds) => {
+            started     = true;
+            currentTick = milliseconds;
+        });
+
         // When an object is created, add the animation functions to it
         game.events.onCreateObject((obj) => {
             // The animations attached to this object
             var animations: AnimationMap = {};
+            var animate: ObjectAnimation;
 
             // Ticks the animations for an object
             var tickAnimations = (milliseconds: number) => {
@@ -73,15 +82,29 @@ module TameGame {
 
                 // Objects with animations become alive
                 obj.aliveStatus.isAlive = true;
+
+                // If no ticks have passed, the animation must start itself
+                if (started) {
+                    // Start the animation on the current tick
+                    animation.start(currentTick);
+                }
             }
 
-            var animate = {
+            // Store the object values
+            animate = {
                 addAnimation:   addAnimation,
                 getAnimation:   getAnimation,
                 tickAnimations: tickAnimations
             }
 
             obj.animate = animate;
+        });
+
+        // Scenes should run any animations that objects have whenever they are live
+        game.events.onCreateScene((scene) => {
+            scene.events.onTick(UpdatePass.Animations, (tick, time) => {
+                tick.liveObjects.forEach(obj => obj.animate.tickAnimations(time));
+            });
         });
     }
 }
