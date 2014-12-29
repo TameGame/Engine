@@ -2,6 +2,7 @@
 /// <reference path="Sprite/Sprite.ts" />
 /// <reference path="Physics/Physics.ts" />
 /// <reference path="Input/Input.ts" />
+/// <reference path="Animation/Animation.ts" />
 
 module TameGame {
     //
@@ -19,6 +20,9 @@ module TameGame {
         
         // Allow objects and scenes to have 'live' behavior
         'tLiveObjects': liveObjectBehavior,
+
+        // Allows animations to be attached to objects
+        'tObjectAnimation': objectAnimationBehavior,
     
         // Objects that have Motion should become alive and move
         'tSimpleMotion': simpleMotionBehavior,

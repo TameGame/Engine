@@ -4,10 +4,10 @@ module TameGame {
         (progress: number, milliseconds: number): void;
     }
 
+    /** Function definition representing an action that updates the animation frame */
     export interface FrameAction<TFrameData> {
         (frame: TFrameData, progress: number, milliseconds: number): void;
     }
-
 
     /**
      * Basic properties that can be used to describe an animation
