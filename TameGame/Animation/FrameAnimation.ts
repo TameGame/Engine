@@ -110,6 +110,7 @@ module TameGame {
 
                 // Call the frame callback
                 if (lastFrame !== frameNum) {
+                    lastFrame = frameNum;
                     callFrame(frames[frameNum], milliseconds, progress);
                 }
             };
