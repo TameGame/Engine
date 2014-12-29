@@ -9,6 +9,11 @@ module TameGame {
         (frame: TFrameData, progress: number, milliseconds: number): void;
     }
 
+    /** Definition of an easing function (maps a linear progress value to an eased value) */
+    export interface EasingFunction {
+        (progress: number): number;
+    }
+
     /**
      * Basic properties that can be used to describe an animation
      *
@@ -20,6 +25,9 @@ module TameGame {
 
         /** Set to true if this animation should run repeatedly until finish() is called */
         repeat?: boolean;
+
+        /** The easing function to use for this animation */
+        easing?: EasingFunction;
     }
 
     /**

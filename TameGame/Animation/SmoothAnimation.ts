@@ -28,7 +28,8 @@ module TameGame {
             properties = properties || {};
             properties = {
                 duration:   properties.duration || 1000.0,
-                repeat:     properties.repeat || false
+                repeat:     properties.repeat || false,
+                easing:     properties.easing || ((val) => val)
             };
 
             // Event registration functions
@@ -104,6 +105,9 @@ module TameGame {
                 if (progress > 1.0) {
                     progress = 1.0;
                 }
+
+                // Apply the easing function
+                progress = properties.easing(progress);
 
                 // Store the last position (used if finish() is called)
                 lastTime        = milliseconds;

@@ -30,8 +30,9 @@ module TameGame {
             // Fill in missing properties (and create a new properties object to replace the original)
             properties = properties || {};
             properties = {
-                duration: properties.duration || 1000.0,
-                repeat: properties.repeat || false
+                duration:   properties.duration || 1000.0,
+                repeat:     properties.repeat || false,
+                easing:     properties.easing || ((val) => val)
             };
 
             // Specifies the start time for this animation
@@ -119,6 +120,9 @@ module TameGame {
                 if (progress > 0.999) {
                     progress = 0.999;
                 }
+
+                // Apply the easing function
+                progress = properties.easing(progress);
 
                 // Work out which frame we're on
                 var frameNum = Math.floor(frames.length * progress);
