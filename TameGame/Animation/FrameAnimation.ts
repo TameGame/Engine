@@ -63,6 +63,11 @@ module TameGame {
                     return;
                 }
 
+                // Do not do any animation before the start time is hit
+                if (milliseconds < startTime) {
+                    return;
+                }
+
                 var endTime     = startTime + properties.duration;
 
                 if (milliseconds >= endTime) {
