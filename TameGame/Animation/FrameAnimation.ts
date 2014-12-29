@@ -80,6 +80,7 @@ module TameGame {
                     } else {
                         // Animation finished
                         finished = true;
+                        callTransitions(1.0, endTime);
                         callFinish(1.0, endTime);
                     }
                 }
