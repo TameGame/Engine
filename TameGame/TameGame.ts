@@ -6,5 +6,6 @@
 /// <reference path="Physics/Physics.ts"/>
 /// <reference path="Assets/Assets.ts"/>
 /// <reference path="Sprite/Sprite.ts"/>
+/// <reference path="Animation/Animation.ts" />
 /// <reference path="WebGlRenderer/WebGlRenderer.ts"/>
 /// <reference path="DefaultBehavior.ts"/>
