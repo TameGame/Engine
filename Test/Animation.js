@@ -113,3 +113,34 @@ QUnit.test("AnimationRepeatsFrames", function(assert) {
     animation.tick(initialTime + 2251.0);
     assert.ok(finished === 1, "FinishesWhenRequested");
 });
+
+QUnit.test("FrameAnimationCanSelfStart", function(assert) {
+    // Create a 1s frame-based animation
+    var animation = new TameGame.FrameAnimation([ "first", "second", "third", "fourth" ], { duration: 1000.0, repeat: false });
+
+    var initialTime     = 1234.0;               // Some millisecond time when the animation is supposed to start
+    var currentFrame    = "none";
+    var finished        = 0;
+    var transitioned    = 0;
+
+    // Set up the animation to update the parameters when it ticks
+    animation.onFrame(function (frame) { currentFrame = frame; }).onFinish(function () { ++finished; }).onTransition(function() { ++transitioned; });
+
+    assert.ok(currentFrame === "none", "FrameNotUpdatedAtStart")
+
+    // Tick to the initial time
+    animation.tick(initialTime);
+    assert.ok(finished === 0, "InitialNotFinished");
+    assert.ok(currentFrame === "first", "StartOnFirstFrame");
+
+    animation.tick(initialTime + 750.0);
+    assert.ok(currentFrame === "fourth", "FourthFrameAt750ms");
+
+    animation.tick(initialTime + 1000.0);
+    assert.ok(finished === 1, "FinishesAt1000ms");
+    assert.ok(transitioned === 1, "FinishIsATransition");
+
+    currentFrame = "notUpdated";
+    animation.tick(initialTime + 1125.0);
+    assert.ok(currentFrame === "notUpdated", "DoesNotUpdateAfterFinish");
+});
