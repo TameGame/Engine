@@ -113,6 +113,7 @@ module TameGame {
             this.tick           = tick;
             this.onTransition   = onTransition;
             this.onFinish       = onFinish;
+            this.onFrame        = onFrame;
             this.finish         = finish;
         }
 
