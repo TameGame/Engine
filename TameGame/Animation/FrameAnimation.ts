@@ -4,14 +4,16 @@ module TameGame {
     /**
      * Basic implementation of a frame-based animation function
      */
-    export class FrameAnimation<TFrameData> implements Animation {
+    export class FrameAnimation<TFrameData> implements AnimationWithCallback<TFrameData> {
         constructor(frames: TFrameData[], properties?: AnimationProperties) {
             var startTime: number                   = 0;
             var finishFns: AnimationAction[]        = [];
             var transitionFns: AnimationAction[]    = [];
+            var frameFns: FrameAction<TFrameData>[] = [];
             var finished: boolean                   = false;
             var lastTime: number                    = 0;
             var lastProgress: number                = 0;
+            var lastFrame: number                   = -1;
 
             // Copying the frames array ensures that nothing external can modify it underneath us
             frames = frames.slice(0);
@@ -38,10 +40,15 @@ module TameGame {
                 finishFns.push(action);
                 return this;
             }
+            var onFrame = (action: FrameAction<TFrameData>) => {
+                frameFns.push(action);
+                return this;
+            }
 
             // Calls the various action functions
             var callTransitions = (progress, timeMillis) => transitionFns.forEach((transition) => transition(progress, timeMillis));
             var callFinish      = (progress, timeMillis) => finishFns.forEach((finish) => finish(progress, timeMillis));
+            var callFrame       = (frame, progress, timeMillis) => frameFns.forEach((frameFn) => frameFn(frame, progress, timeMillis));
 
             // Aborts the animation early
             var finish  = () => {
@@ -95,7 +102,10 @@ module TameGame {
                 // Work out which frame we're on
                 var frameNum = Math.floor(frames.length * progress);
 
-                // TODO: call the frame callback
+                // Call the frame callback
+                if (lastFrame !== frameNum) {
+                    callFrame(frames[frameNum], milliseconds, progress);
+                }
             };
 
             // Store the functions for this object
@@ -119,16 +129,21 @@ module TameGame {
         /**
          * Performs an action when this animation reaches its transition point (the point at which it can be replaced by another animation)
          */
-        onTransition: (action: AnimationAction) => Animation;
+        onTransition: (action: AnimationAction) => AnimationWithCallback<TFrameData>;
 
         /**
          * Performs an action after this animation has finished
          */
-        onFinish: (action: AnimationAction) => Animation;
+        onFinish: (action: AnimationAction) => AnimationWithCallback<TFrameData>;
 
         /**
          * If this is a repeating animation, runs until the final frame and then stops
          */
         finish: () => void;
+
+        /** 
+         * Specifies a callback to be made whenever it's time to generate a new animation frame
+         */
+        onFrame: (action: FrameAction<TFrameData>) => AnimationWithCallback<TFrameData>;
     }
 }

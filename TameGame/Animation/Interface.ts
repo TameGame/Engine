@@ -4,6 +4,10 @@ module TameGame {
         (progress: number, milliseconds: number): void;
     }
 
+    export interface FrameAction<TFrameData> {
+        (frame: TFrameData, progress: number, milliseconds: number): void;
+    }
+
 
     /**
      * Basic properties that can be used to describe an animation
@@ -46,5 +50,25 @@ module TameGame {
          * If this is a repeating animation, runs until the final frame and then stops
          */
         finish(): void;
+    }
+
+    /** 
+     * Interface implemented by objects that can generate a callback every time a new animation frame is required
+     */
+    export interface AnimationWithCallback<TFrameData> extends Animation {
+        /**
+         * Performs an action when this animation reaches its transition point (the point at which it can be replaced by another animation)
+         */
+        onTransition(action: AnimationAction): AnimationWithCallback<TFrameData>;
+
+        /**
+         * Performs an action after this animation has finished
+         */
+        onFinish(action: AnimationAction): AnimationWithCallback<TFrameData>;
+
+        /** 
+         * Specifies a callback to be made whenever it's time to generate a new animation frame
+         */
+        onFrame(action: FrameAction<TFrameData>): AnimationWithCallback<TFrameData>;
     }
 }
