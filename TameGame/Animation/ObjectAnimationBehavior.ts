@@ -28,6 +28,9 @@ module TameGame {
     }
 
     export interface TameObject {
+        /**
+         * Contains ways to attach and run animations for this object
+         */
         animate?: ObjectAnimation;
     }
 
