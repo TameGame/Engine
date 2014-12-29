@@ -2,7 +2,10 @@
 /// <reference path="../Core/Core.ts" />
 
 module TameGame {
-    export interface TameObject {
+    /**
+     * Interface implemented by objects that can apply animations
+     */
+    export interface ObjectAnimation {
         /**
          * Registers an animation for this object
          *
@@ -22,6 +25,10 @@ module TameGame {
           * Causes all of the animations attached to this object to advance
           */
          tickAnimations?: (milliseconds: number) => void;
+    }
+
+    export interface TameObject {
+        animate?: ObjectAnimation;
     }
 
     /** Maps animation names to animation objects */
@@ -68,9 +75,13 @@ module TameGame {
                 obj.aliveStatus.isAlive = true;
             }
 
-            obj.addAnimation    = addAnimation;
-            obj.getAnimation    = getAnimation;
-            obj.tickAnimations  = tickAnimations;
+            var animate = {
+                addAnimation:   addAnimation,
+                getAnimation:   getAnimation,
+                tickAnimations: tickAnimations
+            }
+
+            obj.animate = animate;
         });
     }
 }
