@@ -18,6 +18,15 @@ module TameGame {
             // Copying the frames array ensures that nothing external can modify it underneath us
             frames = frames.slice(0);
 
+            // The functions we're about to declare
+            var tick:           (milliseconds: number) => void;
+            var startAndTick:   (milliseconds: number) => void;
+            var start:          (milliseconds: number) => void;
+            var onTransition:   (action: AnimationAction) => AnimationWithCallback<TFrameData>;
+            var onFinish:       (action: AnimationAction) => AnimationWithCallback<TFrameData>;
+            var onFrame:        (action: FrameAction<TFrameData>) => AnimationWithCallback<TFrameData>;
+            var finish:         () => void;
+
             // Fill in missing properties (and create a new properties object to replace the original)
             properties = properties || {};
             properties = {
@@ -26,24 +35,27 @@ module TameGame {
             };
 
             // Specifies the start time for this animation
-            var start = (milliseconds: number) => {
+            start = (milliseconds: number) => {
                 startTime = milliseconds;
                 lastTime = milliseconds;
 
                 // Can only start an animation once
-                this.start = () => {};
+                this.start  = () => {};
+
+                // Future animation ticks don't need to restart the animation
+                this.tick   = tick;
             };
 
             // Updates the various action functions
-            var onTransition = (action: AnimationAction) => {
+            onTransition = (action: AnimationAction) => {
                 transitionFns.push(action);
                 return this;
             }
-            var onFinish = (action: AnimationAction) => {
+            onFinish = (action: AnimationAction) => {
                 finishFns.push(action);
                 return this;
             }
-            var onFrame = (action: FrameAction<TFrameData>) => {
+            onFrame = (action: FrameAction<TFrameData>) => {
                 frameFns.push(action);
                 return this;
             }
@@ -54,13 +66,13 @@ module TameGame {
             var callFrame       = (frame, progress, timeMillis) => frameFns.forEach((frameFn) => frameFn(frame, progress, timeMillis));
 
             // Aborts the animation early
-            var finish  = () => {
+            finish = () => {
                 finished = true;
                 callFinish(lastTime, lastProgress);
             }
 
             // Performs a tick
-            var tick = (milliseconds: number) => {
+            tick = (milliseconds: number) => {
                 // Nothing to do if we're already finished
                 if (finished) {
                     return;
@@ -118,9 +130,15 @@ module TameGame {
                 }
             };
 
+            // Variant of the tick function used before the animation has started (starts it and then continues with the tick)
+            var startAndTick = (milliseconds: number) => {
+                start(milliseconds);
+                tick(milliseconds);
+            };
+
             // Store the functions for this object
             this.start          = start;
-            this.tick           = tick;
+            this.tick           = startAndTick;
             this.onTransition   = onTransition;
             this.onFinish       = onFinish;
             this.onFrame        = onFrame;
