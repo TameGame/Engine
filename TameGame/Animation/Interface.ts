@@ -4,6 +4,20 @@ module TameGame {
         (progress: number, milliseconds: number): void;
     }
 
+
+    /**
+     * Basic properties that can be used to describe an animation
+     *
+     * Most animation classes should support these properties
+     */
+    export interface AnimationProperties {
+        /** Length of time this animation should take (milliseconds) */
+        duration?: number;
+
+        /** Set to true if this animation should run repeatedly until finish() is called */
+        repeat?: boolean;
+    }
+
     /**
      * Interface implemented by objects representing an animation
      */
