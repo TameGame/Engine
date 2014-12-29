@@ -65,11 +65,11 @@ module TameGame {
 
                 var endTime     = startTime + properties.duration;
 
-                if (milliseconds > endTime) {
+                if (milliseconds >= endTime) {
                     // If repeating, then reset the animation to the beginning again
                     if (properties.repeat) {
                         // Transitions occur at frame 0
-                        while (milliseconds > endTime) {
+                        while (milliseconds >= endTime) {
                             // Update start/end time
                             startTime += properties.duration;
                             endTime = startTime + properties.duration;
