@@ -4,7 +4,7 @@ module TameGame {
     /**
      * Performs linear animation between two values
      */
-    export class LinearAnimation implements AnimationWithCallback<number> {
+    export class SmoothAnimation implements AnimationWithCallback<number> {
         constructor(from: number, to: number, properties: AnimationProperties) {
             // Various variables representing the state of this animation
             var startTime: number                   = 0;
