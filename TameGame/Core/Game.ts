@@ -70,6 +70,7 @@ module TameGame {
             var performRenderEvent  = createEvent<RenderQueue>();
             var newSceneEvent       = createEvent<Scene>();
             var createSceneEvent    = createEvent<Scene>();
+            var createObjectEvent   = createEvent<TameObject>();
             
             this.events = {
                 onPassStart:        passStartEvent.register,
@@ -77,7 +78,8 @@ module TameGame {
                 onRender:           renderEvent.register,
                 onPerformRender:    performRenderEvent.register,
                 onNewScene:         newSceneEvent.register,
-                onCreateScene:      createSceneEvent.register
+                onCreateScene:      createSceneEvent.register,
+                onCreateObject:     createObjectEvent.register
             };
             
             _firePassStart     = passStartEvent.fire;
@@ -109,6 +111,8 @@ module TameGame {
                 // Set up the watchable properties and behaviors
                 _behaviorManager.initObject(obj);
                 _propertyManager.initObject(obj);
+
+                createObjectEvent.fire(obj, _currentTime);
                 return obj;
             }
 
