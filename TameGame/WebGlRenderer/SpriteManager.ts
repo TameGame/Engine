@@ -155,12 +155,24 @@ module TameGame {
                 Object.keys(sheet).forEach((spriteName) => {
                     var sprite = sheet[spriteName];
                     var bounds = sprite.bounds;
-                    var spriteDefn: WebGlSprite = {
-                        texture: texture,
-                        coords: new Float32Array([  bounds.x, bounds.y, 
+
+                    var coords: Float32Array;
+
+                    if (!sprite.rotated) {
+                        coords = new Float32Array([ bounds.x, bounds.y, 
                                                     bounds.x+bounds.width, bounds.y,
                                                     bounds.x, bounds.y+bounds.height,
-                                                    bounds.x+bounds.width, bounds.y+bounds.height ])
+                                                    bounds.x+bounds.width, bounds.y+bounds.height ]);
+                    } else {
+                        coords = new Float32Array([ bounds.x+bounds.width, bounds.y,
+                                                    bounds.x+bounds.width, bounds.y+bounds.height,
+                                                    bounds.x, bounds.y, 
+                                                    bounds.x, bounds.y+bounds.height ]);
+                    }
+
+                    var spriteDefn: WebGlSprite = {
+                        texture:    texture,
+                        coords:     coords
                     };
                     
                     _spriteForId[sprite.id] = spriteDefn;
