@@ -45,12 +45,16 @@ module TameGame {
                     var frameDefn   = frames[frameName];
                     var frameBounds = frameDefn.frame;
                     
-                    var defn: SpriteDefinition = {
-                        bounds: {   x: frameBounds.x/imageWidth, 
+                    // Create the initial sprite definition
+                    var bounds = {  x: frameBounds.x/imageWidth, 
                                     y: frameBounds.y/imageHeight,
                                     width: frameBounds.w/imageWidth,
                                     height: frameBounds.h/imageHeight
-                                }
+                                };
+
+                    var defn: SpriteDefinition = {
+                        bounds: bounds,
+                        rotated: frameDefn.rotated || false
                     };
                 
                     spriteSheet[frameName] = defn;

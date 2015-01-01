@@ -18,7 +18,10 @@ module TameGame {
     export interface SpriteDefinition {
         /** The bounding box of the sprite on the source image, in pixels */
         bounds: BoundingBox;
-        
+
+        /** True if the sprite has been rotated by 90 degrees */
+        rotated: boolean;
+
         /**
          * The ID to assign to this sprite
          *

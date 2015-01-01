@@ -24,7 +24,7 @@ module TameGame {
                 var transformedPos      = transformQuad(obj.transformationMatrix, pos);
                 queue.drawSprite(assetId, cameraId, pos.zIndex, transformedPos);
             } else {
-                queue.drawSprite(assetId, cameraId, pos.zIndex,  pos);
+                queue.drawSprite(assetId, cameraId, pos.zIndex, pos);
             }
         }
     };
