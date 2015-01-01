@@ -1,4 +1,4 @@
-/// <reference path="../ThirdParty/DefinitelyTyped/es6-promise.d.ts"/>
+/// <reference path="../../ThirdParty/DefinitelyTyped/es6-promise.d.ts"/>
 /// <reference path="../RenderQueue/RenderTypes.ts" />
 
 module TameGame {
