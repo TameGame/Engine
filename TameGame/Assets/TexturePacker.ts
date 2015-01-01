@@ -55,14 +55,14 @@ module TameGame {
                                 };
                     var frame = {   x: (frameBounds.x - spriteSourceSize.x)/imageWidth,
                                     y: (frameBounds.y - spriteSourceSize.y)/imageHeight,
-                                    width: sourceSize.w,
-                                    height: sourceSize.h
+                                    width: sourceSize.w/imageWidth,
+                                    height: sourceSize.h/imageHeight
                                 };
 
                     var defn: SpriteDefinition = {
-                        bounds: bounds,
-                        frame: frame,
-                        rotated: frameDefn.rotated || false
+                        bounds:     bounds,
+                        frame:      frame,
+                        rotated:    frameDefn.rotated || false
                     };
                 
                     spriteSheet[frameName] = defn;

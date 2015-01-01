@@ -25,6 +25,9 @@ module TameGame {
         
         /** The coordinates within the texture for this sprite */
         coords: Float32Array;
+
+        /** Transformation matrix applied to the coordinates of this sprite (to take account of the frame) */
+        transform: Float32Array;
     }
     
     /**
@@ -157,7 +160,9 @@ module TameGame {
                     var bounds = sprite.bounds;
 
                     var coords: Float32Array;
+                    var transform: Float32Array;
 
+                    // Pick the standard or rotated coordinates depending on if the flag is set
                     if (!sprite.rotated) {
                         coords = new Float32Array([ bounds.x, bounds.y, 
                                                     bounds.x+bounds.width, bounds.y,
@@ -170,9 +175,21 @@ module TameGame {
                                                     bounds.x, bounds.y+bounds.height ]);
                     }
 
+                    // Generate a transformation matrix based on the 'frame' location of the sprite
+                    transform = new Float32Array([
+                        bounds.width/sprite.frame.width, 0,0,0,
+                        0, bounds.height/sprite.frame.height, 0,0,
+                        0,0,1,0,
+                        0,0,0,1
+                    ]);
+
+                    console.log(sprite.frame);
+
+                    // Generate the sprite definition
                     var spriteDefn: WebGlSprite = {
                         texture:    texture,
-                        coords:     coords
+                        coords:     coords,
+                        transform:  transform
                     };
                     
                     _spriteForId[sprite.id] = spriteDefn;
@@ -194,8 +211,9 @@ module TameGame {
                 
                 // Generate the sprite
                 var sprite: WebGlSprite = {
-                    texture: this.loadTexture(assetName),
-                    coords: new Float32Array([ 0,0, 1,0, 0,1, 1,1 ])
+                    texture:    this.loadTexture(assetName),
+                    coords:     new Float32Array([ 0,0, 1,0, 0,1, 1,1 ]),
+                    transform:  new Float32Array([ 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 ])
                 };
 
                 // Store it
