@@ -19,6 +19,13 @@ module TameGame {
         /** The bounding box of the sprite on the source image, in pixels */
         bounds: BoundingBox;
 
+        /** 
+         * Where the frame of the sprite would appear on the source image in pixels 
+         *
+         * Some sprites may be trimmed: when this happens, this will be larger than the bounding box
+         */
+        frame: BoundingBox;
+
         /** True if the sprite has been rotated by 90 degrees */
         rotated: boolean;
 

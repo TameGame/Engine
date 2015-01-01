@@ -42,8 +42,10 @@ module TameGame {
                 
                 // Fill with definitions; note that we use 0-1 for sprite coordinates so we need to do some translation
                 Object.keys(frames).forEach((frameName) => {
-                    var frameDefn   = frames[frameName];
-                    var frameBounds = frameDefn.frame;
+                    var frameDefn           = frames[frameName];
+                    var frameBounds         = frameDefn.frame;
+                    var spriteSourceSize    = frameDefn.spriteSourceSize;
+                    var sourceSize          = frameDefn.sourceSize;
                     
                     // Create the initial sprite definition
                     var bounds = {  x: frameBounds.x/imageWidth, 
@@ -51,9 +53,15 @@ module TameGame {
                                     width: frameBounds.w/imageWidth,
                                     height: frameBounds.h/imageHeight
                                 };
+                    var frame = {   x: (frameBounds.x - spriteSourceSize.x)/imageWidth,
+                                    y: (frameBounds.y - spriteSourceSize.y)/imageHeight,
+                                    width: sourceSize.w,
+                                    height: sourceSize.h
+                                };
 
                     var defn: SpriteDefinition = {
                         bounds: bounds,
+                        frame: frame,
                         rotated: frameDefn.rotated || false
                     };
                 
