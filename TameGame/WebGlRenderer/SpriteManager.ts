@@ -37,11 +37,13 @@ module TameGame {
             var _textureForUrl: { [name: string]: WebGLTexture };
             var _spriteForId: { [id: number]: WebGlSprite; }
             var _nextSpriteId: number;
+            var _spriteProperties: { [id: number]: SpriteProperties };
             
-            _gl            = gl;
-            _textureForUrl = {};
-            _spriteForId   = {};
-            _nextSpriteId  = 0;
+            _gl                 = gl;
+            _textureForUrl      = {};
+            _spriteForId        = {};
+            _nextSpriteId       = 0;
+            _spriteProperties   = {};
 
             // Set up the functions for this object
             
@@ -149,7 +151,7 @@ module TameGame {
                 });
                 
                 // Load the asset
-                var texture = this.loadTexture(assetName);
+                var texture = loadTexture(assetName);
                 
                 // Generate sprites
                 Object.keys(sheet).forEach((spriteName) => {
@@ -179,10 +181,13 @@ module TameGame {
                     };
                     
                     _spriteForId[sprite.id] = spriteDefn;
+
+                    // Create default properties
+                    _spriteProperties[sprite.id] = { margin: { top: 0, left: 0, right: 0, bottom: 0 } };
                 });
                 
                 return identifiers;
-            }
+            };
             
             /**
              * Loads an image file as a single sprite
@@ -197,23 +202,35 @@ module TameGame {
                 
                 // Generate the sprite
                 var sprite: WebGlSprite = {
-                    texture:    this.loadTexture(assetName),
+                    texture:    loadTexture(assetName),
                     coords:     new Float32Array([ 0,0, 1,0, 0,1, 1,1 ])
                 };
 
                 // Store it
                 _spriteForId[id] = sprite;
+
+                // Create default properties
+                _spriteProperties[id] = { margin: { top: 0, left: 0, right: 0, bottom: 0 } };
                 
                 // Result is the ID
                 return id;
-            }
+            };
 
             /**
              * Indicates an action that should be taken when all the assets that are currently loaded are available
              */
             var whenLoaded = (action: () => void): void => {
                 // TODO: implement me
-            }
+            };
+
+            /**
+             * Retrieves the properties for the sprite with the specified identifier
+             *
+             * Returns null if the sprite has not been loaded
+             */
+            var propertiesForSprite     = (id: number): SpriteProperties => {
+                return _spriteProperties[id] || null;
+            };
 
             // Store the functions
             this.getSpriteMap           = getSpriteMap;
@@ -222,6 +239,7 @@ module TameGame {
             this.loadSpriteSheet        = loadSpriteSheet;
             this.loadSprite             = loadSprite;
             this.whenLoaded             = whenLoaded;
+            this.propertiesForSprite    = propertiesForSprite;
         }
         
         /**
@@ -254,6 +272,13 @@ module TameGame {
          * Sprite assets usually come in the form of .png files
          */
         loadSprite: (assetName: string, id?: number) => number;
+
+        /**
+         * Retrieves the properties for the sprite with the specified identifier
+         *
+         * Returns null if the sprite has not been loaded
+         */
+        propertiesForSprite: (id: number) => SpriteProperties;
 
         /**
          * Indicates an action that should be taken when all the assets that are currently loaded are available

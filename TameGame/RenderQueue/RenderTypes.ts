@@ -31,6 +31,16 @@ module TameGame {
         /** Bottom-right coordinate */
         x4: number; y4: number;
     }
+
+    /**
+     * Interface representing a margin around a rectangular object
+     */
+    export interface Margin {
+        top: number;
+        left: number;
+        right: number;
+        bottom: number;
+    }
     
     /**
      * Returns true if the two bounding boxes overlap

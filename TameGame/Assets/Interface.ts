@@ -52,6 +52,14 @@ module TameGame {
     export interface SpriteIdentifiers {
         [name: string]: number;
     }
+
+    /**
+     * Describes properties for a loaded sprite 
+     */
+    export interface SpriteProperties {
+        /** The margin that should be drawn around this sprite */
+        margin: Margin;
+    }
     
     /**
      * The sprite manager handles loading sprite sheets and assigning IDs to them
@@ -70,6 +78,13 @@ module TameGame {
          * Sprite assets usually come in the form of .png files
          */
         loadSprite(assetName: string, id?: number): number;
+
+        /**
+         * Retrieves the properties for the sprite with the specified identifier
+         *
+         * Returns null if the sprite has not been loaded
+         */
+        propertiesForSprite(id: number): SpriteProperties;
     }
     
     /**
