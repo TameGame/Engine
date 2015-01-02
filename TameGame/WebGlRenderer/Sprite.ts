@@ -29,6 +29,7 @@ module TameGame {
         var spriteFragmentShaderSource =
             'varying highp vec2 vTexCoord;\n'                   +
             'uniform sampler2D sampler;\n'                      +
+            'uniform highp vec4 margin;\n'                      +
             ''                                                  +                                                
             'void main() {\n'                                   +
             '  gl_FragColor = texture2D(sampler, vTexCoord);\n' +
@@ -39,6 +40,7 @@ module TameGame {
         var texCoordAttr        = gl.getAttribLocation(spriteShader, 'texCoord');
         var transformationUni   = gl.getUniformLocation(spriteShader, 'transformation');
         var samplerUni          = gl.getUniformLocation(spriteShader, 'shader');
+        var marginUni           = gl.getUniformLocation(spriteShader, 'margin');
         
         var vertexArray         = new Float32Array(8);
         var vertexBuffer        = gl.createBuffer();
@@ -66,6 +68,7 @@ module TameGame {
             gl.activeTexture(gl.TEXTURE0);
             gl.bindTexture(gl.TEXTURE_2D, sprite.texture);
             gl.uniform1i(samplerUni, 0);
+            gl.uniform4fv(marginUni, sprite.margin);
             
             // Generate the vertices
             vertexArray[0] = item.floatValues[0];

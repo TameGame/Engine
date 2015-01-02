@@ -25,6 +25,9 @@ module TameGame {
         
         /** The coordinates within the texture for this sprite */
         coords: Float32Array;
+
+        /** The margin of transparent pixels that should surround this sprite (ordered: left, top, right, bottom) */
+        margin: Float32Array;
     }
     
     /**
@@ -157,6 +160,7 @@ module TameGame {
                 Object.keys(sheet).forEach((spriteName) => {
                     var sprite = sheet[spriteName];
                     var bounds = sprite.bounds;
+                    var margin = sprite.margin;
 
                     var coords: Float32Array;
                     var transform: Float32Array;
@@ -177,7 +181,8 @@ module TameGame {
                     // Generate the sprite definition
                     var spriteDefn: WebGlSprite = {
                         texture:    texture,
-                        coords:     coords
+                        coords:     coords,
+                        margin:     new Float32Array([ margin.left, margin.top, margin.right, margin.bottom ])
                     };
                     
                     _spriteForId[sprite.id] = spriteDefn;
@@ -203,7 +208,8 @@ module TameGame {
                 // Generate the sprite
                 var sprite: WebGlSprite = {
                     texture:    loadTexture(assetName),
-                    coords:     new Float32Array([ 0,0, 1,0, 0,1, 1,1 ])
+                    coords:     new Float32Array([ 0,0, 1,0, 0,1, 1,1 ]),
+                    margin:     new Float32Array([ 0,0,0,0 ])
                 };
 
                 // Store it
