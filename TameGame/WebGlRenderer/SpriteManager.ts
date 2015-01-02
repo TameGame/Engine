@@ -172,8 +172,6 @@ module TameGame {
                                                     bounds.x, bounds.y+bounds.height ]);
                     }
 
-                    console.log(sprite.frame);
-
                     // Generate the sprite definition
                     var spriteDefn: WebGlSprite = {
                         texture:    texture,
