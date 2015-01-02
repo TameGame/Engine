@@ -169,38 +169,29 @@ module TameGame {
                     var spriteMargin: Float32Array;
 
                     // The way the bounding box is calculated depends on whether or not we're rotated
-                    if (!sprite.rotated) {
-                        bounds = { 
-                            x: trimmedBounds.x - margin.left,
-                            y: trimmedBounds.y - margin.top,
-                            width: trimmedBounds.width + margin.left + margin.right,
-                            height: trimmedBounds.height + margin.top + margin.bottom
-                        };
-                    } else {
-                        bounds = { 
-                            x: trimmedBounds.x - margin.bottom,
-                            y: trimmedBounds.y - margin.left,
-                            width: trimmedBounds.width + margin.top + margin.bottom,
-                            height: trimmedBounds.height + margin.left + margin.right
-                        };
-                    }
+                    bounds = { 
+                        x: trimmedBounds.x - margin.left,
+                        y: trimmedBounds.y - margin.top,
+                        width: trimmedBounds.width + margin.left + margin.right,
+                        height: trimmedBounds.height + margin.top + margin.bottom
+                    };
 
                     // Pick the standard or rotated coordinates depending on if the flag is set
+                    // The bounds represent the area where the sprite would appear if it was not trimmed
+                    // The margin indicates the areas that should be trimmed away
                     if (!sprite.rotated) {
                         coords = new Float32Array([ bounds.x, bounds.y, 
                                                     bounds.x+bounds.width, bounds.y,
                                                     bounds.x, bounds.y+bounds.height,
                                                     bounds.x+bounds.width, bounds.y+bounds.height ]);
-
-                        spriteMargin = new Float32Array([ bounds.x+margin.left, bounds.y+margin.top, bounds.x+bounds.width-margin.right, bounds.y+bounds.height-margin.bottom ]);
                     } else {
                         coords = new Float32Array([ bounds.x+bounds.width, bounds.y,
                                                     bounds.x+bounds.width, bounds.y+bounds.height,
                                                     bounds.x, bounds.y, 
                                                     bounds.x, bounds.y+bounds.height ]);
-
-                        spriteMargin = new Float32Array([ bounds.x+margin.bottom, bounds.y+margin.left, bounds.x+bounds.width-margin.top, bounds.y+bounds.height-margin.right ]);
                     }
+
+                    spriteMargin = new Float32Array([ bounds.x+margin.left, bounds.y+margin.top, bounds.x+bounds.width-margin.right, bounds.y+bounds.height-margin.bottom ]);
 
                     // Generate the sprite definition
                     var spriteDefn: WebGlSprite = {

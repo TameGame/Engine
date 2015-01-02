@@ -53,12 +53,28 @@ module TameGame {
                                     width: frameBounds.w/imageWidth,
                                     height: frameBounds.h/imageHeight
                                 };
-                    var margin = {
-                        left:   spriteSourceSize.x/imageWidth,
-                        top:    spriteSourceSize.y/imageHeight,
-                        right:  (sourceSize.w-frameBounds.w-spriteSourceSize.x)/imageWidth,
-                        bottom: (sourceSize.h-frameBounds.h-spriteSourceSize.y)/imageHeight
-                    };
+                    var margin: Margin;
+
+                    if (!frameDefn.rotated) {
+                        margin = {
+                            left:   spriteSourceSize.x/imageWidth,
+                            top:    spriteSourceSize.y/imageHeight,
+                            right:  (sourceSize.w-frameBounds.w-spriteSourceSize.x)/imageWidth,
+                            bottom: (sourceSize.h-frameBounds.h-spriteSourceSize.y)/imageHeight
+                        };
+                    } else {
+                        // The frame bounds have the right x,y coordinates but reversed widths and heights (sigh)
+                        // The sprite source has reversed x and y coordinates too for bonus confusion
+                        bounds.width = frameBounds.h/imageWidth;
+                        bounds.height = frameBounds.w/imageHeight;
+
+                        margin = {
+                            right:   spriteSourceSize.y/imageWidth,
+                            top:    spriteSourceSize.x/imageHeight,
+                            left:  (sourceSize.h-frameBounds.h-spriteSourceSize.y)/imageWidth,
+                            bottom: (sourceSize.w-frameBounds.w-spriteSourceSize.x)/imageHeight
+                        };
+                    }
 
                     var defn: SpriteDefinition = {
                         bounds:     bounds,
