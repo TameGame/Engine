@@ -162,10 +162,11 @@ module TameGame {
                     var trimmedBounds   = sprite.bounds;
                     var margin          = sprite.margin;
 
+                    var bounds: BoundingBox;
+
                     var coords: Float32Array;
                     var transform: Float32Array;
-
-                    var bounds: BoundingBox;
+                    var spriteMargin: Float32Array;
 
                     // The way the bounding box is calculated depends on whether or not we're rotated
                     if (!sprite.rotated) {
@@ -190,18 +191,22 @@ module TameGame {
                                                     bounds.x+bounds.width, bounds.y,
                                                     bounds.x, bounds.y+bounds.height,
                                                     bounds.x+bounds.width, bounds.y+bounds.height ]);
+
+                        spriteMargin = new Float32Array([ bounds.x+margin.left, bounds.y+margin.top, bounds.x+bounds.width-margin.right, bounds.y+bounds.height-margin.bottom ]);
                     } else {
                         coords = new Float32Array([ bounds.x+bounds.width, bounds.y,
                                                     bounds.x+bounds.width, bounds.y+bounds.height,
                                                     bounds.x, bounds.y, 
                                                     bounds.x, bounds.y+bounds.height ]);
+
+                        spriteMargin = new Float32Array([ bounds.x+margin.bottom, bounds.y+margin.left, bounds.x+bounds.width-margin.top, bounds.y+bounds.height-margin.right ]);
                     }
 
                     // Generate the sprite definition
                     var spriteDefn: WebGlSprite = {
                         texture:    texture,
                         coords:     coords,
-                        margin:     new Float32Array([ margin.left, margin.top, margin.right, margin.bottom ])
+                        margin:     spriteMargin
                     };
                     
                     _spriteForId[sprite.id] = spriteDefn;
@@ -228,7 +233,7 @@ module TameGame {
                 var sprite: WebGlSprite = {
                     texture:    loadTexture(assetName),
                     coords:     new Float32Array([ 0,0, 1,0, 0,1, 1,1 ]),
-                    margin:     new Float32Array([ 0,0,0,0 ])
+                    margin:     new Float32Array([ 0,0,1,1 ])
                 };
 
                 // Store it

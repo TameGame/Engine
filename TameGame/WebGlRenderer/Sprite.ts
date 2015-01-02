@@ -32,8 +32,12 @@ module TameGame {
             'uniform highp vec4 margin;\n'                      +
             ''                                                  +                                                
             'void main() {\n'                                   +
-            '  gl_FragColor = texture2D(sampler, vTexCoord);\n' +
-            '}\n'                                           ;
+            '  if (vTexCoord.x < margin[0] || vTexCoord.y < margin[1] || vTexCoord.x > margin[2] || vTexCoord.y > margin[3]) {\n' +
+            '    gl_FragColor = vec4(0,0,0,0);\n'               +
+            '  } else {\n'                                      +
+            '    gl_FragColor = texture2D(sampler, vTexCoord);\n' +
+            '  }\n'                                             +
+            '}\n'                                               ;
         
         var spriteShader        = renderer.compileShaderProgram(spriteVertexShaderSource, spriteFragmentShaderSource);
         var positionAttr        = gl.getAttribLocation(spriteShader, 'position');
