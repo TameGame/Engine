@@ -24,7 +24,7 @@ module TameGame {
          *
          * Some sprites may be trimmed: when this happens, this will be larger than the bounding box
          */
-        frame: BoundingBox;
+        margin: Margin;
 
         /** True if the sprite has been rotated by 90 degrees */
         rotated: boolean;

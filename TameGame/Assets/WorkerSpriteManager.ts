@@ -8,8 +8,10 @@ module TameGame {
     export class WorkerSpriteManager implements SpriteManager {
         constructor() {
             var _nextSpriteId: number;
+            var _properties: { [id: number]: SpriteProperties };
 
-            _nextSpriteId = 0;
+            _nextSpriteId   = 0;
+            _properties     = {};
 
             /**
              * Indicates an action that should be taken when all the assets that are currently loaded are available
@@ -34,6 +36,9 @@ module TameGame {
                     }
                     
                     identifiers[spriteName] = sprite.id;
+
+                    // Store the properties for this sprite
+                    _properties[sprite.id] = { margin: sprite.margin };
                 });
                 
                 var msg: WorkerMessage = {
@@ -68,15 +73,27 @@ module TameGame {
                         id: id
                     }
                 };
+
+                _properties[id] = { margin: { left:0, right:0, top: 0, bottom: 0 } };
                 
                 postMessage(msg, undefined);            // 2nd argument is a hack around TypeScript's lack of knowledge of WebWorkers
                 
                 return id;
             }
 
-            this.whenLoaded         = whenLoaded;
-            this.loadSpriteSheet    = loadSpriteSheet;
-            this.loadSprite         = loadSprite;
+            /**
+             * Retrieves the properties for the sprite with the specified identifier
+             *
+             * Returns null if the sprite has not been loaded
+             */
+            var propertiesForSprite = (id: number): SpriteProperties => {
+                return _properties[id] || null;
+            };
+
+            this.whenLoaded             = whenLoaded;
+            this.loadSpriteSheet        = loadSpriteSheet;
+            this.loadSprite             = loadSprite;
+            this.propertiesForSprite    = propertiesForSprite;
         }
 
         /**

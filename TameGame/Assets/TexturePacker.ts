@@ -53,15 +53,16 @@ module TameGame {
                                     width: frameBounds.w/imageWidth,
                                     height: frameBounds.h/imageHeight
                                 };
-                    var frame = {   x: (frameBounds.x - spriteSourceSize.x)/imageWidth,
-                                    y: (frameBounds.y - spriteSourceSize.y)/imageHeight,
-                                    width: sourceSize.w/imageWidth,
-                                    height: sourceSize.h/imageHeight
-                                };
+                    var margin = {
+                        left:   spriteSourceSize.x/imageWidth,
+                        top:    spriteSourceSize.y/imageHeight,
+                        right:  (sourceSize.w-frameBounds.w-spriteSourceSize.x)/imageWidth,
+                        bottom: (sourceSize.h-frameBounds.h-spriteSourceSize.y)/imageHeight
+                    };
 
                     var defn: SpriteDefinition = {
                         bounds:     bounds,
-                        frame:      frame,
+                        margin:     margin,
                         rotated:    frameDefn.rotated || false
                     };
                 
