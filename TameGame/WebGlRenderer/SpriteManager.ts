@@ -158,12 +158,31 @@ module TameGame {
                 
                 // Generate sprites
                 Object.keys(sheet).forEach((spriteName) => {
-                    var sprite = sheet[spriteName];
-                    var bounds = sprite.bounds;
-                    var margin = sprite.margin;
+                    var sprite          = sheet[spriteName];
+                    var trimmedBounds   = sprite.bounds;
+                    var margin          = sprite.margin;
 
                     var coords: Float32Array;
                     var transform: Float32Array;
+
+                    var bounds: BoundingBox;
+
+                    // The way the bounding box is calculated depends on whether or not we're rotated
+                    if (!sprite.rotated) {
+                        bounds = { 
+                            x: trimmedBounds.x - margin.left,
+                            y: trimmedBounds.y - margin.top,
+                            width: trimmedBounds.width + margin.left + margin.right,
+                            height: trimmedBounds.height + margin.top + margin.bottom
+                        };
+                    } else {
+                        bounds = { 
+                            x: trimmedBounds.x - margin.bottom,
+                            y: trimmedBounds.y - margin.left,
+                            width: trimmedBounds.width + margin.top + margin.bottom,
+                            height: trimmedBounds.height + margin.left + margin.right
+                        };
+                    }
 
                     // Pick the standard or rotated coordinates depending on if the flag is set
                     if (!sprite.rotated) {
