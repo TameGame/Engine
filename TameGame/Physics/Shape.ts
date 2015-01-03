@@ -12,7 +12,7 @@ module TameGame {
      */
     export interface Shape {
         /** Returns a transformed version of this shape */
-        transform(matrix: Float32Array): Shape;
+        transform(matrix: number[]): Shape;
         
         /** Retrieves the bounding box for this shape */
         getBoundingBox(): BoundingBox;

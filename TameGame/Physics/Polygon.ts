@@ -72,7 +72,7 @@ module TameGame {
      * A polygon with a transformation
      */
     class TransformedPolygon implements PolygonShape {
-        constructor(initVertices: Point2D[], initCenter: Point2D, matrix: Float32Array) {
+        constructor(initVertices: Point2D[], initCenter: Point2D, matrix: number[]) {
             var vertices: Point2D[];
             
             var getVertices = () => {
@@ -96,7 +96,7 @@ module TameGame {
         }
         
         /** Returns a transformed version of this shape */
-        transform: (matrix: Float32Array) => Shape;
+        transform: (matrix: number[]) => Shape;
         
         /** The axes to test (the normals of this shape) */
         getAxes: () => Point2D[];
@@ -151,7 +151,7 @@ module TameGame {
         }
         
         /** Returns a transformed version of this shape */
-        transform: (matrix: Float32Array) => Shape;
+        transform: (matrix: number[]) => Shape;
         
         /** The axes to test (the normals of this shape) */
         getAxes: () => Point2D[];

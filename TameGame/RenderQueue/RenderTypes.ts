@@ -141,7 +141,7 @@ module TameGame {
     /**
      * Transforms a point using a transformation matrix 
      */
-    export function transform(matrix: Float32Array, point: Point2D) {
+    export function transform(matrix: number[], point: Point2D) {
         return {
             x: matrix[0]*point.x + matrix[1]*point.y + matrix[2],
             y: matrix[3]*point.x + matrix[4]*point.y + matrix[5]
@@ -151,8 +151,8 @@ module TameGame {
     /** 
      * Multiplies two matrices 
      */
-    export function multiplyMatrix(a: Float32Array, b: Float32Array) {
-        var r = new Float32Array(9);
+    export function multiplyMatrix(a: number[], b: number[]) {
+        var r = [];
 
         var a00 = a[0], a01 = a[1], a02 = a[2];
         var a10 = a[3], a11 = a[4], a12 = a[5];
@@ -180,7 +180,7 @@ module TameGame {
     /** 
      * Transforms a quad with a matrix 
      */
-    export function transformQuad(matrix: Float32Array, quad: Quad): Quad {
+    export function transformQuad(matrix: number[], quad: Quad): Quad {
         var p1 = transform(matrix, { x: quad.x1, y: quad.y1 });
         var p2 = transform(matrix, { x: quad.x2, y: quad.y2 });
         var p3 = transform(matrix, { x: quad.x3, y: quad.y3 });
@@ -197,15 +197,15 @@ module TameGame {
     /** 
      * Creates the identity matrix 
      */
-    export function identityMatrix(): Float32Array {
-        return new Float32Array([1,0,0, 0,1,0, 0,0,1]);
+    export function identityMatrix(): number[] {
+        return [1,0,0, 0,1,0, 0,0,1];
     }
     
     /**
      * Creates a translation matrix 
      */
-    export function translateMatrix(distance: Point2D): Float32Array {
-        var r = new Float32Array(9);
+    export function translateMatrix(distance: Point2D): number[] {
+        var r: number[] = [];
 
         r[0] = 1;
         r[1] = 0;
@@ -225,12 +225,12 @@ module TameGame {
     /** 
      * Creates a rotation+translation matrix
      */
-    export function rotateTranslateMatrix(angleDegrees: number, translation: Point2D): Float32Array {
+    export function rotateTranslateMatrix(angleDegrees: number, translation: Point2D): number[] {
         var angleRadians = angleDegrees * Math.PI / 180.0;
         var cosT = Math.cos(angleRadians);
         var sinT = Math.sin(angleRadians);
         
-        var r = new Float32Array(9);
+        var r: number[] = [];
 
         r[0] = cosT;
         r[1] = -sinT;
@@ -250,12 +250,12 @@ module TameGame {
     /** 
      * Creates a rotation matrix, optionally about a particular origin point
      */
-    export function rotationMatrix(angleDegrees: number, origin?: Point2D): Float32Array {
+    export function rotationMatrix(angleDegrees: number, origin?: Point2D): number[] {
         var angleRadians = angleDegrees * Math.PI / 180.0;
         var cosT = Math.cos(angleRadians);
         var sinT = Math.sin(angleRadians);
         
-        var r = new Float32Array(9);
+        var r: number[] = [];
 
         r[0] = cosT;
         r[1] = -sinT;
