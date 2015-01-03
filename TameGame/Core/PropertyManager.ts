@@ -81,25 +81,22 @@ module TameGame {
                 var watchObj = {};
                 var propertyTypeName = propertyDefn.name;
 
-                // Stores the actual values for this property
-                var backing = {};
-
                 // Make sure that the immediate action exists
                 if (!immediateActions[propertyTypeName]) {
                     immediateActions[propertyTypeName] = () =>  {};
                 }
 
-                // Fill the initial backing store by copying the values for the property
-                Object.getOwnPropertyNames(propertyObj).forEach((propName) => {
-                    backing[propName] = propertyObj[propName];
-                });
+                var propertyNames = Object.getOwnPropertyNames(propertyObj);
 
                 // Setting the property should trigger events
-                Object.getOwnPropertyNames(propertyObj).forEach((prop) => {
+                propertyNames.forEach((prop) => {
+                    // Set the value of this property
+                    var value = propertyObj[prop];
+
                     Object.defineProperty(watchObj, prop, {
-                        get: () => backing[prop],
+                        get: () => value,
                         set: (newValue) => {
-                            backing[prop] = newValue;
+                            value = newValue;
                             recentChanges.noteChange(sourceObj, propertyDefn);              // Takes advantage of the fact that the property definition type matches the type definition type
                             immediateActions[propertyTypeName](sourceObj);
                         }
@@ -109,13 +106,14 @@ module TameGame {
                 // Calling setValue updates the backing store and fires the change event
                 watchObj['set'] = (newValue) => {
                     // Refill the backing store
-                    Object.getOwnPropertyNames(backing).forEach((prop) => {
-                        backing[prop] = newValue[prop];
+                    propertyNames.forEach((prop) => {
+                        watchObj[prop] = newValue[prop];
                     });
 
                     // Indicate that the property has changed
-                    recentChanges.noteChange(sourceObj, propertyDefn);
-                    immediateActions[propertyTypeName](sourceObj);
+                    // TODO: something more efficient than just replacing the values
+                    //recentChanges.noteChange(sourceObj, propertyDefn);
+                    //immediateActions[propertyTypeName](sourceObj);
                 }
 
                 // Return the watchable object
