@@ -122,42 +122,17 @@ module TameGame {
 
             // Function to initialise properties for an object
             this.initObject = (obj: TameObject) => {
-                var propertyValues = {};            // Property storage for this object
-
-                // Function to retrieve the current value of a particular property
-                var getProp = (propertyName: string) => {
-                    var val = propertyValues[propertyName];
-
-                    if (val) {
-                        // Use the existing value if there is one
-                        return val;
-                    } else {
-                        // If the value is unset, then replace with the default value
-                        val = watchify(properties[propertyName].createDefault(), obj, properties[propertyName]);
-                        propertyValues[propertyName] = val;
-                        return val;
-                    }
-                }
-
-                // Function to set the value of a particular property
-                var setProp = (propertyName: string, value: any) => {
-                    if (!value) {
-                        // We don't allow properties to be set to null or undefined
-                        return;
-                    }
-
-                    // Update the existing property value
-                    getProp(propertyName).set(value);
-                }
 
                 // Declare properties for each value on the object
                 // This could also be done by altering the object's prototype; however, this would cause issues
                 // with actually storing the values of the properties.
                 Object.keys(properties).forEach((propertyName) => {
+                    var value: any = watchify(properties[propertyName].createDefault(), obj, properties[propertyName]);
+
                     // Define this property on the object
                     Object.defineProperty(obj, propertyName, {
-                        get: () => getProp(propertyName),
-                        set: (val) => setProp(propertyName, val)
+                        get: () => value,
+                        set: (val) => value.set(value)
                     });
                 })
             };
