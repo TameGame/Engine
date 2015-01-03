@@ -21,10 +21,10 @@ module TameGame {
         // Render it if it exists
         if (assetId !== -1) {
             if (obj.transformationMatrix) {
-                var transformedPos      = transformQuad(obj.transformationMatrix, pos);
+                var transformedPos      = transformQuad(obj.transformationMatrix, pos.quad);
                 queue.drawSprite(assetId, cameraId, pos.zIndex, transformedPos);
             } else {
-                queue.drawSprite(assetId, cameraId, pos.zIndex, pos);
+                queue.drawSprite(assetId, cameraId, pos.zIndex, pos.quad);
             }
         }
     };

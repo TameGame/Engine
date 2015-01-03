@@ -5,7 +5,10 @@ module TameGame {
     /**
      * The position property describes where a sprite is on screen
      */
-    export interface IPosition extends Quad {
+    export interface IPosition {
+        /** The location of this item, as a quad */
+        quad: Quad;
+
         /** Where this sprite should be rendered relative to other sprites */
         zIndex: number
     }
@@ -19,10 +22,12 @@ module TameGame {
      */
     export var Position: TypeDefinition<IPosition> = declareProperty("position", () => {
         return {
-            x1: 0, y1: 0,
-            x2: 0, y2: 0,
-            x3: 0, y3: 0,
-            x4: 0, y4: 0,
+            quad: {
+                x1: 0, y1: 0,
+                x2: 0, y2: 0,
+                x3: 0, y3: 0,
+                x4: 0, y4: 0
+            },
             
             zIndex: 0
         };

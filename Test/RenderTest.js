@@ -12,10 +12,12 @@ var spriteIds   = TameGame.loadTpJsonSpriteSheet(sprites, data, 'Sprites/SpriteS
         spriteObject.sprite.assetId = someSprite;
         spriteObject.position = {
             zIndex: 0,
-            x1: -1, y1: 1,
-            x2: 1,  y2: 1,
-            x3: -1, y3: -1,
-            x4: 1,  y4: -1
+            quad: { 
+                x1: -1, y1: 1,
+                x2: 1,  y2: 1,
+                x3: -1, y3: -1,
+                x4: 1,  y4: -1
+            }
         };
         
         var spriteShape = new TameGame.Polygon([ { x:-1, y:1 }, { x:1, y:1 }, { x:1,y:-1 }, { x:-1,y:-1 } ]);

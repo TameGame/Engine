@@ -38,7 +38,7 @@ module TameGame {
             calculateBounds: (obj) => {
                 var pos         = obj.position;
                 var presence    = obj.presence;
-                var quad: Quad  = pos;
+                var quad: Quad  = pos.quad;
 
                 // If there's a shape, use the shape to get the quad instead
                 if (presence.shape) {
