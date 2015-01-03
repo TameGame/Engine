@@ -122,7 +122,6 @@ module TameGame {
 
             // Function to initialise properties for an object
             this.initObject = (obj: TameObject) => {
-
                 // Declare properties for each value on the object
                 // This could also be done by altering the object's prototype; however, this would cause issues
                 // with actually storing the values of the properties.
@@ -131,8 +130,8 @@ module TameGame {
 
                     // Define this property on the object
                     Object.defineProperty(obj, propertyName, {
-                        get: () => value,
-                        set: (val) => value.set(value)
+                        get: () => { return value; },
+                        set: (newValue) => value.set(newValue)
                     });
                 })
             };
