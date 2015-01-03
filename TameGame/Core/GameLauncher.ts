@@ -152,7 +152,7 @@ module TameGame {
 
         var nextTick = lastTick + interval;
 
-        // Game ticks 240 times a second
+        // Game ticks 200 times a second
         setInterval(() => {
             // Get the current time
             var tickTime = perf.now();
@@ -162,38 +162,40 @@ module TameGame {
 
             // Update the desired next tick time
             var count = 0;
-            while (nextTick < tickTime) {
+            while (nextTick <= tickTime) {
                 // Run each tick if we missed any, up to a maximum in case the game really is running behind
                 if (count < maxCatchup) {
+                    // Run the game tick
                     game.tick(nextTick);
+                    tickTime = perf.now();
+
+                    // Work out the interval for this tick
+                    var tickInterval = nextTick - lastTick;
+
+                    // Record it
+                    last100ticksTotal -= last100ticks[last100ticksPos];                 // Replacing this tick
+                    last100ticksTotal += tickInterval;
+                    last100ticks[last100ticksPos] = tickInterval;
+
+                    last100ticksPos = (last100ticksPos+1)%100;
+
+                    // Warn if we're ticking too slowly
+                    if (tickTime - lastWarning > 5000.0 && last100ticksTotal > interval*100*1.2) {
+                        lastWarning = tickTime;
+                        var ticksPerSecond = 1000.0/(last100ticksTotal/100.0);
+                        var targetTicks = 1000.0/interval;
+                        console.warn('Tick time: ' + last100ticksTotal/100.0 + ', interval: ' + interval);
+                        console.warn('Game loop running slow (should be ' + targetTicks + ' ticks/second, is actually ' + ticksPerSecond + ' ticks/second)');
+                    }
+
+                    // Record the last tick time
+                    lastTick = nextTick;
                 }
 
                 // Move on to the next tick
                 nextTick += interval;
                 count++;
             }
-
-            // Work out the interval for this tick
-            var tickInterval = tickTime - lastTick;
-
-            // Record it
-            last100ticksTotal -= last100ticks[last100ticksPos];                 // Replacing this tick
-            last100ticksTotal += tickInterval;
-            last100ticks[last100ticksPos] = tickInterval;
-
-            last100ticksPos = (last100ticksPos+1)%100;
-
-            // Warn if we're ticking too slowly
-            if (tickTime - lastWarning > 15000.0 && last100ticksTotal > interval*100*1.2) {
-                lastWarning = tickTime;
-                var ticksPerSecond = 1000.0/(last100ticksTotal/100.0);
-                var targetTicks = 1000.0/interval;
-                console.warn('Tick time: ' + last100ticksTotal/100.0 + ', interval: ' + interval);
-                console.warn('Game loop running slow (should be ' + targetTicks + ' ticks/second, is actually ' + ticksPerSecond + ' ticks/second)');
-            }
-
-            // Record the last tick time
-            lastTick = tickTime;
         }, interval/2.0);
     }
     
