@@ -68,8 +68,6 @@ module TameGame {
         var updateAndMoveObject = (obj: TameObject) => {
             var scene = obj.scene;
             if (!scene) return;
-
-            return;
             
             if (obj.quadTreeRef) {
                 scene.quadTree.removeObject(obj.quadTreeRef);

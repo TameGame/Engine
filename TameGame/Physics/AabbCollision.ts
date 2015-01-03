@@ -83,8 +83,6 @@ module TameGame {
         game.events.onPassStart(UpdatePass.Preparation, () => {
             ++collisionPass;
         });
-
-        return;
         
         // When the presence for an object is updated, check for collisions and react if necessary
         game.watch(Presence, UpdatePass.PhysicsCollision, (obj, presence) => {
