@@ -152,8 +152,6 @@ module TameGame {
      * Multiplies two matrices 
      */
     export function multiplyMatrix(a: number[], b: number[]) {
-        var r = [];
-
         var a00 = a[0], a01 = a[1], a02 = a[2];
         var a10 = a[3], a11 = a[4], a12 = a[5];
         var a20 = a[6], a21 = a[7], a22 = a[8];
@@ -162,17 +160,19 @@ module TameGame {
         var b10 = b[3], b11 = b[4], b12 = b[5];
         var b20 = b[6], b21 = b[7], b22 = b[8];
 
-        r[0] = a00*b00 + a01*b10 + a02*b20;
-        r[1] = a00*b01 + a01*b11 + a02*b21;
-        r[2] = a00*b02 + a01*b12 + a02*b22;
+        var r = [
+            a00*b00 + a01*b10 + a02*b20,
+            a00*b01 + a01*b11 + a02*b21,
+            a00*b02 + a01*b12 + a02*b22,
 
-        r[3] = a10*b00 + a11*b10 + a12*b20;
-        r[4] = a10*b01 + a11*b11 + a12*b21;
-        r[5] = a10*b02 + a11*b12 + a12*b22;
+            a10*b00 + a11*b10 + a12*b20,
+            a10*b01 + a11*b11 + a12*b21,
+            a10*b02 + a11*b12 + a12*b22,
 
-        r[6] = a20*b00 + a21*b10 + a22*b20;
-        r[7] = a20*b01 + a21*b11 + a22*b21;
-        r[8] = a20*b02 + a21*b12 + a22*b22;
+            a20*b00 + a21*b10 + a22*b20,
+            a20*b01 + a21*b11 + a22*b21,
+            a20*b02 + a21*b12 + a22*b22
+        ];
 
         return r;
     }
@@ -205,19 +205,11 @@ module TameGame {
      * Creates a translation matrix 
      */
     export function translateMatrix(distance: Point2D): number[] {
-        var r: number[] = [];
-
-        r[0] = 1;
-        r[1] = 0;
-        r[2] = distance.x;
-
-        r[3] = 0;
-        r[4] = 1;
-        r[5] = distance.y;
-
-        r[6] = 0;
-        r[7] = 0;
-        r[8] = 1;
+        var r: number[] = [
+            1,0, distance.x,
+            0,1, distance.y,
+            0,0, 1
+        ];
 
         return r;
     }
@@ -230,19 +222,11 @@ module TameGame {
         var cosT = Math.cos(angleRadians);
         var sinT = Math.sin(angleRadians);
         
-        var r: number[] = [];
-
-        r[0] = cosT;
-        r[1] = -sinT;
-        r[2] = translation.x;
-
-        r[3] = sinT;
-        r[4] = cosT;
-        r[5] = translation.y;
-
-        r[6] = 0;
-        r[7] = 0;
-        r[8] = 1;
+        var r: number[] = [
+            cosT, -sinT, translation.x,
+            sinT, cosT, translation.y, 
+            0, 0, 1
+        ];
 
         return r;
     }
@@ -255,19 +239,11 @@ module TameGame {
         var cosT = Math.cos(angleRadians);
         var sinT = Math.sin(angleRadians);
         
-        var r: number[] = [];
-
-        r[0] = cosT;
-        r[1] = -sinT;
-        r[2] = 0;
-
-        r[3] = sinT;
-        r[4] = cosT;
-        r[5] = 0;
-
-        r[6] = 0;
-        r[7] = 0;
-        r[8] = 1;
+        var r: number[] = [
+            cosT, -sinT, 0,
+            sinT, cosT, 0, 
+            0, 0, 1
+        ];
 
         if (origin) {
             var x = origin.x;
