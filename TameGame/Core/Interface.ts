@@ -360,8 +360,11 @@ module TameGame {
          *
          * It's a good idea to choose a fixed point that's reasonably recent
          * so that time can be measured to a high degree of accuracy.
+         *
+         * If withRender is set to false, then the rendering pass won't be executed
+         * (this can occur when catching up with missed frames)
          */
-        tick(milliseconds: number): void;
+        tick(milliseconds: number, withRender: boolean): void;
         
         /**
          * The events for this object

@@ -288,7 +288,7 @@ module TameGame {
              * It's a good idea to choose a fixed point that's reasonably recent
              * so that time can be measured to a high degree of accuracy.
              */
-            var tick = (milliseconds: number) => {
+            var tick = (milliseconds: number, withRender: boolean) => {
                 // Update the current time
                 _currentTime = milliseconds;
                 
@@ -308,14 +308,16 @@ module TameGame {
                 var queue = _renderQueue;
                 queue.clearQueue();
                 
-                runPass(UpdatePass.Render, milliseconds, sceneChanges, () => {
-                    // Send the render event
-                    _fireRender(queue, milliseconds);
-                    activeScenes.forEach((scene) => scene._fireRender(queue, milliseconds));
-                    
-                    // Actually perform the render
-                    _firePerformRender(queue, milliseconds);
-                });
+                if (withRender) {
+                    runPass(UpdatePass.Render, milliseconds, sceneChanges, () => {
+                        // Send the render event
+                        _fireRender(queue, milliseconds);
+                        activeScenes.forEach((scene) => scene._fireRender(queue, milliseconds));
+                        
+                        // Actually perform the render
+                        _firePerformRender(queue, milliseconds);
+                    });
+                }
                 
                 // Run the post-render passes
                 postRenderPasses.forEach((pass) => runPass(pass, milliseconds, sceneChanges));
@@ -458,7 +460,7 @@ module TameGame {
          * It's a good idea to choose a fixed point that's reasonably recent
          * so that time can be measured to a high degree of accuracy.
          */
-        tick: (milliseconds: number) => void;
+        tick: (milliseconds: number, withRender: boolean) => void;
 
         /**
          * The events for this object

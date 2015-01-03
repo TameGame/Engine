@@ -104,7 +104,7 @@ module TameGame {
             data    = new AjaxDataManager();
             
             // Run the initial tick before any user code has run
-            game.tick(perf.now());
+            game.tick(perf.now(), true);
             
             // Whenever we get a render request, send it by posting the queue
             game.events.onPerformRender((queue) => {
@@ -146,7 +146,7 @@ module TameGame {
         var last100ticks                = [];
         var last100ticksPos             = 0;
         var last100ticksTotal           = 0;
-        var maxCatchup                  = 3;
+        var maxCatchup                  = 4;
 
         for (var x=0; x<100; ++x) last100ticks.push(0);
 
@@ -165,8 +165,14 @@ module TameGame {
             while (nextTick <= tickTime) {
                 // Run each tick if we missed any, up to a maximum in case the game really is running behind
                 if (count < maxCatchup) {
+                    var willRender = false;
+
+                    // Should render this pass if we've caught up or hit the catchup limit
+                    if (count+1 === maxCatchup) willRender = true;
+                    if (nextTick + interval > tickTime) willRender = true;
+
                     // Run the game tick
-                    game.tick(nextTick);
+                    game.tick(nextTick, willRender);
                     tickTime = perf.now();
 
                     // Work out the interval for this tick
