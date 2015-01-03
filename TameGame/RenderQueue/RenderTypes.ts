@@ -223,7 +223,32 @@ module TameGame {
     }
     
     /** 
-     * Creates a rotation matrixl, optionally about a particular origin point
+     * Creates a rotation+translation matrix
+     */
+    export function rotateTranslateMatrix(angleDegrees: number, translation: Point2D): Float32Array {
+        var angleRadians = angleDegrees * Math.PI / 180.0;
+        var cosT = Math.cos(angleRadians);
+        var sinT = Math.sin(angleRadians);
+        
+        var r = new Float32Array(9);
+
+        r[0] = cosT;
+        r[1] = -sinT;
+        r[2] = translation.x;
+
+        r[3] = sinT;
+        r[4] = cosT;
+        r[5] = translation.y;
+
+        r[6] = 0;
+        r[7] = 0;
+        r[8] = 1;
+
+        return r;
+    }
+    
+    /** 
+     * Creates a rotation matrix, optionally about a particular origin point
      */
     export function rotationMatrix(angleDegrees: number, origin?: Point2D): Float32Array {
         var angleRadians = angleDegrees * Math.PI / 180.0;

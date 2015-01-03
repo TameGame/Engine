@@ -18,7 +18,7 @@ module TameGame {
             var lastRot = newObj.presence.rotation;
 
             // The transformation matrix
-            var transformationMatrix = multiplyMatrix(translateMatrix(newObj.presence.location), rotationMatrix(newObj.presence.rotation));
+            var transformationMatrix = rotateTranslateMatrix(newObj.presence.rotation, newObj.presence.location);
 
             // Lazily evaluate the transformation matrix when requested
             Object.defineProperty(newObj, 'transformationMatrix', {
@@ -28,7 +28,7 @@ module TameGame {
 
                     if (location.x !== lastX || location.y !== lastY || rotation !== lastRot) {
                         // Refresh the matrix
-                        transformationMatrix = multiplyMatrix(translateMatrix(location), rotationMatrix(rotation));
+                        transformationMatrix = rotateTranslateMatrix(rotation, location);
 
                         // Update the position
                         lastX   = location.x;
