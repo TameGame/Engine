@@ -9,7 +9,7 @@ module TameGame {
      * Live objects have their presence updated during every tick
      */
     export function simpleMotionBehavior(game: Game) {
-        game.watch(Motion, UpdatePass.Immediate, (obj, objMotion) => {
+        game.watch(Motion, UpdatePass.Preparation, (obj, objMotion) => {
             // We only execute this behaviour once per object
             if (obj['_hasMotion']) {
                 return;
