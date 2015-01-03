@@ -344,6 +344,8 @@ module TameGame {
                     var actions = _immediateActions[definition.name];
 
                     if (!actions) {
+                        var readFrom = definition.readFrom;
+
                         // Register new actions
                         _immediateActions[definition.name] = actions = [];
 
@@ -351,7 +353,7 @@ module TameGame {
                         _immediate[definition.name] = (obj) => {
                             var x: number;
                             var length: number = actions.length;
-                            var val = definition.readFrom(obj);
+                            var val = readFrom(obj);
 
                             for (x=0; x<length; ++x) {
                                 actions[x].callback(obj, val);
