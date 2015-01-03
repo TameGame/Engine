@@ -205,7 +205,21 @@ module TameGame {
      * Creates a translation matrix 
      */
     export function translateMatrix(distance: Point2D): Float32Array {
-        return new Float32Array([1,0,distance.x, 0,1,distance.y, 0,0,1]);
+        var r = new Float32Array(9);
+
+        r[0] = 1;
+        r[1] = 0;
+        r[2] = distance.x;
+
+        r[3] = 0;
+        r[4] = 1;
+        r[5] = distance.y;
+
+        r[6] = 0;
+        r[7] = 0;
+        r[8] = 1;
+
+        return r;
     }
     
     /** 
@@ -216,20 +230,28 @@ module TameGame {
         var cosT = Math.cos(angleRadians);
         var sinT = Math.sin(angleRadians);
         
-        var result = new Float32Array([
-            cosT, -sinT, 0,
-            sinT, cosT,  0,
-            0,    0,     1
-        ]);
+        var r = new Float32Array(9);
+
+        r[0] = cosT;
+        r[1] = -sinT;
+        r[2] = 0;
+
+        r[3] = sinT;
+        r[4] = cosT;
+        r[5] = 0;
+
+        r[6] = 0;
+        r[7] = 0;
+        r[8] = 1;
 
         if (origin) {
             var x = origin.x;
             var y = origin.y;
 
-            result[2] = x - result[0]*x-result[1]*y;
-            result[5] = y - result[3]*x-result[4]*y;
+            r[2] = x - r[0]*x-r[1]*y;
+            r[5] = y - r[3]*x-r[4]*y;
         }
 
-        return result;
+        return r;
     }
 }
