@@ -184,7 +184,7 @@ module TameGame {
             last100ticksPos = (last100ticksPos+1)%100;
 
             // Warn if we're ticking too slowly
-            if (tickTime - lastWarning > 1000.0 && last100ticksTotal > interval*100*1.2) {
+            if (tickTime - lastWarning > 15000.0 && last100ticksTotal > interval*100*1.2) {
                 lastWarning = tickTime;
                 var ticksPerSecond = 1000.0/(last100ticksTotal/100.0);
                 var targetTicks = 1000.0/interval;
