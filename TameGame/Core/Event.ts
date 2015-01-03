@@ -52,7 +52,7 @@ module TameGame {
         var nextId = 0;
         
         // The registered events
-        var events: { [id: number]: { filterVals: TFilterType[]; action: Event<TParameterType> } } = {};
+        var events: { filterVals: TFilterType[]; action: Event<TParameterType>; id: number; }[] = [];
         
         // Function to register an event
         var register: FilteredEventRegistration<TFilterType, TParameterType> = (filter, newEvent) => {
@@ -70,29 +70,34 @@ module TameGame {
             ++nextId;
             
             // Register
-            events[eventId] = {
+            events.push({
                 filterVals: filter,
-                action: newEvent
-            };
+                action:     newEvent,
+                id:         eventId
+            });
             
             // Create the cancellation object
             return {
                 cancel: () => {
-                    delete events[eventId];
+                    for (var eventNum=0; eventNum < events.length; ++eventNum) {
+                        if (events[eventNum].id == eventId) {
+                            events.splice(eventNum, 1);
+                            return;
+                        }
+                    }
                 }
             };
         }
         
         // Function to fire an event
         var fire: FireFilteredEvent<TFilterType, TParameterType> = (filterValue: TFilterType, param: TParameterType, milliseconds: number) => {
-            for (var eventId in events) {
-                var thisEvent       = events[eventId];
+            events.forEach(thisEvent => {
                 var matchesFilter   = thisEvent.filterVals.some((testVal) => testVal === filterValue);
                 
                 if (matchesFilter) {
                     thisEvent.action(param, milliseconds);
                 }
-            };
+            });
         }
             
         // Result is these two functions
