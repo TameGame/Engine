@@ -9,8 +9,39 @@ module TameGame {
     
     /** Whenever the object's Presence properties are changed, update its transformation matrix */
     export function setObjectTransformBehavior(game: Game) {
-        game.watch(Presence, UpdatePass.Immediate, (obj, presence) => {
-            obj.transformationMatrix = multiplyMatrix(translateMatrix(presence.location), rotationMatrix(presence.rotation));
-        }, Priority.FillDerivedValues);
+        // TODO: would be nice to have a more formal way of defining 'derived'/'dependent' properties
+        // Calculate the transformation matrix lazily
+        game.events.onCreateObject(newObj => {
+            // Previous dependent values
+            var lastX = newObj.presence.location.x;
+            var lastY = newObj.presence.location.y;
+            var lastRot = newObj.presence.rotation;
+
+            // The transformation matrix
+            var transformationMatrix = multiplyMatrix(translateMatrix(newObj.presence.location), rotationMatrix(newObj.presence.rotation));
+
+            // Lazily evaluate the transformation matrix when requested
+            Object.defineProperty(newObj, 'transformationMatrix', {
+                get: () => {
+                    var location = newObj.presence.location;
+                    var rotation = newObj.presence.rotation;
+
+                    if (location.x !== lastX || location.y !== lastY || rotation !== lastRot) {
+                        // Refresh the matrix
+                        transformationMatrix = multiplyMatrix(translateMatrix(location), rotationMatrix(rotation));
+
+                        // Update the position
+                        lastX   = location.x;
+                        lastY   = location.y;
+                        lastRot = rotation;
+                    }
+
+                    return transformationMatrix;
+                },
+                set: value => {
+                    transformationMatrix = value;
+                }
+            });
+        });
     }
 }
