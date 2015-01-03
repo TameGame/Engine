@@ -140,10 +140,61 @@ module TameGame {
      * Runs the 'live' webworker game loop
      */
     function runWebWorkerGameLoop() {
+        var lastTick                    = perf.now();
+        var lastWarning                 = lastTick;
+        var interval                    = 1000.0/200.0;
+        var last100ticks                = [];
+        var last100ticksPos             = 0;
+        var last100ticksTotal           = 0;
+        var maxCatchup                  = 3;
+
+        for (var x=0; x<100; ++x) last100ticks.push(0);
+
+        var nextTick = lastTick + interval;
+
         // Game ticks 240 times a second
         setInterval(() => {
-            game.tick(perf.now());
-        }, 1000.0 / 240.0);
+            // Get the current time
+            var tickTime = perf.now();
+
+            // Ignore ticks that are 'too fast' (which we do due to the way setInteval works)
+            if (tickTime < nextTick) return;
+
+            // Update the desired next tick time
+            var count = 0;
+            while (nextTick < tickTime) {
+                // Run each tick if we missed any, up to a maximum in case the game really is running behind
+                if (count < maxCatchup) {
+                    game.tick(nextTick);
+                }
+
+                // Move on to the next tick
+                nextTick += interval;
+                count++;
+            }
+
+            // Work out the interval for this tick
+            var tickInterval = tickTime - lastTick;
+
+            // Record it
+            last100ticksTotal -= last100ticks[last100ticksPos];                 // Replacing this tick
+            last100ticksTotal += tickInterval;
+            last100ticks[last100ticksPos] = tickInterval;
+
+            last100ticksPos = (last100ticksPos+1)%100;
+
+            // Warn if we're ticking too slowly
+            if (tickTime - lastWarning > 1000.0 && last100ticksTotal > interval*100*1.2) {
+                lastWarning = tickTime;
+                var ticksPerSecond = 1000.0/(last100ticksTotal/100.0);
+                var targetTicks = 1000.0/interval;
+                console.warn('Tick time: ' + last100ticksTotal/100.0 + ', interval: ' + interval);
+                console.warn('Game loop running slow (should be ' + targetTicks + ' ticks/second, is actually ' + ticksPerSecond + ' ticks/second)');
+            }
+
+            // Record the last tick time
+            lastTick = tickTime;
+        }, interval/2.0);
     }
     
     /**
