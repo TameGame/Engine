@@ -152,11 +152,29 @@ module TameGame {
      * Multiplies two matrices 
      */
     export function multiplyMatrix(a: Float32Array, b: Float32Array) {
-        return new Float32Array([
-            a[0]*b[0]+a[1]*b[3]+a[2]*b[6], a[0]*b[1]+a[1]*b[4]+a[2]*b[7], a[0]*b[2]+a[1]*b[5]+a[2]*b[8],
-            a[3]*b[0]+a[4]*b[3]+a[5]*b[6], a[3]*b[1]+a[4]*b[4]+a[5]*b[7], a[3]*b[2]+a[4]*b[5]+a[5]*b[8],
-            a[6]*b[0]+a[7]*b[3]+a[8]*b[6], a[6]*b[1]+a[7]*b[4]+a[8]*b[7], a[6]*b[2]+a[7]*b[5]+a[8]*b[8]
-        ]);
+        var r = new Float32Array(9);
+
+        var a00 = a[0], a01 = a[1], a02 = a[2];
+        var a10 = a[3], a11 = a[4], a12 = a[5];
+        var a20 = a[6], a21 = a[7], a22 = a[8];
+
+        var b00 = b[0], b01 = b[1], b02 = b[2];
+        var b10 = b[3], b11 = b[4], b12 = b[5];
+        var b20 = b[6], b21 = b[7], b22 = b[8];
+
+        r[0] = a00*b00 + a01*b10 + a02*b20;
+        r[1] = a00*b01 + a01*b11 + a02*b21;
+        r[2] = a00*b02 + a01*b12 + a02*b22;
+
+        r[3] = a10*b00 + a11*b10 + a12*b20;
+        r[4] = a10*b01 + a11*b11 + a12*b21;
+        r[5] = a10*b02 + a11*b12 + a12*b22;
+
+        r[6] = a20*b00 + a21*b10 + a22*b20;
+        r[7] = a20*b01 + a21*b11 + a22*b21;
+        r[8] = a20*b02 + a21*b12 + a22*b22;
+
+        return r;
     }
     
     /** 
