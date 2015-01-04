@@ -57,7 +57,7 @@ module TameGame {
     });
     
     // Tick at 60fps
-    var tickDuration = 1000.0 / 60.0;
+    var tickDuration = 1000.0 / 120.0;
     var maxPassTime  = 1000.0 / 15.0;
 
     /** Resets the ticks for a scene (and any subscenes it may have) */
