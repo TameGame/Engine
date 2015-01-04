@@ -20,7 +20,7 @@ module TameGame {
             var fireCount =0;
 
             // Fire at least once if the event isn't continuously firing
-            if (lastMilliseconds > lastFiringTime) {
+            if (lastMilliseconds > lastFiringTime+duration) {
                 event(param, lastMilliseconds+duration, lastMilliseconds);
                 lastFiringTime = lastMilliseconds+duration;
                 ++fireCount;
