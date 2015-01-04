@@ -265,6 +265,13 @@ module TameGame {
                     this._mainPartition = this._mainPartition.createParent(QuadCorner.NE);
                 }
             }
+
+            // Functions that update the quadtree before it's queried
+            var updateFunctions: any[] = [];
+
+            var beforeUpdate = () => {
+                updateFunctions.forEach(updateFunc => updateFunc());
+            }
             
             // The initial partition covers the region from -1,-1 to 1,1
             this._mainPartition = new Partition({ x:-1, y:-1, width:2, height: 2});
@@ -306,6 +313,8 @@ module TameGame {
             };
 
             this.forAllInBounds = (bounds, callback) => {
+                beforeUpdate();
+
                 this._mainPartition.forAllOverlapping(bounds, (partition) => {
                     partition.objects.forEach((quadObj) => {
                         if (bbOverlaps(bounds, quadObj.bounds)) {
@@ -316,9 +325,20 @@ module TameGame {
             };
             
             this.calculateMaxBadness = () => {
+                beforeUpdate();
+
                 return this._mainPartition.calculateMaxBadness();
             };
+
+            this.onUpdate = (updateFunc) => {
+                updateFunctions.push(updateFunc);
+            }
         }
+
+        /**
+         * Registers an event handler that updates this quadtree just before any query
+         */
+        onUpdate: (updateFunc: () => void) => void;
         
         /**
          * Calculate the highest number of objects that share a node (aka, the badness of the tree). Higher is worse.
