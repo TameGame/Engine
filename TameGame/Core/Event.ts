@@ -34,9 +34,9 @@ module TameGame {
         }
         
         // Function to fire an event
-        var fire: Event<TParameterType> = (param: TParameterType, milliseconds: number) => {
+        var fire: Event<TParameterType> = (param: TParameterType, milliseconds: number, lastMilliseconds: number) => {
             for (var eventId in events) {
-                events[eventId](param, milliseconds);
+                events[eventId](param, milliseconds, lastMilliseconds);
             }
         }
             
@@ -90,12 +90,12 @@ module TameGame {
         }
         
         // Function to fire an event
-        var fire: FireFilteredEvent<TFilterType, TParameterType> = (filterValue: TFilterType, param: TParameterType, milliseconds: number) => {
+        var fire: FireFilteredEvent<TFilterType, TParameterType> = (filterValue: TFilterType, param: TParameterType, milliseconds: number, lastMilliseconds: number) => {
             events.forEach(thisEvent => {
                 var matchesFilter   = thisEvent.filterVals.some((testVal) => testVal === filterValue);
                 
                 if (matchesFilter) {
-                    thisEvent.action(param, milliseconds);
+                    thisEvent.action(param, milliseconds, lastMilliseconds);
                 }
             });
         }

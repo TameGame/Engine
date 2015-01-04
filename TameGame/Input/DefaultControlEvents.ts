@@ -70,7 +70,7 @@ module TameGame {
             }
 
             // Function to be called on each tick where inputs are available
-            var tickInputs = (inputs: ControlInput[], milliseconds: number) => {
+            var tickInputs = (inputs: ControlInput[], milliseconds: number, lastMilliseconds: number) => {
                 if (!inputs) inputs = [];
 
                 // Create the new control state
@@ -160,7 +160,7 @@ module TameGame {
                     // Fire the actions if the control has been released
                     var control = controlActions[action];
                     if (upControls[control.device] && upControls[control.device][control.control]) {
-                        actionUp.fire(action, control, milliseconds);
+                        actionUp.fire(action, control, milliseconds, lastMilliseconds);
                     }
                 });
 
@@ -168,14 +168,14 @@ module TameGame {
                     // Fire the action if the control has been pressed
                     var control = controlActions[action];
                     if (downControls[control.device] && downControls[control.device][control.control]) {
-                        actionDown.fire(action, control, milliseconds);
+                        actionDown.fire(action, control, milliseconds, lastMilliseconds);
                     }
                 });
 
                 Object.keys(controlActions).forEach(action => {
                     // Fire the action for each tick the control has any pressure on it 
                     var control = controlActions[action];
-                    duringAction.fire(action, control, milliseconds);
+                    duringAction.fire(action, control, milliseconds, lastMilliseconds);
                 });
 
                 // Update the control srtate
@@ -192,7 +192,7 @@ module TameGame {
         /**
          * Called once per tick with the status of every control that is 'down' (has a pressure of greater than 0)
          */
-        tickInputs: (inputs: ControlInput[], milliseconds: number) => void;
+        tickInputs: (inputs: ControlInput[], milliseconds: number, lastMilliseconds: number) => void;
 
         /**
          * Registers an event handler for a particular action, called on the tick when the control is pressed down (pressure reaches greater than 0.5)

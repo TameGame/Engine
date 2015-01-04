@@ -18,9 +18,12 @@ module TameGame {
     
     /**
      * Callback representing an event
+     *
+     * Milliseconds is the time of the current tick.
+     * lastMilliseconds is the time of the previous tick
      */
     export interface Event<TParameterType> {
-        (param: TParameterType, milliseconds: number): void;
+        (param: TParameterType, milliseconds: number, lastMilliseconds: number): void;
     }
     
     /**
@@ -49,7 +52,7 @@ module TameGame {
      * Callback representing an event
      */
     export interface FireFilteredEvent<TFilterType, TParameterType> {
-        (filterVal: TFilterType, param: TParameterType, millseconds: number): void;
+        (filterVal: TFilterType, param: TParameterType, millseconds: number, lastMilliseconds: number): void;
     }
 
     /**

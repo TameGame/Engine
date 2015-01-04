@@ -141,7 +141,7 @@ module TameGame {
         /**
          * Called once per tick with the status of every control that is 'down' (has a pressure of greater than 0)
          */
-        tickInputs: (inputs: ControlInput[], milliseconds: number) => void;
+        tickInputs: (inputs: ControlInput[], milliseconds: number, lastMilliseconds: number) => void;
 
         /**
          * Registers an event handler for a particular action, called on the tick when the control is pressed down (pressure reaches greater than 0.5)

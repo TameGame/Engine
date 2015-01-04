@@ -114,7 +114,7 @@ module TameGame {
             
             // Live objects run on the early passes of the engine
             preRenderPasses.forEach((updatePass) => {
-                scene.events.onPassStart(updatePass, (pass, time: number) => {
+                scene.events.onPassStart(updatePass, (pass: UpdatePass, time: number) => {
                     // If no time has passed yet, we do nothing
                     if (lastTime < 0) return;
                     
@@ -125,9 +125,9 @@ module TameGame {
                         Object.keys(liveObjectList).forEach((objId) => tickObjects.push(liveObjectList[objId]));
                     }
                     
-                    var onTick = (tick: Tick, tickTime: number) => {
-                        gameTicks.fire(updatePass, tick, time);
-                        sceneTicks.fire(updatePass, tick, time);
+                    var onTick = (tick: Tick, tickTime: number, lastTickTime: number) => {
+                        gameTicks.fire(updatePass, tick, time, lastTickTime);
+                        sceneTicks.fire(updatePass, tick, time, lastTickTime);
                     };
                     
                     // They are called at 60fps. If the game engine is running slow they get called multiple times
@@ -140,7 +140,7 @@ module TameGame {
                     
                     for (var tickTime = lastTime; tickTime < time; tickTime += tickDuration) {
                         // Call the tick functions
-                        onTick({ duration: tickDuration, liveObjects: tickObjects }, lastTick);
+                        onTick({ duration: tickDuration, liveObjects: tickObjects }, lastTick, lastTick-tickDuration);
                         lastTick += tickDuration;
                         
                         // Don't process beyond the end time

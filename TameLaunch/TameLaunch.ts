@@ -20,6 +20,7 @@ importScripts('TameGame.js');
     // The source script should post an event to let us know it's time to start a game
     onmessage = (event: MessageEvent) => {
         var msg: TameGame.WorkerMessage = event.data;
-        messageEvent.fire(msg.action, msg, TameGame.perf.now());
+        var time = TameGame.perf.now();
+        messageEvent.fire(msg.action, msg, time, time);
     };
 })();

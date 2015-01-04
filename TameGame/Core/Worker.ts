@@ -38,7 +38,8 @@ module TameGame {
                 var when = getMillseconds();
 
                 // Dispatch the event
-                messageEvent.fire(msgData.action, msgData, when);
+                // These events are independent of the main game clock, so the 'lastMilliseconds' value is the same (they occur instantaneously)
+                messageEvent.fire(msgData.action, msgData, when, when);
             }
         }
 

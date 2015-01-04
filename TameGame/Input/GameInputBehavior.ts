@@ -42,18 +42,18 @@ module TameGame {
         });
 
         // Every game tick, dispatch the player input
-        game.events.onPassStart(UpdatePass.PlayerInput, (pass, time) => {
+        game.events.onPassStart(UpdatePass.PlayerInput, (pass, time, lastTime) => {
             // Collect all the control inputs into a single array
             var allInput: ControlInput[] = [];
             forEachControlMap(activeControls, (control, input) => allInput.push(input));
 
             // Dispatch the input to the game events object
-            game.controlEvents.tickInputs(allInput, time);
+            game.controlEvents.tickInputs(allInput, time, lastTime);
 
             // Also dispatch the input to all the active scenes
             game.forAllActiveScenes((scene) => {
                 if (scene.controlEvents && scene.controlEvents.tickInputs) {
-                    scene.controlEvents.tickInputs(allInput, time);
+                    scene.controlEvents.tickInputs(allInput, time, lastTime);
                 }
             });
         });

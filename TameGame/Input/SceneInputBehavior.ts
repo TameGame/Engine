@@ -26,7 +26,7 @@ module TameGame {
             var originalOnDuringAction  = newScene.controlEvents.onDuringAction;
 
             var createModifiedCallback  = (originalCallback: Event<ControlInput>): Event<ControlInput> => {
-                var newCallback = (originalControl: ControlInput, milliseconds: number) => {
+                var newCallback = (originalControl: ControlInput, milliseconds: number, lastMilliseconds: number) => {
                     var modifiedControl = originalControl;
 
                     // TODO: If the control uses a location, and the scene has a camera position, then translate the location from 0,0-1,0 to the scene's own coordinates
@@ -42,7 +42,7 @@ module TameGame {
                     }
 
                     // Call the original event handler
-                    return originalCallback(modifiedControl, milliseconds);
+                    return originalCallback(modifiedControl, milliseconds, lastMilliseconds);
                 };
 
                 return newCallback;

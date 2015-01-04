@@ -46,6 +46,7 @@ module TameGame {
             
             var _renderQueue:       RenderQueue;
             var _currentTime:       number;
+            var _lastTime:          number;
 
             // Display a warning and use an empty message dispatcher if none is passed in
             if (!messageDispatcher) {
@@ -60,6 +61,7 @@ module TameGame {
             _immediateActions       = {};
             _renderQueue            = new StandardRenderQueue(initialSize);
             _currentTime            = 0;
+            _lastTime               = 0;
             _propertyManager        = new PropertyManager(_immediate);
             _behaviorManager        = new BehaviorManager();
             
@@ -112,7 +114,7 @@ module TameGame {
                 _behaviorManager.initObject(obj);
                 _propertyManager.initObject(obj);
 
-                createObjectEvent.fire(obj, _currentTime);
+                createObjectEvent.fire(obj, _currentTime, _lastTime);
                 return obj;
             }
 
@@ -141,7 +143,7 @@ module TameGame {
                     }
                     
                     objects[o.identifier] = o;
-                    addObjectEvent.fire(o, _currentTime);
+                    addObjectEvent.fire(o, _currentTime, _lastTime);
                     o.scene = this;
                     return this;
                 }
@@ -152,17 +154,17 @@ module TameGame {
                     o.scene = null;
                     
                     delete objects[o.identifier];
-                    removeObjectEvent.fire(o, _currentTime);
+                    removeObjectEvent.fire(o, _currentTime, _lastTime);
                     return this;
                 }
                 function addScene(s: Scene): Scene {
                     subScenes[s.identifier] = s;
-                    addSubSceneEvent.fire(s, _currentTime);
+                    addSubSceneEvent.fire(s, _currentTime, _lastTime);
                     return this;
                 }
                 function removeScene(s: Scene): Scene {
                     delete subScenes[s.identifier];
-                    removeSubSceneEvent.fire(s, _currentTime);
+                    removeSubSceneEvent.fire(s, _currentTime, _lastTime);
                     return this;
                 }
                 function forAllObjects(callback: (obj: TameObject) => void) {
@@ -207,7 +209,7 @@ module TameGame {
                     }
                 };
                 
-                _fireCreateScene(result, _currentTime);
+                _fireCreateScene(result, _currentTime, _lastTime);
                 return result;
             }
 
@@ -219,7 +221,7 @@ module TameGame {
                 _currentScene = scene;
                 
                 // Fire an event to indicate that the scene has changed
-                _fireNewScene(scene, _currentTime);
+                _fireNewScene(scene, _currentTime, _lastTime);
             }
             
             /**
@@ -251,9 +253,9 @@ module TameGame {
             /**
              * Performs the actions associated with a pass
              */
-            var runPass = (pass: UpdatePass, milliseconds: number, sceneChanges: { scene: InternalScene; watchers: RegisteredWatchers; changes: Watcher }[] , callback?: () => void) => {
-                _firePassStart(pass, pass, milliseconds);
-                sceneChanges.forEach((change) => change.scene._firePassStart(pass, pass, milliseconds));
+            var runPass = (pass: UpdatePass, milliseconds: number, lastMilliseconds: number, sceneChanges: { scene: InternalScene; watchers: RegisteredWatchers; changes: Watcher }[] , callback?: () => void) => {
+                _firePassStart(pass, pass, milliseconds, lastMilliseconds);
+                sceneChanges.forEach((change) => change.scene._firePassStart(pass, pass, milliseconds, lastMilliseconds));
 
                 // Dispatch the changes for this pass to the watchers - both global and for each scene in turn
                 var recentChanges = _propertyManager.getRecentChanges();
@@ -267,8 +269,8 @@ module TameGame {
                     callback();
                 }
 
-                sceneChanges.forEach((change) => change.scene._firePassFinish(pass, pass, milliseconds));
-                _firePassFinish(pass, pass, milliseconds);
+                sceneChanges.forEach((change) => change.scene._firePassFinish(pass, pass, milliseconds, lastMilliseconds));
+                _firePassFinish(pass, pass, milliseconds, lastMilliseconds);
             }
             
             /**
@@ -290,7 +292,8 @@ module TameGame {
              */
             var tick = (milliseconds: number, withRender: boolean) => {
                 // Update the current time
-                _currentTime = milliseconds;
+                _lastTime       = _currentTime;
+                _currentTime    = milliseconds;
                 
                 // Retrieve the list of active scenes
                 var activeScenes = getActiveScenes();
@@ -302,25 +305,25 @@ module TameGame {
                 });
                 
                 // Run the pre-render passes
-                preRenderPasses.forEach((pass) => runPass(pass, milliseconds, sceneChanges));
+                preRenderPasses.forEach((pass) => runPass(pass, milliseconds, _lastTime, sceneChanges));
                 
                 // Run the render pass
                 var queue = _renderQueue;
                 queue.clearQueue();
                 
                 if (withRender) {
-                    runPass(UpdatePass.Render, milliseconds, sceneChanges, () => {
+                    runPass(UpdatePass.Render, milliseconds, _lastTime, sceneChanges, () => {
                         // Send the render event
-                        _fireRender(queue, milliseconds);
-                        activeScenes.forEach((scene) => scene._fireRender(queue, milliseconds));
+                        _fireRender(queue, milliseconds, _lastTime);
+                        activeScenes.forEach((scene) => scene._fireRender(queue, milliseconds, _lastTime));
                         
                         // Actually perform the render
-                        _firePerformRender(queue, milliseconds);
+                        _firePerformRender(queue, milliseconds, _lastTime);
                     });
                 }
                 
                 // Run the post-render passes
-                postRenderPasses.forEach((pass) => runPass(pass, milliseconds, sceneChanges));
+                postRenderPasses.forEach((pass) => runPass(pass, milliseconds, _lastTime, sceneChanges));
 
                 // Clear out any property changes: they are now all handled
                 recentChanges.clearChanges();
