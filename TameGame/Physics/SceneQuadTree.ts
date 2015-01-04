@@ -68,14 +68,14 @@ module TameGame {
         };
 
         // Function to remove an object, update its AABB and then put it back in its scene
-        var updateAndMoveObject = (obj: TameObject, scene: Scene) => {
+        var updateAndMoveObject = (obj: TameObject, quadTree: QuadTree) => {
             if (obj.quadTreeRef) {
-                scene.quadTree.removeObject(obj.quadTreeRef);
+                quadTree.removeObject(obj.quadTreeRef);
             }
 
-            updateObjectBounds(obj);
+            obj.aabb = obj.behavior.aabb.calculateBounds(obj);
 
-            obj.quadTreeRef = scene.quadTree.addObject(obj.aabb, obj);
+            obj.quadTreeRef = quadTree.addObject(obj.aabb, obj);
         };
 
         // Marks an object as having been moved since the quadtree was updated
@@ -116,7 +116,7 @@ module TameGame {
                 var movedObjects = scene.movedObjects;
 
                 for (objId in movedObjects) {
-                    updateAndMoveObject(movedObjects[objId], scene);
+                    updateAndMoveObject(movedObjects[objId], quadTree);
                 }
 
                 scene.movedObjects = {};
