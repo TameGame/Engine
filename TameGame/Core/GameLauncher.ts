@@ -199,6 +199,7 @@ module TameGame {
                 }
 
                 // Move on to the next tick
+                tickTime = perf.now();
                 nextTick += interval;
                 count++;
             }
