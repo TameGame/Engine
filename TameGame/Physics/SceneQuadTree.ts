@@ -8,6 +8,9 @@ module TameGame {
     export interface Scene {
         /** QuadTree of objects in this scene (not defined if quad tree behaviour is turned off) */
         quadTree?: QuadTree;
+
+        /** List of objects that have moved since the last time the quadtree was updated */
+        movedObjects?: { [id: number]: TameObject };
     }
     
     export interface TameObject {
@@ -65,10 +68,7 @@ module TameGame {
         };
 
         // Function to remove an object, update its AABB and then put it back in its scene
-        var updateAndMoveObject = (obj: TameObject) => {
-            var scene = obj.scene;
-            if (!scene) return;
-            
+        var updateAndMoveObject = (obj: TameObject, scene: Scene) => {
             if (obj.quadTreeRef) {
                 scene.quadTree.removeObject(obj.quadTreeRef);
             }
@@ -78,9 +78,19 @@ module TameGame {
             obj.quadTreeRef = scene.quadTree.addObject(obj.aabb, obj);
         };
 
+        // Marks an object as having been moved since the quadtree was updated
+        var markAsMoved = (obj: TameObject) => {
+            var scene = obj.scene;
+            if (scene) {
+                scene.movedObjects[obj.identifier] = obj;
+            }
+        }
+
         game.events.onCreateScene((scene) => {
             // Create a QuadTree for this scene
-            scene.quadTree = new QuadTree();
+            var quadTree = new QuadTree();
+            scene.quadTree      = quadTree;
+            scene.movedObjects  = {};
             
             // When objects are added or removed from the scene, add or remove thenm from the appropriate quadTree
             scene.events.onAddObject((obj) => {
@@ -96,10 +106,26 @@ module TameGame {
                     scene.quadTree.removeObject(obj.quadTreeRef);
                     delete obj.quadTreeRef;
                 }
+
+                delete scene.movedObjects[obj.identifier];
             });
+
+            // When the quadtree is queried, make sure all of the moved objects are in fact moved
+            var updateMovedObjects = () => {
+                var objId;
+                var movedObjects = scene.movedObjects;
+
+                for (objId in movedObjects) {
+                    updateAndMoveObject(movedObjects[objId], scene);
+                }
+
+                scene.movedObjects = {};
+            };
+
+            quadTree.onUpdate(updateMovedObjects);
         });
         
-        game.watch(Position, UpdatePass.Immediate, (obj) => updateAndMoveObject(obj), Priority.UseDerivedValues);
-        game.watch(Presence, UpdatePass.Immediate, (obj) => updateAndMoveObject(obj), Priority.UseDerivedValues);
+        game.watch(Position, UpdatePass.Immediate, markAsMoved, Priority.UseDerivedValues);
+        game.watch(Presence, UpdatePass.Immediate, markAsMoved, Priority.UseDerivedValues);
     }
 }
