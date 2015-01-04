@@ -91,18 +91,16 @@ module TameGame {
             
             this.initObject = (obj) => {
                 var objBehavior = obj.behavior;
-                var backing: Behavior = {};
                 var behaviorProperties: PropertyDescriptorMap = {};
                 
                 Object.keys(behaviors).forEach((behaviorName) => {
                     var behaviorDefn = behaviors[behaviorName];
-                    
-                    behaviorProperties[behaviorName] = {
-                        get: () => {
-                            // Try the backing first
-                            var behavior = backing[behaviorName];
-                            if (behavior) return behavior;
-                            
+                    var behavior: Behavior;
+
+                    var getFn: () => Behavior;
+                    getFn = () => {
+                        // Try the backing first
+                        if (!behavior) {
                             // Try the classes
                             var classes = obj.details.behaviorClass;
                             classes.some((behaviorClass) => {
@@ -110,14 +108,22 @@ module TameGame {
                                 
                                 return behavior?true:false;
                             });
-                            if (behavior) return behavior;
-                            
-                            // Use the default value
-                            return behaviorDefn.defaultValue;
-                        },
-                        set: (value) => {
-                            backing[behaviorName] = value;
+
+                            // Use the default value if no class is set
+                            behavior = behavior || behaviorDefn.defaultValue;
                         }
+
+                        // Once we've set a behavior, use the simpler version of the backing funciton
+                        if (behavior) {
+                            getFn = () => behavior;
+                        }
+
+                        return behavior;
+                    }
+                    
+                    behaviorProperties[behaviorName] = {
+                        get: () => { return getFn(); },
+                        set: (value) => { behavior = value; }
                     };
                 });
                 
