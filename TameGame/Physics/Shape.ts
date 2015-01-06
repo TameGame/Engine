@@ -42,10 +42,13 @@ module TameGame {
      */
     export interface SatShape extends Shape {
         /** The axes to test (the normals of this shape) */
-        getAxes(): Point2D[];
+        getAxes(testShape: SatShape): Point2D[];
         
         /** Projects the points of this shape onto the specified axis */
         projectOntoAxis(axis: Point2D): Projection;
+
+        /** The closest point on this shape to the specified point */
+        closestPoint(point: Point2D): Point2D;
     }
     
     /**

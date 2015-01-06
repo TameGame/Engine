@@ -16,8 +16,8 @@ module TameGame {
      */
     export function satCollision(a: SatShape, b: SatShape): Collision {
         // Fetch the shape axes
-        var aAxes = a.getAxes();
-        var bAxes = b.getAxes();
+        var aAxes = a.getAxes(b);
+        var bAxes = b.getAxes(a);
         
         var result: Collision = null;
         
@@ -89,7 +89,7 @@ module TameGame {
                         
                     // Calculate the MTV
                     // The result is in an arbitrary direction
-                    var mtv = getMtvFromAxesCollided(a.getAxes(), b.getAxes());
+                    var mtv = getMtvFromAxesCollided(a.getAxes(b), b.getAxes(a));
                     
                     // See which direction the MTV is moving in
                     var direction = dot(sepVector, mtv);

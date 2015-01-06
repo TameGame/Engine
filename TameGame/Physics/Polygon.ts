@@ -67,6 +67,34 @@ module TameGame {
 
         return { min: min, max: max };
     }
+
+    var MAX_VALUE = Number.MAX_VALUE;
+    function closestPoint(vertices: Point2D[], point: Point2D) : Point2D {
+        // Helper function to calculate the distance to a point with a particular ID
+        function squareDistance(x: number) {
+            var testPoint = vertices[x];
+            var dX = point.x - testPoint.x;
+            var dY = point.y - testPoint.y;
+
+            return dX*dX + dY*dY;
+        }
+
+        var closest         = -1;
+        var closestDistance = MAX_VALUE;
+
+        // Test all the points to see which is closest
+        for (var x=0; x<vertices.length; ++x) {
+            var pointDistance = squareDistance(x);
+
+            if (pointDistance < closestDistance) {
+                closest         = x;
+                closestDistance = pointDistance;
+            }
+        }
+
+        // Return the closest point
+        return vertices[closest];
+    }
     
     /**
      * A polygon with a transformation
@@ -86,6 +114,7 @@ module TameGame {
             this.getCenter          = () => center;
             this.getAxes            = () => getAxes(getVertices());
             this.projectOntoAxis    = (axis) => projectOntoAxis(getVertices(), axis);
+            this.closestPoint       = (point) => closestPoint(getVertices(), point);
             this.transform          = (transformMatrix) => new TransformedPolygon(initVertices, center, multiplyMatrix(matrix, transformMatrix));
             this.getVertices        = () => getVertices();
             this.getBoundingBox     = () => {
@@ -112,6 +141,9 @@ module TameGame {
 
         /** Retrieves the bounding box for this shape */
         getBoundingBox: () => BoundingBox;
+
+        /** The closest point on this shape to the specified point */
+        closestPoint: (point: Point2D) => Point2D;
     }
     
     /**
@@ -142,6 +174,7 @@ module TameGame {
             this.getAxes            = () => getAxes(vertices);
             this.projectOntoAxis    = (axis) => projectOntoAxis(vertices, axis);
             this.transform          = (matrix) => new TransformedPolygon(vertices, center, matrix);
+            this.closestPoint       = (point) => closestPoint(vertices, point);
             this.getVertices        = () => vertices;
             this.getBoundingBox     = () => {
                 var boundingBox = getBoundingBox(vertices);
@@ -167,5 +200,8 @@ module TameGame {
 
         /** Retrieves the bounding box for this shape */
         getBoundingBox: () => BoundingBox;
+
+        /** The closest point on this shape to the specified point */
+        closestPoint: (point: Point2D) => Point2D;
     }
 }
