@@ -127,6 +127,23 @@ module TameGame {
     export function scaleVector(p: Point2D, factor: number) {
         return { x: p.x * factor, y: p.y * factor };
     }
+
+    /**
+     * Works out the magnitude of a vector
+     */
+     export function magnitude(p1: Point2D) : number {
+        return Math.sqrt(p1.x*p1.x + p1.y*p1.y);
+     }
+
+     /**
+      * Works out the distance between two points
+      */
+     export function distance(p1: Point2D, p2: Point2D) : number {
+        var dX = p1.x - p2.x;
+        var dY = p1.y - p2.y;
+
+        return Math.sqrt(dX*dX + dY*dY);
+     }
     
     /**
      * Converts a vector to a unit-length vector 

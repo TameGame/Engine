@@ -7,11 +7,29 @@ QUnit.test("DoesntCollide", function(assert) {
     assert.ok(collides.collided === false);
 });
 
+QUnit.test("DoesntCollideCircle", function(assert) {
+    var triangle1 = new TameGame.Polygon([ { x:1, y:1 }, { x:2, y:2 }, { x:1, y:2 }]);
+    var circle2 = new TameGame.Circle({ x: 4.5, y: 4.5 }, 1);
+    
+    var collides = TameGame.satCollision(triangle1, circle2);
+    
+    assert.ok(collides.collided === false);
+});
+
 QUnit.test("DoesCollideWhenOnTopOfEachOther", function(assert) {
     var triangle1 = new TameGame.Polygon([ { x:1, y:1 }, { x:2, y:2 }, { x:1, y:2 }]);
     var triangle2 = new TameGame.Polygon([ { x:1, y:1 }, { x:2, y:2 }, { x:1, y:2 }]);
     
     var collides = TameGame.satCollision(triangle1, triangle2);
+    
+    assert.ok(collides.collided === true);
+});
+
+QUnit.test("DoesCollideWhenOnTopOfEachOtherCircle", function(assert) {
+    var triangle1 = new TameGame.Polygon([ { x:1, y:1 }, { x:2, y:2 }, { x:1, y:2 }]);
+    var circle2 = new TameGame.Circle({ x: 1.5, y: 1.5 }, 1);
+    
+    var collides = TameGame.satCollision(triangle1, circle2);
     
     assert.ok(collides.collided === true);
 });
