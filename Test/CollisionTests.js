@@ -89,7 +89,7 @@ QUnit.test("AabbCollisionDuringPass", function (assert) {
     var someScene = someGame.createScene();
 
     // Create two objects and move them into collision by changing their presence
-    var objPos = { x1: -1, y1: -1, x2: 1, y2: -1, x3: 1, y3: 1, x4: -1, y4: 1 };
+    var objPos = { quad: { x1: -1, y1: -1, x2: 1, y2: -1, x3: 1, y3: 1, x4: -1, y4: 1 } };
     
     var obj1 = someGame.createObject();
     var obj2 = someGame.createObject();
@@ -133,7 +133,7 @@ QUnit.test("NoCollisionIfNotOverlapping", function (assert) {
     var someScene = someGame.createScene();
 
     // Create two objects and move them into collision by changing their presence
-    var objPos = { x1: -1, y1: -1, x2: 1, y2: -1, x3: 1, y3: 1, x4: -1, y4: 1 };
+    var objPos = { quad: { x1: -1, y1: -1, x2: 1, y2: -1, x3: 1, y3: 1, x4: -1, y4: 1 } };
     
     var obj1 = someGame.createObject();
     var obj2 = someGame.createObject();
