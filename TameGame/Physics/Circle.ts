@@ -17,7 +17,7 @@ module TameGame {
             var cY = center.y;
 
             // Creates a transformed circle
-            var transform = (matrix: number[]) => {
+            var cTransform = (matrix: number[]) => {
                 // Calculate the new center and a point on the transformed circle
                 var newCenter   = transform(matrix, { x: cX, y: cY });
                 var newEdge     = transform(matrix, { x: cX+radius, y: cY });
@@ -30,15 +30,15 @@ module TameGame {
             }
 
             // Returns the bounding box of this circle
-            var getBoundingBox = () => {
+            var cGetBoundingBox = () => {
                 return { x: cX - radius, y: cY - radius, width: radius*2, height: radius*2 };
             }
 
             // Retrieves the center of this circle
-            var getCenter = () => { return { x: cX, y: cY }; }
+            var cGetCenter = () => { return { x: cX, y: cY }; }
 
             // Projects this circle onto an axis
-            var projectOntoAxis = (axis: Point2D) => {
+            var cProjectOntoAxis = (axis: Point2D) => {
                 // Project the center point
                 var center = dot(axis, { x: cX, y: cY });
 
@@ -48,7 +48,7 @@ module TameGame {
             }
 
             // Works out the closest point on the circle to a particular point
-            var closestPoint = (point: Point2D) => {
+            var cClosestPoint = (point: Point2D) => {
                 // Vector to the center of the circle
                 var vX = point.x - cX;
                 var vY = point.y - cY;
@@ -64,7 +64,7 @@ module TameGame {
             }
 
             /** The axes to test (the normals of this shape) */
-            var getAxes = (testShape: SatShape) => {
+            var cGetAxes = (testShape: SatShape) => {
                 // One axis: between the circle and the closest point on the target shape
                 var closestPoint = testShape.closestPoint({ x: cX, y: cY });
 
@@ -77,12 +77,12 @@ module TameGame {
             };
 
             // Set up this object
-            this.transform          = transform;
-            this.getBoundingBox     = getBoundingBox;
-            this.getCenter          = getCenter;
-            this.getAxes            = getAxes;
-            this.projectOntoAxis    = projectOntoAxis;
-            this.closestPoint       = closestPoint;
+            this.transform          = cTransform;
+            this.getBoundingBox     = cGetBoundingBox;
+            this.getCenter          = cGetCenter;
+            this.getAxes            = cGetAxes;
+            this.projectOntoAxis    = cProjectOntoAxis;
+            this.closestPoint       = cClosestPoint;
         }
 
         /** Returns a transformed version of this shape */
