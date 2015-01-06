@@ -39,12 +39,13 @@ module TameGame {
 
             // Projects this circle onto an axis
             var cProjectOntoAxis = (axis: Point2D) => {
+                var mag = magnitude(axis);
+
                 // Project the center point
                 var center = dot(axis, { x: cX, y: cY });
 
                 // All projections are the same
-                // Assumes the axis is a unit axis
-                return { min: center-radius, max: center+radius };
+                return { min: center-radius*mag, max: center+radius*mag };
             }
 
             // Works out the closest point on the circle to a particular point
