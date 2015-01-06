@@ -39,7 +39,7 @@ module TameGame {
                 var velocity            = motion.velocity;
                 var rotationVelocity    = motion.rotationVelocity;
                 
-                if (velocity.x !== 0 && velocity.y !== 0) {
+                if (velocity.x !== 0 || velocity.y !== 0) {
                     presence.location = addVector(presence.location, scaleVector(velocity, durationSeconds));
                 }
 
