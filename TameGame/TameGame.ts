@@ -1,4 +1,4 @@
-/// <reference path="../ThirdParty/DefinitelyTyped/es6-promise.d.ts"/>
+/// <reference path="ThirdParty/DefinitelyTyped/es6-promise.d.ts"/>
 
 /// <reference path="Core/Core.ts"/>
 /// <reference path="RenderQueue/RenderQueue.ts"/>
