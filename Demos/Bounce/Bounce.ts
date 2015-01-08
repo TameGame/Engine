@@ -104,7 +104,7 @@ module Bounce {
     bounceScene.addObject(createWall({ x: 8, y: 0 }, { width: 2, height: 12 }));
 
     // Generate some balls
-    for (var x = 0; x<50; ++x) {
+    for (var x = 0; x<100; ++x) {
         var ball = createBall();
 
         // Place it at a random point
