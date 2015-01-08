@@ -9,7 +9,8 @@ module Bounce {
     var ballSprite = sprites.loadSprite('Ball.png');
 
     // Create a shape for the ball so we can perform collision detection
-    var ballShape = new TameGame.Circle({ x: 0, y: 1 }, 1);
+    var ballRadius = 0.25;
+    var ballShape = new TameGame.Circle({ x: 0, y: 1 }, ballRadius);
 
     // Function to create a ball object
     function createBall() {
@@ -22,15 +23,50 @@ module Bounce {
         newBall.position = {
             zIndex: 0,
             quad: { 
-                x1: -1, y1: 1,
-                x2: 1,  y2: 1,
-                x3: -1, y3: -1,
-                x4: 1,  y4: -1
+                x1: -ballRadius, y1: ballRadius,
+                x2: ballRadius,  y2: ballRadius,
+                x3: -ballRadius, y3: -ballRadius,
+                x4: ballRadius,  y4: -ballRadius
             }
         };
 
         // Give it a shape for collision detection purposes
         newBall.presence.shape = ballShape;
+
+        // Balls bounce off things that they collide with
+        newBall.behavior.shapeCollision = {
+            shapeCollision: (collision: TameGame.Collision, withObject: TameGame.TameObject, thisObject: TameGame.TameObject) => {
+                // Get the 'minimum translation vector' for the collision
+                var mtv = collision.getMtv();
+
+                // Move this object away from the object it collided with
+                var oldPos = newBall.presence.location;
+                var newPos = {
+                    x: oldPos.x + mtv.x/2,
+                    y: oldPos.y + mtv.y/2
+                };
+                newBall.presence.location = newPos;
+
+                // If the ball is not moving away from the point of collision, then make it bounce in a different direction
+                var direction       = newBall.motion.velocity;
+                if (TameGame.dot(mtv, direction) < 0) {
+                    // Normalise it
+                    var mtvUnit = TameGame.unit(mtv);
+
+                    // Calculate the new direction (reflection about the normal)
+                    var mtvDotVelocity  = TameGame.dot(mtvUnit, direction);
+
+                    var newDirection = {
+                        x: 2*mtvDotVelocity*mtvUnit.x - direction.x,
+                        y: 2*mtvDotVelocity*mtvUnit.y - direction.y
+                    };
+                }
+
+                // Returning false ensures the collision is processed for the other object too
+                return false;
+            }
+        };
+
 
         // This is the result
         return newBall;
@@ -48,12 +84,20 @@ module Bounce {
         var width = size.width;
         var height = size.height;
 
+        // The wall just has a presence and location but no sprite
         newWall.presence.location   = position;
         newWall.presence.shape      = new TameGame.Polygon([
             { x: -width/2.0, y: -height/2.0 },
             { x: width/2.0, y: -height/2.0 },
             { x: width/2.0, y: height/2.0 },
             { x: -width/2.0, y: height/2.0 } ]);
+
+        // It does nothing when collided with
+        newWall.behavior.shapeCollision = {
+            shapeCollision: (collision: TameGame.Collision, withObject: TameGame.TameObject, thisObject: TameGame.TameObject) => {
+                return false;
+            }
+        };
 
         return newWall;
     }
@@ -65,14 +109,14 @@ module Bounce {
     bounceScene.addObject(createWall({ x: 8, y: 0 }, { width: 2, height: 12 }));
 
     // Generate some balls
-    for (var x = 0; x<10; ++x) {
+    for (var x = 0; x<50; ++x) {
         var ball = createBall();
 
         // Place it at a random point
         ball.presence.location = { x: Math.random()*10-5, y: Math.random()*10-5 };
 
         // Start it moving in a random direction
-        ball.motion.velocity = { x: Math.random()*2, y: Math.random()*2 };
+        ball.motion.velocity = { x: Math.random()*4-2, y: Math.random()*4-2 };
 
         // Add to the scene
         bounceScene.addObject(ball);
