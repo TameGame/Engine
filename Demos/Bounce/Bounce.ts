@@ -50,15 +50,10 @@ module Bounce {
                 // If the ball is not moving away from the point of collision, then make it bounce in a different direction
                 var direction       = newBall.motion.velocity;
                 if (TameGame.dot(mtv, direction) < 0) {
-                    // Normalise it
-                    var mtvUnit = TameGame.unit(mtv);
-
-                    // Calculate the new direction (reflection about the normal)
-                    var mtvDotVelocity  = TameGame.dot(mtvUnit, direction);
-
-                    var newDirection = {
-                        x: 2*mtvDotVelocity*mtvUnit.x - direction.x,
-                        y: 2*mtvDotVelocity*mtvUnit.y - direction.y
+                    // Change the direction of this ball
+                    newBall.motion.velocity = {
+                        x: Math.random()*4-2,
+                        y: Math.random()*4-2
                     };
                 }
 
