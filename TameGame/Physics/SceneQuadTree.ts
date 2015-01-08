@@ -68,8 +68,6 @@ module TameGame {
                 quadTree.removeObject(obj.quadTreeRef);
             }
 
-            obj.aabb = obj.behavior.aabb.calculateBounds(obj);
-
             obj.quadTreeRef = quadTree.addObject(obj.aabb, obj);
         };
 
@@ -95,6 +93,7 @@ module TameGame {
                     },
                 set: (val) => {
                     aabb = val;
+                    newObj['_aabb'] = false;
                 }
             });
         });
