@@ -8,6 +8,7 @@ var engine      = 'TameGame';
 var launch      = 'TameLaunch';
 var test        = 'Test';
 var thirdParty  = 'ThirdParty';
+var bounceDemo  = 'Demos/Bounce';
 
 // 'ThirdParty' should end up in a folder called 'ThirdParty'
 thirdParty = pickFiles(thirdParty, {
@@ -47,6 +48,27 @@ var tameLaunchJs = compileTypeScript(launch, {
     declaration: true
 });
 
+// Create the demos
+bounceDemo = mergeTrees([bounceDemo, engineDefinitions]);
+
+var bounceJs = compileTypeScript(bounceDemo, {
+    out: 'Bounce.js',
+    sourcemap: true,
+    declaration: true
+});
+
+var bounceSupport = pickFiles(bounceDemo, {
+    srcDir: '/',
+    files:  [ '**/*.html', '**/*.png' ],
+    destDir: '/'
+});
+
+var completeBounceDemo = mergeTrees([bounceSupport, bounceJs, engineJs, tameLaunchJs]);
+completeBounceDemo = pickFiles(completeBounceDemo, {
+    srcDir: '/',
+    destDir: '/Demos/Bounce'
+});
+
 // Minify the engine and launcher
 var launchMinSource = pickFiles(tameLaunchJs, {
     srcDir: '/',
@@ -61,4 +83,4 @@ var minifySource = mergeTrees([launchMinSource, engineMinSource]);
 var engineMinified = uglifyJs(minifySource, {
 });
 
-module.exports = mergeTrees([ engineJs, engineMinified, tameLaunchJs, test ]);
+module.exports = mergeTrees([ engineJs, engineMinified, tameLaunchJs, test, completeBounceDemo ]);
