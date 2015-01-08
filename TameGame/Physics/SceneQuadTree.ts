@@ -16,7 +16,7 @@ module TameGame {
     export interface TameObject {
         /** Most recently calculated axis-aligned bounding box */
         aabb?: BoundingBox;
-        
+
         /** Where this object is located in the scene quadtree */
         quadTreeRef?: QuadTreeReference;
     }
@@ -62,11 +62,6 @@ module TameGame {
     
     /** Attaches scene quadtree tracking behaviour to an existing game */
     export function sceneQuadTreeBehavior(game: Game) {
-        // Function to update the aabb of an object
-        var updateObjectBounds = (obj: TameObject) => {
-            obj.aabb = obj.behavior.aabb.calculateBounds(obj);
-        };
-
         // Function to remove an object, update its AABB and then put it back in its scene
         var updateAndMoveObject = (obj: TameObject, quadTree: QuadTree) => {
             if (obj.quadTreeRef) {
@@ -81,10 +76,28 @@ module TameGame {
         // Marks an object as having been moved since the quadtree was updated
         var markAsMoved = (obj: TameObject) => {
             var scene = obj.scene;
+            obj['_aabb'] = true;
             if (scene) {
                 scene.movedObjects[obj.identifier] = obj;
             }
         }
+
+        game.events.onCreateObject((newObj) => {
+            var aabb: BoundingBox = { x: 0, y: 0, width: 0, height: 0 };
+
+            Object.defineProperty(newObj, 'aabb', {
+                get: () => {
+                        if (newObj['_aabb']) {
+                            newObj['_aabb'] = false;
+                            aabb = newObj.behavior.aabb.calculateBounds(newObj);
+                        }
+                        return aabb;
+                    },
+                set: (val) => {
+                    aabb = val;
+                }
+            });
+        });
 
         game.events.onCreateScene((scene) => {
             // Create a QuadTree for this scene
@@ -94,9 +107,6 @@ module TameGame {
             
             // When objects are added or removed from the scene, add or remove thenm from the appropriate quadTree
             scene.events.onAddObject((obj) => {
-                // Update the bounds of the object
-                updateObjectBounds(obj);
-                
                 // Add to the quadtree for this scene
                 obj.quadTreeRef = scene.quadTree.addObject(obj.aabb, obj);
             });
