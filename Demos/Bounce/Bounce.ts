@@ -103,8 +103,13 @@ module Bounce {
     bounceScene.addObject(createWall({ x: -10, y: 0 }, { width: 2, height: 12 }));
     bounceScene.addObject(createWall({ x: 10, y: 0 }, { width: 2, height: 12 }));
 
-    // Generate some balls
-    for (var x = 0; x<100; ++x) {
+    // Generate 1 ball every second (up to 500)
+    var numBalls = 0;
+    bounceScene.clock.every(() => {
+        if (numBalls > 500) {
+            return;
+        }
+
         var ball = createBall();
 
         // Place it at a random point
@@ -115,7 +120,8 @@ module Bounce {
 
         // Add to the scene
         bounceScene.addObject(ball);
-    }
+        ++numBalls;
+    }, 1000);
 
     // Run the scene that we just created in the game
     game.startScene(bounceScene);

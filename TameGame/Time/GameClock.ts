@@ -22,7 +22,7 @@ module TameGame {
     export function clockBehavior(game: Game) {
         game.clock = new ClockWatcher(game);
 
-        game.events.onNewScene((scene) => {
+        game.events.onCreateScene((scene) => {
             scene.clock = new ClockWatcher(scene);
         });
     }
