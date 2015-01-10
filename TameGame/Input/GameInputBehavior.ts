@@ -30,7 +30,7 @@ module TameGame {
         // Register the scene input behavior as well
         sceneInputBehavior(game);
 
-        // When th  worker sends control events, update the list of controls
+        // When the worker sends control events, update the list of controls
         dispatcher.onMessage(workerMessages.inputControl, (msg) => {
             var input: ControlInput = msg.data.input;
 

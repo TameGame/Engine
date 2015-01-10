@@ -168,7 +168,7 @@ module TameGame {
          * As for onPass, but the call is made every time this object is part
          * of the active scene and the game hits the specified pass.
          */
-        everyPass: (updatePass: UpdatePass, callback: (milliseconds: number) => void) => Cancellable;
+        everyPass: (updatePass: UpdatePass, callback: (milliseconds: number, lastMilliseconds: number) => void) => Cancellable;
 
         /**
          * Retrieves the registered properites for the specified pass
