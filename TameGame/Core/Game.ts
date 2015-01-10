@@ -20,6 +20,10 @@ module TameGame {
         _fireRender:        Event<RenderQueue>;
     }
 
+    interface OnPassCallback {
+        (milliseconds: number, lastMilliseconds: number): void;
+    }
+
     /**
      * The default Game class
      *
@@ -250,11 +254,23 @@ module TameGame {
                 return scenes;
             }
 
+            var onNextPass: { [pass: number]: OnPassCallback[] } = {};
+
             /**
              * Performs the actions associated with a pass
              */
             var runPass = (pass: UpdatePass, milliseconds: number, lastMilliseconds: number, sceneChanges: { scene: InternalScene; watchers: RegisteredWatchers; changes: Watcher }[] , callback?: () => void) => {
+                // Fire the pass start event
                 _firePassStart(pass, pass, milliseconds, lastMilliseconds);
+
+                // Fire the on-shot events for this pass
+                var oneShot = onNextPass[pass];
+                if (oneShot) {
+                    oneShot.forEach(fn => fn(milliseconds, lastMilliseconds));
+                    onNextPass[pass] = null;
+                }
+
+                // Fire the scene pass start events and any on/every pass handlers
                 sceneChanges.forEach((change) => {
                     change.scene._firePassStart(pass, pass, milliseconds, lastMilliseconds)
                     change.scene._watchers.performPassEvents(pass, milliseconds, lastMilliseconds);
@@ -394,11 +410,15 @@ module TameGame {
             }
 
             var onPass = (updatePass: UpdatePass, callback: (milliseconds: number, lastMilliseconds: number) => void) => {
-                // TODO: implement me
+                var eventsForPass = onNextPass[updatePass];
+                if (!eventsForPass) {
+                    onNextPass[updatePass] = eventsForPass = [];
+                }
+
+                eventsForPass.push(callback);
             }
             var everyPass = (updatePass: UpdatePass, callback: (milliseconds: number, lastMilliseconds: number) => void): Cancellable => {
-                // TODO: implement me
-                return null;
+                return passStartEvent.register(updatePass, (updatePass, milliseconds, lastMilliseconds) => callback(milliseconds, lastMilliseconds));
             }
 
             // Store the functions to create the final object

@@ -57,6 +57,56 @@ QUnit.test("SceneSinglePassEventFires", function(assert) {
     assert.ok(fireCount === 1, "Fires only once");
 });
 
+QUnit.test("SceneEveryPassEventFires", function(assert) {
+    var someGame = new TameGame.StandardGame();
+    var someScene = someGame.createScene();
+    someGame.startScene(someScene);
+
+    var fireCount = 0;
+    var toCancel = someScene.everyPass(TameGame.UpdatePass.PhysicsMotion, function () { fireCount++ });
+    assert.ok(fireCount === 0, "Count initially 0");
+    someGame.tick(0);
+    assert.ok(fireCount === 1, "Fires during tick");
+    someGame.tick(1);
+    assert.ok(fireCount === 2, "Fires every pass");
+
+    toCancel.cancel();
+    someGame.tick(2);
+    assert.ok(fireCount === 2, "Stops firing when cancelled");
+});
+
+QUnit.test("GameSinglePassEventFires", function(assert) {
+    var someGame = new TameGame.StandardGame();
+    var someScene = someGame.createScene();
+    someGame.startScene(someScene);
+
+    var fireCount = 0;
+    someGame.onPass(TameGame.UpdatePass.PhysicsMotion, function () { fireCount++ });
+    assert.ok(fireCount === 0, "Count initially 0");
+    someGame.tick(0);
+    assert.ok(fireCount === 1, "Fires during tick");
+    someGame.tick(1);
+    assert.ok(fireCount === 1, "Fires only once");
+});
+
+QUnit.test("GameEveryPassEventFires", function(assert) {
+    var someGame = new TameGame.StandardGame();
+    var someScene = someGame.createScene();
+    someGame.startScene(someScene);
+
+    var fireCount = 0;
+    var toCancel = someGame.everyPass(TameGame.UpdatePass.PhysicsMotion, function () { fireCount++ });
+    assert.ok(fireCount === 0, "Count initially 0");
+    someGame.tick(0);
+    assert.ok(fireCount === 1, "Fires during tick");
+    someGame.tick(1);
+    assert.ok(fireCount === 2, "Fires every pass");
+
+    toCancel.cancel();
+    someGame.tick(2);
+    assert.ok(fireCount === 2, "Stops firing when cancelled");
+});
+
 QUnit.test("CallingSetGeneratesUpdate", function(assert) {
     var someGame        = new TameGame.StandardGame();
     var someObject      = someGame.createObject();
