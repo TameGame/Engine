@@ -9,6 +9,49 @@ QUnit.test("CanCreateObject", function(assert) {
     assert.ok(someObject !== null, "Object created");
 });
 
+QUnit.test("CanUseUninitializedField", function (assert) {
+    var obj = {};
+    var initCount = 0;
+    TameGame.defineUnintializedField(obj, 'test', function () {
+        initCount++;
+        return 'InitialVal' + initCount;
+    });
+
+    TameGame.defineUnintializedField(obj, 'test2', function () {
+        initCount++;
+        return 'InitialVal' + initCount;
+    });
+
+    assert.ok(obj.test === 'InitialVal1', "Initializes to the initial val");
+    assert.ok(obj.test === 'InitialVal1', "Only initialized once");
+
+    obj.test = 'Changed';
+    assert.ok(obj.test === 'Changed', "Changes OK");
+
+    obj.test2 = 'StartWithInit';
+    assert.ok(obj.test2 === 'StartWithInit', "Can replace the value without initialization");
+});
+
+QUnit.test("PrototypeUninitializedField", function (assert) {
+    function obj() { }
+    var initCount = 0;
+    TameGame.defineUnintializedField(obj.prototype, 'test', function () {
+        initCount++;
+        return 'InitialVal' + initCount;
+    });
+
+    var test1 = new obj();
+    var test2 = new obj();
+    var test3 = new obj();
+
+    assert.ok(test1.test === 'InitialVal1', "First object initializes OK");
+    assert.ok(test2.test === 'InitialVal2', "First object initializes OK and differently");
+
+    test3.test = 'Changed';
+    assert.ok(test3.test === 'Changed', "Can assign a value to an uninitialized field");
+});
+
+
 QUnit.test("PhysicsPassIsDeferredUntilTick", function(assert) {
     var someGame        = new TameGame.StandardGame();
     var someObject      = someGame.createObject();
