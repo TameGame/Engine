@@ -98,10 +98,10 @@ module Bounce {
     }
 
     // Walls around the edges
-    bounceScene.addObject(createWall({ x: 0, y: 7 }, { width: 16, height: 2 }));
-    bounceScene.addObject(createWall({ x: 0, y: -7}, { width: 16, height: 2 }));
-    bounceScene.addObject(createWall({ x: -8, y: 0 }, { width: 2, height: 12 }));
-    bounceScene.addObject(createWall({ x: 8, y: 0 }, { width: 2, height: 12 }));
+    bounceScene.addObject(createWall({ x: 0, y: 7 }, { width: 22, height: 2 }));
+    bounceScene.addObject(createWall({ x: 0, y: -7}, { width: 22, height: 2 }));
+    bounceScene.addObject(createWall({ x: -10, y: 0 }, { width: 2, height: 12 }));
+    bounceScene.addObject(createWall({ x: 10, y: 0 }, { width: 2, height: 12 }));
 
     // Generate some balls
     for (var x = 0; x<100; ++x) {

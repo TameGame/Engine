@@ -255,14 +255,17 @@ module TameGame {
              */
             var runPass = (pass: UpdatePass, milliseconds: number, lastMilliseconds: number, sceneChanges: { scene: InternalScene; watchers: RegisteredWatchers; changes: Watcher }[] , callback?: () => void) => {
                 _firePassStart(pass, pass, milliseconds, lastMilliseconds);
-                sceneChanges.forEach((change) => change.scene._firePassStart(pass, pass, milliseconds, lastMilliseconds));
+                sceneChanges.forEach((change) => {
+                    change.scene._firePassStart(pass, pass, milliseconds, lastMilliseconds)
+                    change.scene._watchers.performPassEvents(pass, milliseconds, lastMilliseconds);
+                });
 
                 // Dispatch the changes for this pass to the watchers - both global and for each scene in turn
                 var recentChanges = _propertyManager.getRecentChanges();
-                recentChanges.dispatchChanges(pass, _watchers);
+                recentChanges.dispatchChanges(pass, _watchers, milliseconds, lastMilliseconds);
 
                 sceneChanges.forEach((change) => {
-                    change.changes.dispatchChanges(pass, change.watchers);
+                    change.changes.dispatchChanges(pass, change.watchers, milliseconds, lastMilliseconds);
                 });
                 
                 if (callback) {
@@ -390,10 +393,10 @@ module TameGame {
                 }
             }
 
-            var onPass = (updatePass: UpdatePass, callback: (milliseconds: number) => void) => {
+            var onPass = (updatePass: UpdatePass, callback: (milliseconds: number, lastMilliseconds: number) => void) => {
                 // TODO: implement me
             }
-            var everyPass = (updatePass: UpdatePass, callback: (milliseconds: number) => void): Cancellable => {
+            var everyPass = (updatePass: UpdatePass, callback: (milliseconds: number, lastMilliseconds: number) => void): Cancellable => {
                 // TODO: implement me
                 return null;
             }

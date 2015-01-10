@@ -43,6 +43,20 @@ QUnit.test("PhysicsPassUpdatesOnlyOccurOnce", function(assert) {
     assert.ok(numUpdates === 1, "Update doesn't reoccur on the next tick");
 });
 
+QUnit.test("SceneSinglePassEventFires", function(assert) {
+    var someGame = new TameGame.StandardGame();
+    var someScene = someGame.createScene();
+    someGame.startScene(someScene);
+
+    var fireCount = 0;
+    someScene.onPass(TameGame.UpdatePass.PhysicsMotion, function () { fireCount++ });
+    assert.ok(fireCount === 0, "Count initially 0");
+    someGame.tick(0);
+    assert.ok(fireCount === 1, "Fires during tick");
+    someGame.tick(1);
+    assert.ok(fireCount === 1, "Fires only once");
+});
+
 QUnit.test("CallingSetGeneratesUpdate", function(assert) {
     var someGame        = new TameGame.StandardGame();
     var someObject      = someGame.createObject();

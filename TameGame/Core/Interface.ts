@@ -159,7 +159,7 @@ module TameGame {
          * the specified pass as part of processing a tick, the callback
          * is called, once only.
          */
-        onPass(updatePass: UpdatePass, callback: (milliseconds: number) => void);
+        onPass(updatePass: UpdatePass, callback: (milliseconds: number, lastMilliseconds: number) => void);
 
         /**
          * As for onPass, but the call is made every time this object is part

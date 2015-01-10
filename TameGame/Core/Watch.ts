@@ -1,14 +1,22 @@
 /// <reference path="Interface.ts" />
 
 module TameGame {
+    interface OnPassCallback {
+        (milliseconds: number, lastMilliseconds: number): void;
+    }
+
     /**
      * Represents a set of registered watchers
      */
     export class RegisteredWatchers implements Watchable {
         constructor() {
             var _registered: { [updatePass: number]: { [property: string]: { priority: number; callback: any }[] } }; 
+            var _onNextPass: { [updatePass: number]: OnPassCallback[] };
+            var _onEveryPass: { [updatePass: number]: OnPassCallback[] };
 
             _registered = {};
+            _onNextPass = {};
+            _onEveryPass = {};
 
             /**
              * When any any object with an attached property of the specified
@@ -64,17 +72,42 @@ module TameGame {
              * the specified pass as part of processing a tick, the callback
              * is called, once only.
              */
-            function onPass(updatePass: UpdatePass, callback: (milliseconds: number) => void) {
-                // TODO: implement me
+            function onPass(updatePass: UpdatePass, callback: (milliseconds: number, lastMilliseconds: number) => void) {
+                var passUpdates = _onNextPass[updatePass];
+                if (!passUpdates) {
+                    _onNextPass[updatePass] = passUpdates = [];
+                }
+
+                passUpdates.push(callback);
             }
 
             //
             // As for onPass, but the call is made every time this object is part
             // of the active scene and the game hits the specified pass.
             //
-            function everyPass(updatePass: UpdatePass, callback: (milliseconds: number) => void) : Cancellable {
-                // TODO: implement me
-                return { cancel: () => { } };
+            function everyPass(updatePass: UpdatePass, callback: (milliseconds: number, lastMilliseconds: number) => void) : Cancellable {
+                var passUpdates = _onEveryPass[updatePass];
+                if (!passUpdates) {
+                    _onEveryPass[updatePass] = passUpdates = [];
+                }
+
+                passUpdates.push(callback);
+
+                return { 
+                    cancel: () => { 
+                        var passUpdates = _onEveryPass[updatePass];
+                        if (!passUpdates) {
+                            return;
+                        }
+
+                        for (var x=0; x<passUpdates.length; ++x) {
+                            if (passUpdates[x] === callback) {
+                                passUpdates.splice(x, 1);
+                                break;
+                            }
+                        }
+                    }
+                };
             }
 
             //
@@ -82,11 +115,29 @@ module TameGame {
             //
             function getRegistered(pass: number) { return _registered[pass]; }
 
+            ///
+            /// Performs all the queued events for a particular pass
+            ///
+            function performPassEvents(pass: number, milliseconds: number, lastMilliseconds: number) { 
+                var forThisPass = _onNextPass[pass];
+                var forEveryPass = _onEveryPass[pass];
+
+                if (forThisPass) {
+                    forThisPass.forEach(fn => fn(milliseconds, lastMilliseconds));
+                    _onNextPass[pass] = null;
+                }
+
+                if (forEveryPass) {
+                    forEveryPass.forEach(fn => fn(milliseconds, lastMilliseconds));
+                }
+            }
+
             // Initialise the object properties
-            this.watch          = watch;
-            this.onPass         = onPass;
-            this.everyPass      = everyPass;
-            this.getRegistered  = getRegistered;
+            this.watch              = watch;
+            this.onPass             = onPass;
+            this.everyPass          = everyPass;
+            this.getRegistered      = getRegistered;
+            this.performPassEvents  = performPassEvents;
         }
 
         /**
@@ -111,7 +162,7 @@ module TameGame {
          * the specified pass as part of processing a tick, the callback
          * is called, once only.
          */
-        onPass: (updatePass: UpdatePass, callback: (milliseconds: number) => void) => void;
+        onPass: (updatePass: UpdatePass, callback: (milliseconds: number, lastMilliseconds: number) => void) => void;
 
         /**
          * As for onPass, but the call is made every time this object is part
@@ -123,6 +174,11 @@ module TameGame {
          * Retrieves the registered properites for the specified pass
          */
         getRegistered: (pass: number) => { [property: string]: { priority: number; callback: any }[] };
+
+        /**
+         * Performs all the queued events for a particular pass
+         */
+        performPassEvents: (pass: number, milliseconds: number, lastMilliseconds: number) => void;
     }
 
     /**
@@ -162,7 +218,7 @@ module TameGame {
             /**
              * Sends changes to the watchers in a RegisteredWatchers object
              */
-            function dispatchChanges(pass: UpdatePass, target: RegisteredWatchers) {
+            function dispatchChanges(pass: UpdatePass, target: RegisteredWatchers, milliseconds: number, lastMilliseconds: number) {
                 // Fetch the list of watchers for this pass
                 var watchers = target.getRegistered(pass);
                 if (!watchers) {
@@ -234,7 +290,7 @@ module TameGame {
         /**
          * Sends changes to the watchers in a RegisteredWatchers object
          */
-        dispatchChanges: (pass: UpdatePass, target: RegisteredWatchers) => void;
+        dispatchChanges: (pass: UpdatePass, target: RegisteredWatchers, milliseconds: number, lastMilliseconds: number) => void;
 
         /**
          * Generate a filtered version of this watcher that only applies to the specified object
