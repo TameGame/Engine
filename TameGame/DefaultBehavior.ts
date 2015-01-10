@@ -3,6 +3,7 @@
 /// <reference path="Physics/Physics.ts" />
 /// <reference path="Input/Input.ts" />
 /// <reference path="Animation/Animation.ts" />
+/// <reference path="Time/Time.ts" />
 
 module TameGame {
     //
@@ -37,6 +38,9 @@ module TameGame {
         'tQuadTree': sceneQuadTreeBehavior,
 
         // Control input is routed using the standard behavior
-        'tInput': defaultInputBehavior
+        'tInput': defaultInputBehavior,
+
+        // Clocks are run off the watchable events for scenes and the game by default
+        'tClock': clockBehavior
     }
 }

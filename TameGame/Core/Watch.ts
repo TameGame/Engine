@@ -120,7 +120,7 @@ module TameGame {
             ///
             function performPassEvents(pass: number, milliseconds: number, lastMilliseconds: number) { 
                 var forThisPass     = _onNextPass[pass];
-                var forEveryPass    = _onEveryPass[pass].slice();
+                var forEveryPass    = _onEveryPass[pass];
 
                 if (forThisPass) {
                     forThisPass.forEach(fn => fn(milliseconds, lastMilliseconds));
@@ -128,6 +128,7 @@ module TameGame {
                 }
 
                 if (forEveryPass) {
+                    forEveryPass = forEveryPass.slice();
                     forEveryPass.forEach(fn => fn(milliseconds, lastMilliseconds));
                 }
             }
