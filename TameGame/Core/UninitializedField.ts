@@ -8,15 +8,18 @@ module TameGame {
     export function defineUnintializedField<TObjType, TFieldType>(obj: TObjType, fieldName: string, initialize: (obj: TObjType) => TFieldType) {
         // Relies on the standard JavaScript behaviour for 'this' (not captured by a closure, but referring to the calling object)
         function getFunction() {
+            if (Object.isFrozen(this) || Object.isSealed(this)) {
+                return initialize(this);
+            }
+
             var newVal = initialize(this);
-            delete this[fieldName];
-            this[fieldName] = newVal;
+            Object.defineProperty(this, fieldName, { configurable: true, enumerable: true, writable: true, value: newVal });
             return newVal;
         }
 
+        var setting: boolean = false;
         function setFunction(val: TFieldType) {
-            delete this[fieldName];
-            this[fieldName] = val;
+            Object.defineProperty(this, fieldName, { configurable: true, enumerable: true, writable: true, value: val });
         }
 
         Object.defineProperty(obj, fieldName, {
