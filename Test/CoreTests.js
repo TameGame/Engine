@@ -22,6 +22,8 @@ QUnit.test("CanUseUninitializedField", function (assert) {
         return 'InitialVal' + initCount;
     });
 
+    assert.ok(initCount === 0, "Does not immediately initialize");
+
     assert.ok(obj.test === 'InitialVal1', "Initializes to the initial val");
     assert.ok(obj.test === 'InitialVal1', "Only initialized once");
 
@@ -43,6 +45,8 @@ QUnit.test("PrototypeUninitializedField", function (assert) {
     var test1 = new obj();
     var test2 = new obj();
     var test3 = new obj();
+
+    assert.ok(initCount === 0, "Does not immediately initialize");
 
     assert.ok(test1.test === 'InitialVal1', "First object initializes OK");
     assert.ok(test2.test === 'InitialVal2', "First object initializes OK and differently");
