@@ -103,10 +103,10 @@ module Bounce {
     bounceScene.addObject(createWall({ x: -10, y: 0 }, { width: 2, height: 12 }));
     bounceScene.addObject(createWall({ x: 10, y: 0 }, { width: 2, height: 12 }));
 
-    // Generate 1 ball every second (up to 500)
+    // Generate 1 ball every second (up to 240)
     var numBalls = 0;
     bounceScene.clock.every(() => {
-        if (numBalls > 500) {
+        if (numBalls > 240) {
             return;
         }
 
@@ -121,6 +121,10 @@ module Bounce {
         // Add to the scene
         bounceScene.addObject(ball);
         ++numBalls;
+
+        if (numBalls % 20 === 0) {
+            console.log(numBalls + " balls");
+        }
     }, 1000);
 
     // Run the scene that we just created in the game
