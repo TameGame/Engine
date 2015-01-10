@@ -119,8 +119,8 @@ module TameGame {
             /// Performs all the queued events for a particular pass
             ///
             function performPassEvents(pass: number, milliseconds: number, lastMilliseconds: number) { 
-                var forThisPass = _onNextPass[pass];
-                var forEveryPass = _onEveryPass[pass];
+                var forThisPass     = _onNextPass[pass];
+                var forEveryPass    = _onEveryPass[pass].slice();
 
                 if (forThisPass) {
                     forThisPass.forEach(fn => fn(milliseconds, lastMilliseconds));
