@@ -46,6 +46,14 @@ QUnit.test("PrototypeUninitializedField", function (assert) {
 
     assert.ok(test1.test === 'InitialVal1', "First object initializes OK");
     assert.ok(test2.test === 'InitialVal2', "First object initializes OK and differently");
+    assert.ok(test1.test === 'InitialVal1', "First object does not reinitialize");
+
+    test2.test = 'Changed';
+    assert.ok(test2.test === 'Changed', "Can update the field after initializing it");
+
+    delete test1.test;
+    test1.test = 'Changed';
+    assert.ok(test1.test === 'Changed', "Can update the field by deletion");
 
     test3.test = 'Changed';
     assert.ok(test3.test === 'Changed', "Can assign a value to an uninitialized field");
