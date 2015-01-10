@@ -10,7 +10,7 @@ module Bounce {
 
     // Create a shape for the ball so we can perform collision detection
     var ballRadius = 0.25;
-    var ballShape = new TameGame.Circle({ x: 0, y: 1 }, ballRadius);
+    var ballShape = new TameGame.Circle({ x: 0, y: 0 }, ballRadius);
 
     // Function to create a ball object
     function createBall() {
@@ -100,8 +100,8 @@ module Bounce {
     // Walls around the edges
     bounceScene.addObject(createWall({ x: 0, y: 7 }, { width: 22, height: 2 }));
     bounceScene.addObject(createWall({ x: 0, y: -7}, { width: 22, height: 2 }));
-    bounceScene.addObject(createWall({ x: -10, y: 0 }, { width: 2, height: 12 }));
-    bounceScene.addObject(createWall({ x: 10, y: 0 }, { width: 2, height: 12 }));
+    bounceScene.addObject(createWall({ x: -11.2, y: 0 }, { width: 2, height: 12 }));
+    bounceScene.addObject(createWall({ x: 11.2, y: 0 }, { width: 2, height: 12 }));
 
     // Generate 1 ball every second (up to 240)
     var numBalls = 0;
