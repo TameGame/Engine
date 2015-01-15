@@ -90,15 +90,29 @@ module TameGame {
                 return foundClass !== null;
             });
 
+            // Get the prototype
+            var proto = foundClass || defaultValue;
+
+            // Generate the result
+            var protoType = typeof proto;
+            var result: TBehavior;
+
+            if (protoType === 'function') {
+                // Some objects are just functions
+                result = proto;
+            } else {
+                // Create from the object prototype
+                result = Object.create(proto);
+            }
+
+
             // If there's a class behavior, use that as the value
             if (foundClass) {
-                var result = Object.create(foundClass);
                 result['fromClass'] = true;
-                return result;
             }
 
             // Use the default value
-            return Object.create(defaultValue);
+            return result;
         };
 
         // Add to the default behavior prototype
