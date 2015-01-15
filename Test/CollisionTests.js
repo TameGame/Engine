@@ -161,8 +161,8 @@ QUnit.test("AabbCollisionDuringPass", function (assert) {
     // Count the number of collisions
     var collideCount1 = 0;
     var collideCount2 = 0;
-    obj1.behavior.aabbCollision = function () { ++collideCount1; };
-    obj2.behavior.aabbCollision = function () { ++collideCount2; };
+    obj1.behavior.aabbCollision.collided = function () { ++collideCount1; };
+    obj2.behavior.aabbCollision.collided = function () { ++collideCount2; };
     
     // Run the pass
     someGame.tick(0);
@@ -205,8 +205,8 @@ QUnit.test("NoCollisionIfNotOverlapping", function (assert) {
     // Count the number of collisions
     var collideCount1 = 0;
     var collideCount2 = 0;
-    obj1.behavior.aabbCollision = function () { ++collideCount1; };
-    obj2.behavior.aabbCollision = function () { ++collideCount2; };
+    obj1.behavior.aabbCollision.collided = function () { ++collideCount1; };
+    obj2.behavior.aabbCollision.collided = function () { ++collideCount2; };
     
     // Run the pass
     someGame.tick(0);
