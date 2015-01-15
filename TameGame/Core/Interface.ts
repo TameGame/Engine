@@ -249,7 +249,16 @@ module TameGame {
     /**
      * The behavior interface defines the possible behaviours of an object
      */
-    export interface Behavior { }
+    export interface Behavior {
+        /** Adds a class to this object */
+        addClass?: (newClass: string) => void;
+
+        /** Removes a class from this object */
+        removeClass?: (oldClass: string) => void;
+
+        /** Retrieves the classes for this object */
+        getClasses?: () => string[];
+    }
     
     /**
      * A TameObject provides the base functionality for all game objects

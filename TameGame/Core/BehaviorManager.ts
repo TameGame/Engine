@@ -1,5 +1,7 @@
 /// <reference path="Interface.ts" />
 /// <reference path="StandardProperties.ts" />
+/// <reference path="UninitializedField.ts" />
+/// <reference path="Behavior.ts" />
 
 module TameGame {
     /**
@@ -58,6 +60,70 @@ module TameGame {
         
             defaultValue:   createDefault()
         };
+
+        // Create the default value (returned when there's no class or state defined for the object)
+        var defaultValue = newBehavior.defaultValue;
+
+        // Function to create the value for this behavior for a particular object
+        var createObjectValue = (obj: Behavior) => {
+            // Get the classes that are applied to this object
+            var classes: string[];
+
+            if (obj.getClasses) {
+                classes = obj.getClasses();
+            } else {
+                classes = [];
+            }
+
+            // Look for a class containing this behavior
+            var foundClass: TBehavior = null;;
+            classes.some((className) => {
+                // Get the behaviors defined for this class
+                var classBehaviors = behaviorClasses[className];
+
+                // Check if this class has a definition for this behavior object
+                if (classBehaviors) {
+                    foundClass = classBehaviors[name];
+                }
+
+                // Stop once we find a behavior
+                return foundClass !== null;
+            });
+
+            // If there's a class behavior, use that as the value
+            if (foundClass) {
+                var result = Object.create(foundClass);
+                result['fromClass'] = true;
+                return result;
+            }
+
+            // Use the default value
+            return Object.create(defaultValue);
+        };
+
+        // Add to the default behavior prototype
+        defineUnintializedField(DefaultBehavior.prototype, name, (newBehavior, defineProperty) => {
+            // An initial value of null indicates to use the state/class to retrieve the behavior
+            var currentValue = null;
+
+            function getValue() {
+                currentValue = currentValue || createObjectValue(newBehavior);
+                return currentValue;
+            }
+
+            function setValue(newValue) {
+                currentValue = newValue;
+            }
+
+            // When the property is retrieved, create a new value (based on the class/state) if it's set to null
+            defineProperty({
+                get: getValue,
+                set: setValue
+            });
+
+            // Retrieve the initial value
+            return getValue();
+        });
         
         // Store it
         globalBehaviors[name] = newBehavior;
@@ -90,44 +156,7 @@ module TameGame {
             var behaviors = globalBehaviors;
             
             this.initObject = (obj) => {
-                var objBehavior = obj.behavior;
-                var behaviorProperties: PropertyDescriptorMap = {};
-                
-                Object.keys(behaviors).forEach((behaviorName) => {
-                    var behaviorDefn = behaviors[behaviorName];
-                    var behavior: Behavior;
-
-                    var getFn: () => Behavior;
-                    getFn = () => {
-                        // Try the backing first
-                        if (!behavior) {
-                            // Try the classes
-                            var classes = obj.details.behaviorClass;
-                            classes.some((behaviorClass) => {
-                                behavior = behaviorClasses[behaviorClass][behaviorName];
-                                
-                                return behavior?true:false;
-                            });
-
-                            // Use the default value if no class is set
-                            behavior = behavior || behaviorDefn.defaultValue;
-                        }
-
-                        // Once we've set a behavior, use the simpler version of the backing funciton
-                        if (behavior) {
-                            getFn = () => behavior;
-                        }
-
-                        return behavior;
-                    }
-                    
-                    behaviorProperties[behaviorName] = {
-                        get: () => { return getFn(); },
-                        set: (value) => { behavior = value; }
-                    };
-                });
-                
-                Object.defineProperties(objBehavior, behaviorProperties);
+                obj.behavior = new DefaultBehavior();
             }
         }
         

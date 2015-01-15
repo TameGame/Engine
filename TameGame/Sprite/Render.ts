@@ -48,7 +48,7 @@ module TameGame {
             
             if (obj.sprite.assetId !== -1) {
                 // Attach the behaviour
-                obj.details.behaviorClass.push('sprite');
+                obj.behavior.addClass('sprite');
             } else {
                 // Asset ID is -1, so try again next update
                 delete obj['_sRender'];

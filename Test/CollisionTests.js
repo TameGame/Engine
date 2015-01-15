@@ -147,7 +147,7 @@ QUnit.test("AabbCollisionDuringPass", function (assert) {
     
     var obj1 = someGame.createObject();
     var obj2 = someGame.createObject();
-    
+
     someScene.addObject(obj1);
     someScene.addObject(obj2);
     someGame.startScene(someScene);

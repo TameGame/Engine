@@ -9,14 +9,15 @@ module TameGame {
         // Relies on the standard JavaScript behaviour for 'this' (not captured by a closure, but referring to the calling object)
         function getFunction() {
             var initialized = false;
+            var self = this;
 
-            var newVal = initialize(this, (descriptor) => {
-                Object.defineProperty(this, fieldName, descriptor);
+            var newVal = initialize(self, (descriptor) => {
+                Object.defineProperty(self, fieldName, descriptor);
                 initialized = true;
             });
 
             if (!initialized) {
-                Object.defineProperty(this, fieldName, { configurable: true, enumerable: true, writable: true, value: newVal });
+                Object.defineProperty(self, fieldName, { configurable: true, enumerable: true, writable: true, value: newVal });
             }
 
             return newVal;
