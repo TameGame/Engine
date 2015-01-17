@@ -10,7 +10,7 @@ module TameGame {
      */
     interface PropertyDefinition {
         createDefault: () => any;
-        name: string;
+        uniqueName: string;
         readFrom: (obj: any) => any;
     }
     
@@ -43,7 +43,7 @@ module TameGame {
         
         var newProperty: PropertyDefinition = {
             createDefault:  createDefault,
-            name:           typeName,
+            uniqueName:     typeName,
             readFrom:       readFrom
         };
 
@@ -79,7 +79,7 @@ module TameGame {
             var watchify = (propertyObj: any, sourceObj: TameObject, propertyDefn: PropertyDefinition) => {
                 // propertyObj but with properties that trigger when changed
                 var watchObj = {};
-                var propertyTypeName = propertyDefn.name;
+                var propertyTypeName = propertyDefn.uniqueName;
 
                 // Make sure that the immediate action exists
                 if (!immediateActions[propertyTypeName]) {

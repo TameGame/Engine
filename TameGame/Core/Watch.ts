@@ -45,9 +45,9 @@ module TameGame {
                 }
 
                 // Get/create the callback array for the property type
-                var propertyCallbacks = passCallbacks[definition.name];
+                var propertyCallbacks = passCallbacks[definition.uniqueName];
                 if (!propertyCallbacks) {
-                    propertyCallbacks = passCallbacks[definition.name] = [];
+                    propertyCallbacks = passCallbacks[definition.uniqueName] = [];
                 }
 
                 // Register this callback
@@ -228,7 +228,7 @@ module TameGame {
             }
 
             function getNoteForProperty<TPropertyType>(prop: TypeDefinition<TPropertyType>): (o: TameObject) => void {
-                return getNoteForPropertyName(prop.name);
+                return getNoteForPropertyName(prop.uniqueName);
             }
 
             /**

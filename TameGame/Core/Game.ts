@@ -363,16 +363,16 @@ module TameGame {
                     }
                     
                     // Get the immediate actions for this property
-                    var actions = _immediateActions[definition.name];
+                    var actions = _immediateActions[definition.uniqueName];
 
                     if (!actions) {
                         var readFrom = definition.readFrom;
 
                         // Register new actions
-                        _immediateActions[definition.name] = actions = [];
+                        _immediateActions[definition.uniqueName] = actions = [];
 
                         // When the action occurs, call each item in the actions array
-                        _immediate[definition.name] = (obj) => {
+                        _immediate[definition.uniqueName] = (obj) => {
                             var x: number;
                             var length: number = actions.length;
                             var val = readFrom(obj);

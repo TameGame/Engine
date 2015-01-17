@@ -122,8 +122,8 @@ module TameGame {
      * time.
      */
     export interface TypeDefinition<TType> {
-        // A unique name for this property (usually just the same as the name of the class)
-        name: string;
+        // A unique name for this type (different from any other type definition)
+        uniqueName: string;
 
         // Creates a new default value for this property
         createDefault(): TType;

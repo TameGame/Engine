@@ -13,7 +13,7 @@ module TameGame {
     interface BehaviorDefinition {
         // Matches TypeDefinition
         createDefault: () => any;
-        name: string;
+        uniqueName: string;
         readFrom: (obj: any) => any;
         
         // Details used by the behavior manager itself
@@ -54,7 +54,7 @@ module TameGame {
         
         // Set up the behavior definition
         var newBehavior: BehaviorDefinition = {
-            name:           createTypeName(),
+            uniqueName:     createTypeName(),
             createDefault:  createDefault,
             readFrom:       (obj) => obj[name],
         
