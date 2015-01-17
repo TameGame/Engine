@@ -267,6 +267,7 @@ module TameGame {
             function clearChanges() {
                 Object.keys(_clearChange).forEach((propName) => {
                     _clearChange[propName]();
+                    initialChanges = {};
                 });
             }
             
