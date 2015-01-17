@@ -133,6 +133,14 @@ module TameGame {
     }
 
     /**
+     * A property definition defines a watchable property
+     */
+    export interface PropertyDefinition<TType> extends TypeDefinition<TType> {
+        // The given name for this property ()
+        givenName: string;
+    }
+
+    /**
      * A watchable object can generate callbacks when properties that are
      * attached to it or its child objects change
      */

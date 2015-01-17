@@ -8,14 +8,15 @@ module TameGame {
      * Interface matches TypeDefinition and is sometimes used interchangably; this doesn't have the need to
      * specify a type in the same way.
      */
-    interface PropertyDefinition {
+    interface GenericPropertyDefinition {
         createDefault: () => any;
         uniqueName: string;
+        givenName: string;
         readFrom: (obj: any) => any;
     }
     
     // The set of properties that will be managed by a property manager
-    var globalProperties: { [propertyName: string]: PropertyDefinition } = {};
+    var globalProperties: { [propertyName: string]: GenericPropertyDefinition } = {};
 
     /**
      * Declares a new property that can be used in objects managed by the property manager
@@ -35,15 +36,16 @@ module TameGame {
      *
      * See StandardProperties.ts for an example
      */
-    export function declareProperty<TPropertyType>(propertyName: string, createDefault: () => TPropertyType): TypeDefinition<TPropertyType> {
+    export function declareProperty<TPropertyType>(propertyName: string, createDefault: () => TPropertyType): PropertyDefinition<TPropertyType> {
         var typeName = createTypeName();
         var readFrom = (obj) => {
             return obj[propertyName];
         };
         
-        var newProperty: PropertyDefinition = {
+        var newProperty: GenericPropertyDefinition = {
             createDefault:  createDefault,
             uniqueName:     typeName,
+            givenName:      propertyName,
             readFrom:       readFrom
         };
 
@@ -76,7 +78,7 @@ module TameGame {
             var recentChanges = new Watcher();
 
             // Function that creates property values that notify us of any changes
-            var watchify = (propertyObj: any, sourceObj: TameObject, propertyDefn: PropertyDefinition) => {
+            var watchify = (propertyObj: any, sourceObj: TameObject, propertyDefn: GenericPropertyDefinition) => {
                 // propertyObj but with properties that trigger when changed
                 var watchObj = {};
                 var propertyTypeName = propertyDefn.uniqueName;
