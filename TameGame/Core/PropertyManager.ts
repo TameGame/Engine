@@ -94,8 +94,8 @@ module TameGame {
                     // Set the value of this property
                     var value = propertyObj[prop];
                     Object.defineProperty(watchObj, prop, {
-                        get: () => value,
-                        set: (newValue) => {
+                        get: function() { return value; },
+                        set: function (newValue) {
                             value = newValue;
                             noteChange(sourceObj);              // Takes advantage of the fact that the property definition type matches the type definition type
                             immediateActions[propertyTypeName](sourceObj);

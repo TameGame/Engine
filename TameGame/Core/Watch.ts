@@ -188,34 +188,45 @@ module TameGame {
      */
     export class Watcher {
         constructor(initialChanges?: { [property: string]: { [id: number]: (callback: any) => void } }) {
-            var _changes: { [property: string]: { [id: number]: (callback: any) => void } };
             var _propertyChangers: { [property: string]: (o: TameObject) => void };
+            var _clearChange: { [property: string]: () => void };
+            var _getChange: { [property: string]: () => { [id: number]: (callback: any) => void } };
 
             if (!initialChanges) {
                 initialChanges = {};
             }
-            _changes            = initialChanges;
             _propertyChangers   = {};
+            _clearChange        = {};
+            _getChange          = {};
 
             //
             // Retrieves a function that can be called to notify a change to a particular property
             //
             function getNoteForProperty<TPropertyType>(property: TypeDefinition<TPropertyType>): (o: TameObject) => void {
-                var name    = property.name;
-
-                var propertyChanges = _changes[name];
-                if (!propertyChanges) {
-                    propertyChanges = _changes[name] = {};
-                }
+                var name            = property.name;
 
                 if (!_propertyChangers[name]) {
-                    _propertyChangers[name] = function (o: TameObject) {
-                        var id      = o.identifier;
-        
-                        if (!propertyChanges[id]) {
-                            propertyChanges[id] = function (callback) { callback(o, property.readFrom(o)); }
+                    (function () {
+                        var propertyChanges = initialChanges[name] || {};
+
+                        // Create a function to flag this property
+                        _propertyChangers[name] = function (o: TameObject) {
+                            var id      = o.identifier;
+            
+                            if (!propertyChanges[id]) {
+                                propertyChanges[id] = function (callback) { callback(o, property.readFrom(o)); }
+                            }
                         }
-                    }
+
+                        // Create a function to clear this property
+                        _clearChange[name] = function () {
+                            propertyChanges = {};
+                        }
+
+                        _getChange[name] = function () {
+                            return propertyChanges;
+                        }
+                    })();
                 }
 
                 return _propertyChangers[name];
@@ -232,14 +243,13 @@ module TameGame {
                 }
 
                 // For each property, dispatch the events
-                var changes = _changes;
-                Object.getOwnPropertyNames(changes).forEach((prop) => {
+                Object.getOwnPropertyNames(_getChange).forEach((prop) => {
                     // Fetch the callbacks for this property
                     var callbacks = watchers[prop];
 
                     if (callbacks) {
                         // For every object with a change to this property...
-                        var callbackFunctions = changes[prop];
+                        var callbackFunctions = _getChange[prop]();
                         Object.keys(callbackFunctions).forEach((objId) => {
                             // Fetch the function that can notify of the change
                             var objCallback = callbackFunctions[objId];
@@ -255,7 +265,9 @@ module TameGame {
              * Clear out any changes that might have occurred 
              */
             function clearChanges() {
-                _changes = {};
+                Object.keys(_clearChange).forEach((propName) => {
+                    _clearChange[propName]();
+                });
             }
             
             /**
@@ -266,8 +278,8 @@ module TameGame {
                 var newChanges: { [property: string]: { [id: number]: (callback: any) => void } } = {}; 
                 
                 // Only include objects matched by the filter
-                Object.getOwnPropertyNames(_changes).forEach((propertyName) => {
-                    var oldPropertyChanges = _changes[propertyName];
+                Object.getOwnPropertyNames(_getChange).forEach((propertyName) => {
+                    var oldPropertyChanges = _getChange[propertyName]();
                     var newPropertyChanges = newChanges[propertyName] = {};
                     
                     // Using forEach() here would be preferable but it seems to fail the type checks (TypeScript doesn't realise the IDs are numbers)
