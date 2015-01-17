@@ -45,9 +45,9 @@ module TameGame {
                 }
 
                 // Get/create the callback array for the property type
-                var propertyCallbacks = passCallbacks[definition.uniqueName];
+                var propertyCallbacks = passCallbacks[definition.givenName];
                 if (!propertyCallbacks) {
-                    propertyCallbacks = passCallbacks[definition.uniqueName] = [];
+                    propertyCallbacks = passCallbacks[definition.givenName] = [];
                 }
 
                 // Register this callback
@@ -230,8 +230,8 @@ module TameGame {
                 return _propertyChangers[name];
             }
 
-            function getNoteForProperty<TPropertyType>(prop: TypeDefinition<TPropertyType>): (o: TameObject) => void {
-                return getNoteForPropertyName(prop.uniqueName);
+            function getNoteForProperty<TPropertyType>(prop: PropertyDefinition<TPropertyType>): (o: TameObject) => void {
+                return getNoteForPropertyName(prop.givenName);
             }
 
             /**
@@ -258,7 +258,7 @@ module TameGame {
                             var propValue = changedObj[prop];
 
                             // Make the call
-                            callbacks.forEach(callback => callback.callback(changedObj, null));
+                            callbacks.forEach(callback => callback.callback(changedObj, propValue));
                         });
                     }
                 });
@@ -307,7 +307,7 @@ module TameGame {
         /**
          * Retrieves a function that logs a change for the specified property
          */
-        getNoteForProperty<TPropertyType>(property: TypeDefinition<TPropertyType>): (o: TameObject) => void { return null; /* Here because TypeScript can't support generic lambdas */ }
+        getNoteForProperty<TPropertyType>(property: PropertyDefinition<TPropertyType>): (o: TameObject) => void { return null; /* Here because TypeScript can't support generic lambdas */ }
 
         /**
          * Sends changes to the watchers in a RegisteredWatchers object
