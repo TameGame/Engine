@@ -100,7 +100,7 @@ module TameGame {
                         set: function (newValue) {
                             value = newValue;
                             noteChange(sourceObj);              // Takes advantage of the fact that the property definition type matches the type definition type
-                            immediateActions[propertyTypeName](sourceObj, newValue);
+                            immediateActions[propertyTypeName](sourceObj, watchObj);
                         }
                     });
                 });

@@ -379,7 +379,6 @@ module TameGame {
                             _immediate[definition.uniqueName] = function (obj, val) { 
                                 var x: number;
                                 var length: number = actions.length;
-                                val = obj[propName];
 
                                 for (x=0; x<length; ++x) {
                                     act[x].callback(obj, val);
