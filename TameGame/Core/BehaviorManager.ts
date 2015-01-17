@@ -156,27 +156,4 @@ module TameGame {
     export function declareBehaviorClass(behaviorClassName: string, behaviors: Behavior) {
         behaviorClasses[behaviorClassName] = behaviors;
     }
-    
-    /**
-     * The BehaviorManager handles registering and creating the behaviors of objects.
-     *
-     * Behaviors are simply collections functions that objects use to communicate with one another.
-     * For instance, it is possible to define something like a CollisionBehavior and use that to decide
-     * what should happen when one object collides with another (and indeed, this is what the default
-     * physics library does)
-     */
-    export class BehaviorManager {
-        constructor() {
-            var behaviors = globalBehaviors;
-            
-            this.initObject = (obj) => {
-                obj.behavior = new DefaultBehavior();
-            }
-        }
-        
-        /** Initialises an object with the default behaviors */
-        initObject: (obj: TameObject) => void;
-    };
-    
-    // TODO: implement behavior classes
 }

@@ -3,6 +3,7 @@
 /// <reference path="Event.ts" />
 /// <reference path="PropertyManager.ts" />
 /// <reference path="BehaviorManager.ts" />
+/// <reference path="Behavior.ts" />
 /// <reference path="../RenderQueue/RenderQueue.ts"/>
 
 module TameGame {
@@ -37,7 +38,6 @@ module TameGame {
             var _nextIdentifier: number;
             var _watchers: RegisteredWatchers;
             var _propertyManager: PropertyManager;
-            var _behaviorManager: BehaviorManager;
             var _immediate: { [propertyName: string]: (obj: TameObject) => void };
             var _immediateActions: { [propertyName: string]: { priority: number; callback: (obj: TameObject, value: any) => void }[] };
             
@@ -67,7 +67,6 @@ module TameGame {
             _currentTime            = 0;
             _lastTime               = 0;
             _propertyManager        = new PropertyManager(_immediate);
-            _behaviorManager        = new BehaviorManager();
             
             // Set up the events
             var passStartEvent      = createFilteredEvent<UpdatePass, UpdatePass>();
@@ -101,7 +100,7 @@ module TameGame {
             var createObject = (): TameObject => {
                 // An object contains some properties and behaviors, which we declare here
                 var properties = {};
-                var behaviors = {};
+                var behaviors = new DefaultBehavior();
                 var obj: TameObject;
 
                 var identifier = _nextIdentifier;
@@ -110,12 +109,11 @@ module TameGame {
                 // Create basic object
                 obj = {
                     identifier:     identifier,
-                    behavior:       {},
+                    behavior:       behaviors,
                     scene:          null
                 };
                 
                 // Set up the watchable properties and behaviors
-                _behaviorManager.initObject(obj);
                 _propertyManager.initObject(obj);
 
                 createObjectEvent.fire(obj, _currentTime, _lastTime);
