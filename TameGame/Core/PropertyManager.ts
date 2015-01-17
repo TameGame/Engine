@@ -70,7 +70,7 @@ module TameGame {
      * obj.prop.x.y = value3 will not.
      */
     export class PropertyManager {
-        constructor(immediateActions: { [propertyName: string]: (TameObject) => void }) {
+        constructor(immediateActions: { [propertyName: string]: (o: TameObject, val: any) => void }) {
             // Properties for this object
             var properties = globalProperties;
 
@@ -100,7 +100,7 @@ module TameGame {
                         set: function (newValue) {
                             value = newValue;
                             noteChange(sourceObj);              // Takes advantage of the fact that the property definition type matches the type definition type
-                            immediateActions[propertyTypeName](sourceObj);
+                            immediateActions[propertyTypeName](sourceObj, newValue);
                         }
                     });
                 });

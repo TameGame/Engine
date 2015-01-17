@@ -38,7 +38,7 @@ module TameGame {
             var _nextIdentifier: number;
             var _watchers: RegisteredWatchers;
             var _propertyManager: PropertyManager;
-            var _immediate: { [propertyName: string]: (obj: TameObject) => void };
+            var _immediate: { [propertyName: string]: (obj: TameObject, value: any) => void };
             var _immediateActions: { [propertyName: string]: { priority: number; callback: (obj: TameObject, value: any) => void }[] };
             
             var _firePassStart:     FireFilteredEvent<UpdatePass, UpdatePass>;
@@ -372,15 +372,19 @@ module TameGame {
                         _immediateActions[definition.uniqueName] = actions = [];
 
                         // When the action occurs, call each item in the actions array
-                        _immediate[definition.uniqueName] = (obj) => {
-                            var x: number;
-                            var length: number = actions.length;
-                            var val = readFrom(obj);
+                        (function() {
+                            var act         = actions;
+                            var propName    = definition.givenName;
 
-                            for (x=0; x<length; ++x) {
-                                actions[x].callback(obj, val);
+                            _immediate[definition.uniqueName] = function (obj, val) { 
+                                var x: number;
+                                var length: number = actions.length;
+
+                                for (x=0; x<length; ++x) {
+                                    act[x].callback(obj, val);
+                                }
                             }
-                        };
+                        })();
                     }
 
                     // Append the action
