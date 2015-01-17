@@ -10,7 +10,7 @@ module TameGame {
      */
     export class RegisteredWatchers implements Watchable {
         constructor() {
-            var _registered: { [updatePass: number]: { [property: string]: { priority: number; callback: any }[] } }; 
+            var _registered: { [updatePass: number]: { [property: string]: { priority: number; callback: { (o: TameObject, val: any): void } }[] } }; 
             var _onNextPass: { [updatePass: number]: OnPassCallback[] };
             var _onEveryPass: { [updatePass: number]: OnPassCallback[] };
 
@@ -187,10 +187,10 @@ module TameGame {
      * with dispatching the relevant events.
      */
     export class Watcher {
-        constructor(initialChanges?: { [property: string]: { [id: number]: (callback: any) => void } }) {
+        constructor(initialChanges?: { [property: string]: { [id: number]: TameObject } }) {
             var _propertyChangers: { [property: string]: (o: TameObject) => void };
             var _clearChange: { [property: string]: () => void };
-            var _getChange: { [property: string]: () => { [id: number]: (callback: any) => void } };
+            var _getChange: { [property: string]: () => { [id: number]: TameObject } };
 
             if (!initialChanges) {
                 initialChanges = {};
@@ -202,9 +202,7 @@ module TameGame {
             //
             // Retrieves a function that can be called to notify a change to a particular property
             //
-            function getNoteForProperty<TPropertyType>(property: TypeDefinition<TPropertyType>): (o: TameObject) => void {
-                var name            = property.name;
-
+            function getNoteForPropertyName(name: string): (o: TameObject) => void {
                 if (!_propertyChangers[name]) {
                     (function () {
                         var propertyChanges = initialChanges[name] || {};
@@ -212,10 +210,7 @@ module TameGame {
                         // Create a function to flag this property
                         _propertyChangers[name] = function (o: TameObject) {
                             var id      = o.identifier;
-            
-                            if (!propertyChanges[id]) {
-                                propertyChanges[id] = function (callback) { callback(o, property.readFrom(o)); }
-                            }
+                            propertyChanges[id] = o;
                         }
 
                         // Create a function to clear this property
@@ -230,6 +225,10 @@ module TameGame {
                 }
 
                 return _propertyChangers[name];
+            }
+
+            function getNoteForProperty<TPropertyType>(prop: TypeDefinition<TPropertyType>): (o: TameObject) => void {
+                return getNoteForPropertyName(prop.name);
             }
 
             /**
@@ -249,13 +248,14 @@ module TameGame {
 
                     if (callbacks) {
                         // For every object with a change to this property...
-                        var callbackFunctions = _getChange[prop]();
-                        Object.keys(callbackFunctions).forEach((objId) => {
+                        var changes = _getChange[prop]();
+                        Object.keys(changes).forEach((objId) => {
                             // Fetch the function that can notify of the change
-                            var objCallback = callbackFunctions[objId];
+                            var changedObj = changes[objId];
+                            var propValue = changedObj[prop];
 
                             // Make the call
-                            callbacks.forEach(callback => objCallback(callback.callback));
+                            callbacks.forEach(callback => callback.callback(changedObj, null));
                         });
                     }
                 });
@@ -276,7 +276,7 @@ module TameGame {
              * IDs.
              */
             function filter(filterFunc: (objId: number) => boolean): Watcher {
-                var newChanges: { [property: string]: { [id: number]: (callback: any) => void } } = {}; 
+                var newChanges: { [property: string]: { [id: number]: TameObject } } = {}; 
                 
                 // Only include objects matched by the filter
                 Object.getOwnPropertyNames(_getChange).forEach((propertyName) => {
