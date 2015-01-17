@@ -20,7 +20,7 @@ module TameGame {
     /**
      * The position property describes where a sprite is on screen
      */
-    export var Position: TypeDefinition<IPosition> = declareProperty("position", () => {
+    export var Position: PropertyDefinition<IPosition> = declareProperty("position", () => {
         return {
             quad: {
                 x1: 0, y1: 0,
@@ -48,7 +48,7 @@ module TameGame {
     /**
      * The sprite property describes the sprite that should be displayed by a particular object
      */
-    export var Sprite: TypeDefinition<ISprite> = declareProperty("sprite", () => {
+    export var Sprite: PropertyDefinition<ISprite> = declareProperty("sprite", () => {
         return {
             // Asset ID -1 indicates no sprite
             assetId: -1

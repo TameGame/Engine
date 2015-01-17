@@ -52,7 +52,7 @@ module TameGame {
         aliveStatus?: IAliveStatus;
     }
     
-    export var AliveStatus: TypeDefinition<IAliveStatus> = declareProperty("aliveStatus", () => {
+    export var AliveStatus: PropertyDefinition<IAliveStatus> = declareProperty("aliveStatus", () => {
         return { isAlive: false };
     });
     

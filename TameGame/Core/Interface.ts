@@ -160,7 +160,7 @@ module TameGame {
          * are found in the Priority object. A priority of 0 is used if this
          * parameter is not specified.
          */
-        watch<TPropertyType>(definition: TypeDefinition<TPropertyType>, updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>, priority?: number): Cancellable;
+        watch<TPropertyType>(definition: PropertyDefinition<TPropertyType>, updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>, priority?: number): Cancellable;
 
         /**
          * When this object is part of the active scene and the game hits

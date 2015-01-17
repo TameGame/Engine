@@ -28,7 +28,7 @@ module TameGame {
              * Watch notifications are generally not called immediately but when
              * a particular update pass is hit during a game tick.
              */
-            function watch<TPropertyType>(definition: TypeDefinition<TPropertyType>, updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>, priority?: number): Cancellable {
+            function watch<TPropertyType>(definition: PropertyDefinition<TPropertyType>, updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>, priority?: number): Cancellable {
                 // This only deals with deferred updates
                 if (updatePass === UpdatePass.Immediate) {
                     throw "Immediate updates are not supported by this object";
@@ -156,7 +156,10 @@ module TameGame {
          * are found in the Priority object. A priority of 0 is used if this
          * parameter is not specified.
          */
-        watch: (definition: any, updatePass: UpdatePass, callback: any, priority?: number) => Cancellable;          // Using 'any' instead of the generic definitions as TypeScript doesn't seem to support this in lambdas as far as I can see
+        watch<TPropertyType>(definition: PropertyDefinition<TPropertyType>, updatePass: UpdatePass, callback: any, priority?: number): Cancellable {
+            /* Empty definition to work around typescript's inability to declare generic lambdas */
+            return null;
+        }
 
         /**
          * When this object is part of the active scene and the game hits

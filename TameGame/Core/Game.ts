@@ -356,7 +356,7 @@ module TameGame {
              * Watch notifications are generally not called immediately but when
              * a particular update pass is hit during a game tick.
              */
-            function watch<TPropertyType>(definition: TypeDefinition<TPropertyType>, updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>, priority?: number): Cancellable {
+            function watch<TPropertyType>(definition: PropertyDefinition<TPropertyType>, updatePass: UpdatePass, callback: PropertyChangedCallback<TPropertyType>, priority?: number): Cancellable {
                 if (updatePass === UpdatePass.Immediate) {
                     if (typeof priority === 'undefined' || priority === null) {
                         priority = 0;

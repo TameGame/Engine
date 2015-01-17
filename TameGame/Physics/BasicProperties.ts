@@ -20,7 +20,7 @@ module TameGame {
         presence?: IPresence;
     }
 
-    export var Presence: TypeDefinition<IPresence> = declareProperty("presence", () => {
+    export var Presence: PropertyDefinition<IPresence> = declareProperty("presence", () => {
         return {
             shape: null,
             location: { x: 0, y: 0 },
@@ -43,7 +43,7 @@ module TameGame {
         motion?: IMotion;
     }
 
-    export var Motion: TypeDefinition<IMotion> = declareProperty("motion", () => {
+    export var Motion: PropertyDefinition<IMotion> = declareProperty("motion", () => {
         return {
             velocity: { x:0, y:0 },
             rotationVelocity: 0
