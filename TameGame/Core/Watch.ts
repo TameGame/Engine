@@ -297,6 +297,9 @@ module TameGame {
                 return new Watcher(newChanges);
             }
 
+            // Initialise anything that has an initial change (so that filtering works)
+            Object.keys(initialChanges).forEach((propName) => getNoteForPropertyName(propName));
+
             // Finish up the object
             this.getNoteForProperty = getNoteForProperty;
             this.dispatchChanges    = dispatchChanges;
