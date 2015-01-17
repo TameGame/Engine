@@ -189,31 +189,36 @@ module TameGame {
     export class Watcher {
         constructor(initialChanges?: { [property: string]: { [id: number]: (callback: any) => void } }) {
             var _changes: { [property: string]: { [id: number]: (callback: any) => void } };
+            var _propertyChangers: { [property: string]: (o: TameObject) => void };
 
             if (!initialChanges) {
                 initialChanges = {};
             }
-            _changes = initialChanges;
+            _changes            = initialChanges;
+            _propertyChangers   = {};
 
             //
-            // Notes that a property on an object has changed
+            // Retrieves a function that can be called to notify a change to a particular property
             //
-            function noteChange<TPropertyType>(o: TameObject, property: TypeDefinition<TPropertyType>) {
+            function getNoteForProperty<TPropertyType>(property: TypeDefinition<TPropertyType>): (o: TameObject) => void {
                 var name    = property.name;
-                var id      = o.identifier;
 
                 var propertyChanges = _changes[name];
                 if (!propertyChanges) {
                     propertyChanges = _changes[name] = {};
                 }
 
-                // Create a default callback if none is yet registered for this object
-                if (!propertyChanges[id]) {
-                    // Create a callback function for this object
-                    propertyChanges[id] = (callback) => {
-                        callback(o, property.readFrom(o));
-                    };
+                if (!_propertyChangers[name]) {
+                    _propertyChangers[name] = function (o: TameObject) {
+                        var id      = o.identifier;
+        
+                        if (!propertyChanges[id]) {
+                            propertyChanges[id] = function (callback) { callback(o, property.readFrom(o)); }
+                        }
+                    }
                 }
+
+                return _propertyChangers[name];
             }
 
             /**
@@ -233,7 +238,7 @@ module TameGame {
                     var callbacks = watchers[prop];
 
                     if (callbacks) {
-                        // For every object with a change to this property..
+                        // For every object with a change to this property...
                         var callbackFunctions = changes[prop];
                         Object.keys(callbackFunctions).forEach((objId) => {
                             // Fetch the function that can notify of the change
@@ -277,16 +282,16 @@ module TameGame {
             }
 
             // Finish up the object
-            this.noteChange         = noteChange;
+            this.getNoteForProperty = getNoteForProperty;
             this.dispatchChanges    = dispatchChanges;
             this.filter             = filter;
             this.clearChanges       = clearChanges;
         }
 
         /**
-         * Notes that a property on an object has changed for later dispatch
+         * Retrieves a function that logs a change for the specified property
          */
-        noteChange<TPropertyType>(o: TameObject, property: TypeDefinition<TPropertyType>) { /* Gets replaced */}
+        getNoteForProperty<TPropertyType>(property: TypeDefinition<TPropertyType>): (o: TameObject) => void { return null; /* Here because TypeScript can't support generic lambdas */ }
 
         /**
          * Sends changes to the watchers in a RegisteredWatchers object

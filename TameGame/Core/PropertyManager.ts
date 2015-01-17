@@ -74,7 +74,6 @@ module TameGame {
 
             // Storage for any recent changes that have occurred
             var recentChanges = new Watcher();
-            var noteChange = recentChanges.noteChange;
 
             // Function that creates property values that notify us of any changes
             var watchify = (propertyObj: any, sourceObj: TameObject, propertyDefn: PropertyDefinition) => {
@@ -87,18 +86,18 @@ module TameGame {
                     immediateActions[propertyTypeName] = () =>  {};
                 }
 
-                var propertyNames = Object.getOwnPropertyNames(propertyObj);
+                var propertyNames   = Object.getOwnPropertyNames(propertyObj);
+                var noteChange      = recentChanges.getNoteForProperty(propertyDefn);
 
                 // Setting the property should trigger events
                 propertyNames.forEach((prop) => {
                     // Set the value of this property
                     var value = propertyObj[prop];
-
                     Object.defineProperty(watchObj, prop, {
                         get: () => value,
                         set: (newValue) => {
                             value = newValue;
-                            noteChange(sourceObj, propertyDefn);              // Takes advantage of the fact that the property definition type matches the type definition type
+                            noteChange(sourceObj);              // Takes advantage of the fact that the property definition type matches the type definition type
                             immediateActions[propertyTypeName](sourceObj);
                         }
                     });
