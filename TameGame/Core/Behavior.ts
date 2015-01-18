@@ -37,7 +37,7 @@ module TameGame {
     }
 
     DefaultBehavior.prototype.addClass = function (newClass) {
-        this._classes.push(newClass);
+        this._classes.unshift(newClass);
 
         clearClasses(this);
     };
