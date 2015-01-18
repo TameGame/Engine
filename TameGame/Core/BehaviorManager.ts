@@ -30,6 +30,9 @@ module TameGame {
     
     /** The behavior classes that we know about */
     var behaviorClasses: { [ name: string ]: Behavior } = {};
+
+    /** The behavior classes to use for particular states */
+    var behaviorStates: { [ className: string ]: { [ stateName: string ]: Behavior } } = {};
     
     /**
      * Declares a new behavior type with a particular default behavior
@@ -158,16 +161,40 @@ module TameGame {
      * If an class already exists with this name, the passed in behavior will be merged in to it.
      */
     export function declareBehaviorClass(behaviorClassName: string, behaviors: Behavior) {
-        var mergedBehavior = behaviorClasses[behaviorClassName];
-
-        // Create a new behavior
-        if (!mergedBehavior) {
-            mergedBehavior = behaviorClasses[behaviorClassName] = {};
-        }
+        var mergedBehavior = behaviorClasses[behaviorClassName] || {};
 
         // Merge in the behaviors
         Object.getOwnPropertyNames(behaviors).forEach((behaviorName) => {
             mergedBehavior[behaviorName] = behaviors[behaviorName];
         });
+
+        behaviorClasses[behaviorClassName] = mergedBehavior;
+    }
+
+    /**
+     * Declares a behavior for an object with a particular class and state
+     */
+    export function declareBehaviorClassState(behaviorClassName: string, stateName: string, behaviors: Behavior) {
+        // Get the states for this class
+        var states          = behaviorStates[behaviorClassName] || {};
+        var mergedBehavior  = states[stateName] || {};
+
+        // Merge the behaviors
+        Object.getOwnPropertyNames(behaviors).forEach((behaviorName) => {
+            mergedBehavior[behaviorName] = behaviors[behaviorName];
+        });
+
+        // Store the results
+        states[stateName]                   = mergedBehavior;
+        behaviorStates[behaviorClassName]   = states;
+    }
+
+
+    /**
+     * Declares a behavior for an object with a particular class and state
+     */
+    export function declareBehaviorState(stateName: string, behaviors: Behavior) {
+        // We use the class with the empty name as the soruce for the default states
+        declareBehaviorClassState('', stateName, behaviors);
     }
 }
