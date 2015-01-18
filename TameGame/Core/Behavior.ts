@@ -51,7 +51,7 @@ module TameGame {
         var classes = this._classes;
         for (var x=0; x<classes.length; ++x) {
             if (classes[x] === oldClass) {
-                classes[x].splice(x);
+                classes.splice(x, 1);
                 --x;
             }
         }
