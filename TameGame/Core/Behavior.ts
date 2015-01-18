@@ -11,7 +11,15 @@ module TameGame {
             Object.defineProperty(this, '_classes', { 
                 configurable: false,
                 enumerable: false,
-                value: [] 
+                writable: true,
+                value: []
+            });
+
+            Object.defineProperty(this, '_state', { 
+                configurable: false,
+                enumerable: false,
+                writable: true,
+                value: ''
             });
         }
 
@@ -24,8 +32,14 @@ module TameGame {
         /** Retrieves the classes for this object */
         getClasses: () => string[];
 
+        /** Sets/gets the behavior state of this object */
+        state: string;
+
         /** Classes set for this behavior */
         _classes: string[];
+
+        /** The current state of this object */
+        _state: string;
     }
 
     /**
@@ -63,4 +77,15 @@ module TameGame {
     DefaultBehavior.prototype.getClasses = function () {
         return this._classes;
     }
+
+    Object.defineProperty(DefaultBehavior.prototype, 'state', {
+        set: function (newValue: string) {
+            this._state = newValue;
+            clearClasses(this);
+        },
+        get: function () { 
+            return this._state; 
+        },
+        enumerable: false
+    });
 }

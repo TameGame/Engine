@@ -266,6 +266,9 @@ module TameGame {
 
         /** Retrieves the classes for this object */
         getClasses?: () => string[];
+
+        /** Sets/gets the behavior state of this object */
+        state?: string;
     }
     
     /**
