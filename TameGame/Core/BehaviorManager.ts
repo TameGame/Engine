@@ -32,7 +32,7 @@ module TameGame {
     var behaviorClasses: { [ name: string ]: Behavior } = {};
 
     /** The behavior classes to use for particular states */
-    var behaviorStates: { [ className: string ]: { [ stateName: string ]: Behavior } } = {};
+    var behaviorStates: { [ className: string ]: { [ stateName: string ]: Behavior } } = { '': {} };
     
     /**
      * Declares a new behavior type with a particular default behavior
@@ -78,23 +78,26 @@ module TameGame {
                 classes = [];
             }
 
+            // We also need the state
+            var state = obj.state;
+
             // Look for a class containing this behavior
             var foundClass: TBehavior = null;;
             classes.some((className) => {
                 // Get the behaviors defined for this class
-                var classBehaviors = behaviorClasses[className];
+                var classBehaviors  = behaviorClasses[className] || {};
+                var classStates     = behaviorStates[className] || {};
+                var stateBehaviors  = classStates[state] || {};
 
                 // Check if this class has a definition for this behavior object
-                if (classBehaviors) {
-                    foundClass = classBehaviors[name] || null;
-                }
+                foundClass = stateBehaviors[name] || classBehaviors[name] || null;
 
                 // Stop once we find a behavior
                 return foundClass !== null;
             });
 
             // Get the prototype
-            var proto = foundClass || defaultValue;
+            var proto = foundClass || behaviorStates[''][state] || defaultValue;
 
             // Generate the result
             var protoType = typeof proto;
@@ -188,7 +191,6 @@ module TameGame {
         states[stateName]                   = mergedBehavior;
         behaviorStates[behaviorClassName]   = states;
     }
-
 
     /**
      * Declares a behavior for an object with a particular class and state
