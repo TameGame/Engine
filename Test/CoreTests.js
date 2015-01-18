@@ -447,6 +447,7 @@ QUnit.test("ClassesAreApplied", function (assert) {
 TameGame.declareBehaviorState('state1', { test: { test: function (obj) { obj.testState1 = true; } } });
 TameGame.declareBehaviorState('state2', { test: { test: function (obj) { obj.testState2 = true; } } });
 TameGame.declareBehaviorClassState('testClass1', 'state1', { test: { test: function (obj) { obj.testClass1State1 = true; } } });
+TameGame.declareBehaviorClassState('testClass3', 'state1', { test: { test: function (obj) { obj.testClass3State1 = true; } } });
 
 QUnit.test("StatesAreApplied", function (assert) {
     var game    = new TameGame.StandardGame();
@@ -493,9 +494,8 @@ QUnit.test("StatesAreApplied", function (assert) {
     someObj.behavior.addClass('testClass1');
     someObj.behavior.state = 'state2';
     someObj.behavior.test.test(someObj);
-    assert.ok(someObj.testState2, 'State2 default behavior still invoked after test class is defined');
-    assert.ok(!someObj.testClass1, '(Not class behavior)');
-    assert.ok(!someObj.tested, '(Not default behavior)');
+    assert.ok(someObj.testClass1, 'TestClass1 behavior invoked when state2 is applied');
+    assert.ok(!someObj.testState2, '(Not standard state behavior)');
 
     someObj.tested              = false;
     someObj.testState1          = false;
@@ -510,6 +510,24 @@ QUnit.test("StatesAreApplied", function (assert) {
     someObj.testState2          = false;
     someObj.testClass1State1    = false;
     someObj.behavior.removeClass('testClass1');
+    someObj.behavior.addClass('testClass3');
+    someObj.behavior.state = 'state2';
+    someObj.behavior.test.test(someObj);
+    assert.ok(someObj.testState2, 'Default stateful behavior invoked when class does not provide behavior');
+
+    someObj.tested              = false;
+    someObj.testState1          = false;
+    someObj.testState2          = false;
+    someObj.testClass1State1    = false;
+    someObj.behavior.state = 'state1';
+    someObj.behavior.test.test(someObj);
+    assert.ok(someObj.testClass3State1, "Classes can override behavior by state even if it doesn't exist in the class itself");
+
+    someObj.tested              = false;
+    someObj.testState1          = false;
+    someObj.testState2          = false;
+    someObj.testClass1State1    = false;
+    someObj.behavior.removeClass('testClass3');
     someObj.behavior.state = 'randomState';
     someObj.behavior.test.test(someObj);
     assert.ok(someObj.tested, 'Default behavior when unknown state is added');
