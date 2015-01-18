@@ -177,7 +177,6 @@ module TameGame {
             mergedBehavior[behaviorName] = behaviors[behaviorName];
         });
 
-        console.log(behaviorClassName, mergedBehavior);
         behaviorClasses[behaviorClassName] = mergedBehavior;
     }
 
