@@ -444,6 +444,70 @@ QUnit.test("ClassesAreApplied", function (assert) {
     assert.ok(someObj.tested, 'Removing all classes reverts behavior back to default');
 });
 
+TameGame.declareBehaviorState('state1', { test: { test: function (obj) { obj.testState1 = true; } } });
+TameGame.declareBehaviorState('state2', { test: { test: function (obj) { obj.testState2 = true; } } });
+TameGame.declareBehaviorClassState('testClass1', 'state1', { test: { test: function (obj) { obj.testClass1State1 = true; } } });
+
+QUnit.test("StatesAreApplied", function (assert) {
+    var game    = new TameGame.StandardGame();
+    var someObj = game.createObject();
+
+    assert.ok(someObj.behavior.test, 'Test behavior defined');
+
+    assert.ok(!someObj.tested, 'Default behavior not initially invoked');
+    someObj.behavior.test.test(someObj);
+    assert.ok(someObj.tested, 'Default behavior invoked when no state');
+
+    someObj.tested              = false;
+    someObj.testState1          = false;
+    someObj.testState2          = false;
+    someObj.testClass1State1    = false;
+    someObj.behavior.state = 'state1';
+    someObj.behavior.test.test(someObj);
+    assert.ok(someObj.testState1, 'State1 default behavior invoked');
+
+    someObj.tested              = false;
+    someObj.testState1          = false;
+    someObj.testState2          = false;
+    someObj.testClass1State1    = false;
+    someObj.behavior.state = 'state2';
+    someObj.behavior.test.test(someObj);
+    assert.ok(someObj.testState2, 'State2 default behavior invoked');
+
+    someObj.tested              = false;
+    someObj.testState1          = false;
+    someObj.testState2          = false;
+    someObj.testClass1State1    = false;
+    someObj.behavior.state = 'state2';
+    someObj.behavior.test.test(someObj);
+    assert.ok(someObj.testState2, 'State2 default behavior invoked');
+
+    someObj.tested              = false;
+    someObj.testState1          = false;
+    someObj.testState2          = false;
+    someObj.testClass1State1    = false;
+    someObj.behavior.addClass('testClass1');
+    someObj.behavior.state = 'state2';
+    someObj.behavior.test.test(someObj);
+    assert.ok(someObj.testState2, 'State2 default behavior still invoked after test class is defined');
+
+    someObj.tested              = false;
+    someObj.testState1          = false;
+    someObj.testState2          = false;
+    someObj.testClass1State1    = false;
+    someObj.behavior.state = 'state1';
+    someObj.behavior.test.test(someObj);
+    assert.ok(someObj.testClass1State1, 'State1 classful state behavior invoked');
+
+    someObj.tested              = false;
+    someObj.testState1          = false;
+    someObj.testState2          = false;
+    someObj.testClass1State1    = false;
+    someObj.behavior.state = 'randomState';
+    someObj.behavior.test.test(someObj);
+    assert.ok(someObj.tested, 'Default behavior when unknown state is added');
+});
+
 // =====================================
 //  Simple performance test of the core
 // =====================================
