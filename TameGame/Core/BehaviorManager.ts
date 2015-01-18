@@ -107,7 +107,7 @@ module TameGame {
 
 
             // If there's a class behavior, use that as the value
-            if (foundClass) {
+            if (result) {
                 result['fromClass'] = true;
             }
 
