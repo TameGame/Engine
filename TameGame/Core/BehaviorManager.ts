@@ -83,7 +83,7 @@ module TameGame {
 
                 // Check if this class has a definition for this behavior object
                 if (classBehaviors) {
-                    foundClass = classBehaviors[name];
+                    foundClass = classBehaviors[name] || null;
                 }
 
                 // Stop once we find a behavior
