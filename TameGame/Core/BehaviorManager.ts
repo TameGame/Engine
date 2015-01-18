@@ -131,6 +131,7 @@ module TameGame {
 
             // When the property is retrieved, create a new value (based on the class/state) if it's set to null
             defineProperty({
+                configurable: true,
                 get: getValue,
                 set: setValue
             });
