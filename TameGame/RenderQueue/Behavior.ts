@@ -10,9 +10,9 @@ module TameGame {
      */
     export interface IRenderBehavior {
         /**
-         * Adds rendering actions to the supplied render queue
+         * Renders the current object
          */
-        (obj: TameObject, queue: RenderQueue): void;
+        (obj: any, queue: RenderQueue): void;
     }
     
     export interface Behavior {

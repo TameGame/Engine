@@ -42,6 +42,9 @@ module TameGame {
                     cameraQuad = transformQuad(cameraTransform, cameraQuad);
                     
                     var cameraBB = quadBoundingBox(cameraQuad);
+
+                    // Ask the scene to render itself
+                    scene.behavior.render(scene, renderQueue);
                     
                     if (scene.quadTree) {
                         // Render only the objects that intersect the camera bounding box
