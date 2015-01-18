@@ -435,6 +435,13 @@ QUnit.test("ClassesAreApplied", function (assert) {
     someObj.behavior.test.test(someObj);
     assert.ok(someObj.testClass1, 'First test class is used if main class does not implement method');
     assert.ok(!someObj.tested, 'Default behavior still overridden');
+
+    someObj.tested = false;
+    someObj.testClass1 = false;
+    someObj.testClass2 = false;
+    someObj.behavior.removeClass('testClass1');
+    someObj.behavior.test.test(someObj);
+    assert.ok(someObj.tested, 'Removing all classes reverts behavior back to default');
 });
 
 // =====================================
