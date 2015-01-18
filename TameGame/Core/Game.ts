@@ -211,6 +211,8 @@ module TameGame {
                         onRemoveSubScene:   removeSubSceneEvent.register
                     }
                 };
+
+                result.behavior.addClass("Scene");
                 
                 _fireCreateScene(result, _currentTime, _lastTime);
                 return result;
