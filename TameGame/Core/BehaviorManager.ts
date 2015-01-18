@@ -96,8 +96,14 @@ module TameGame {
                 return foundClass !== null;
             });
 
+            // Fall back to the behaviors for the empty class if no behaviors for a specific class were found
+            if (!foundClass) {
+                var defaultStateBehavior = behaviorStates[''][state] || {};
+                foundClass = defaultStateBehavior[name] || null;
+            }
+
             // Get the prototype
-            var proto = foundClass || behaviorStates[''][state] || defaultValue;
+            var proto = foundClass || defaultValue;
 
             // Generate the result
             var protoType = typeof proto;
@@ -171,6 +177,7 @@ module TameGame {
             mergedBehavior[behaviorName] = behaviors[behaviorName];
         });
 
+        console.log(behaviorClassName, mergedBehavior);
         behaviorClasses[behaviorClassName] = mergedBehavior;
     }
 

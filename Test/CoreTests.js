@@ -455,6 +455,8 @@ QUnit.test("StatesAreApplied", function (assert) {
     assert.ok(someObj.behavior.test, 'Test behavior defined');
 
     assert.ok(!someObj.tested, 'Default behavior not initially invoked');
+    console.log(someObj.behavior.test);
+    console.log(someObj.behavior.test.test);
     someObj.behavior.test.test(someObj);
     assert.ok(someObj.tested, 'Default behavior invoked when no state');
 
@@ -463,6 +465,8 @@ QUnit.test("StatesAreApplied", function (assert) {
     someObj.testState2          = false;
     someObj.testClass1State1    = false;
     someObj.behavior.state = 'state1';
+    console.log(someObj.behavior.test);
+    console.log(someObj.behavior.test.test);
     someObj.behavior.test.test(someObj);
     assert.ok(someObj.testState1, 'State1 default behavior invoked');
 
@@ -490,6 +494,7 @@ QUnit.test("StatesAreApplied", function (assert) {
     someObj.behavior.state = 'state2';
     someObj.behavior.test.test(someObj);
     assert.ok(someObj.testState2, 'State2 default behavior still invoked after test class is defined');
+    assert.ok(!someObj.tested, '(Not default behavior)');
 
     someObj.tested              = false;
     someObj.testState1          = false;
@@ -503,6 +508,7 @@ QUnit.test("StatesAreApplied", function (assert) {
     someObj.testState1          = false;
     someObj.testState2          = false;
     someObj.testClass1State1    = false;
+    someObj.behavior.removeClass('testClass1');
     someObj.behavior.state = 'randomState';
     someObj.behavior.test.test(someObj);
     assert.ok(someObj.tested, 'Default behavior when unknown state is added');
