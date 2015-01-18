@@ -29,38 +29,43 @@ module TameGame {
                 if (scene.camera) {
                     // Set the camera for this scene
                     renderQueue.moveCamera(cameraZIndex, scene.cameraId, scene.camera.center, scene.camera.height, scene.camera.rotation);
-                    
-                    // Calculate where the camera is located
-                    var renderDims  = renderQueue.getDimensions();
-                    var ratio       = renderDims.width/renderDims.height;
-                    var height      = scene.camera.height;
-                    var width       = height * ratio;
-                    
-                    var cameraQuad      = bbToQuad({ x: -width/2.0, y: -height/2.0, width: width, height: height });
-                    var cameraTransform = multiplyMatrix(translateMatrix(scene.camera.center), rotationMatrix(scene.camera.rotation));
-                    
-                    cameraQuad = transformQuad(cameraTransform, cameraQuad);
-                    
-                    var cameraBB = quadBoundingBox(cameraQuad);
 
                     // Ask the scene to render itself
                     scene.behavior.render(scene, renderQueue);
-                    
-                    if (scene.quadTree) {
-                        // Render only the objects that intersect the camera bounding box
-                        scene.quadTree.forAllInBounds(cameraBB, (obj) => {
-                            var renderBehavior = obj.behavior.render;
-                            renderBehavior(obj, renderQueue);
-                        });
-                    } else {
-                        // Just render all the objects in this scene - don't bother to try to optimise anything
-                        scene.forAllObjects((obj) => {
-                            var renderBehavior = obj.behavior.render;
-                            renderBehavior(obj, renderQueue);
-                        });
-                    }
                 }
             });
         });
     }
+
+    // Declare how scenes should render themselves by default
+    declareBehaviorClass('Scene', {
+        render: (scene: Scene, renderQueue: RenderQueue) => {
+            // Calculate where the camera is located
+            var renderDims  = renderQueue.getDimensions();
+            var ratio       = renderDims.width/renderDims.height;
+            var height      = scene.camera.height;
+            var width       = height * ratio;
+            
+            var cameraQuad      = bbToQuad({ x: -width/2.0, y: -height/2.0, width: width, height: height });
+            var cameraTransform = multiplyMatrix(translateMatrix(scene.camera.center), rotationMatrix(scene.camera.rotation));
+            
+            cameraQuad = transformQuad(cameraTransform, cameraQuad);
+            
+            var cameraBB = quadBoundingBox(cameraQuad);
+
+            if (scene.quadTree) {
+                // Render only the objects that intersect the camera bounding box
+                scene.quadTree.forAllInBounds(cameraBB, (obj) => {
+                    var renderBehavior = obj.behavior.render;
+                    renderBehavior(obj, renderQueue);
+                });
+            } else {
+                // Just render all the objects in this scene - don't bother to try to optimise anything
+                scene.forAllObjects((obj) => {
+                    var renderBehavior = obj.behavior.render;
+                    renderBehavior(obj, renderQueue);
+                });
+            }
+        }
+    });
 }
