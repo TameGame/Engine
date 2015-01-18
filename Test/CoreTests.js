@@ -494,6 +494,7 @@ QUnit.test("StatesAreApplied", function (assert) {
     someObj.behavior.state = 'state2';
     someObj.behavior.test.test(someObj);
     assert.ok(someObj.testState2, 'State2 default behavior still invoked after test class is defined');
+    assert.ok(!someObj.testClass1, '(Not class behavior)');
     assert.ok(!someObj.tested, '(Not default behavior)');
 
     someObj.tested              = false;
