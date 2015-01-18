@@ -344,6 +344,11 @@ module TameGame {
          * Events attached to this scene
          */
         events: SceneEvents;
+
+        /**
+         * Behaviors attached to this scene
+         */
+        behavior: Behavior;
     }
 
     /**
