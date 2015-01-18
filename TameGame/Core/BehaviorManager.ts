@@ -152,8 +152,20 @@ module TameGame {
      *
      * Behaviors can be left as null or undefined in a behavior class: the behavior from lower
      * priority or the default will be used instead if this is done.
+     *
+     * If an class already exists with this name, the passed in behavior will be merged in to it.
      */
     export function declareBehaviorClass(behaviorClassName: string, behaviors: Behavior) {
-        behaviorClasses[behaviorClassName] = behaviors;
+        var mergedBehavior = behaviorClasses[behaviorClassName];
+
+        // Create a new behavior
+        if (!mergedBehavior) {
+            mergedBehavior = behaviorClasses[behaviorClassName] = {};
+        }
+
+        // Merge in the behaviors
+        Object.getOwnPropertyNames(behaviors).forEach((behaviorName) => {
+            mergedBehavior[behaviorName] = behaviors[behaviorName];
+        });
     }
 }
