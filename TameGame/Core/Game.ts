@@ -426,6 +426,10 @@ module TameGame {
                 return passStartEvent.register(updatePass, (updatePass, milliseconds, lastMilliseconds) => callback(milliseconds, lastMilliseconds));
             }
 
+            // Generate the game behavior
+            var behavior = new DefaultBehavior();
+            behavior.addClass("Game");
+
             // Store the functions to create the final object
             this.createObject       = createObject;
             this.createScene        = createScene;
@@ -435,6 +439,7 @@ module TameGame {
             this.watch              = watch;
             this.onPass             = onPass;
             this.everyPass          = everyPass;
+            this.behavior           = behavior;
 
             // == Game is ready for use ==
             
@@ -497,6 +502,11 @@ module TameGame {
          * The events for this object
          */
         events: GameEvents;
+
+        /**
+         * Behaviors attached to this game
+         */
+        behavior: Behavior;
 
         /**
          * When any any object with an attached property of the specified

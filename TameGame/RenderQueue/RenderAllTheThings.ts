@@ -35,6 +35,10 @@ module TameGame {
                 }
             });
         });
+
+        game.events.onRender((renderQueue) => {
+            game.behavior.render(game, renderQueue);
+        });
     }
 
     // Declare how scenes should render themselves by default

@@ -395,6 +395,11 @@ module TameGame {
          * The events for this object
          */
         events: GameEvents;
+
+        /**
+         * Behaviors attached to this game
+         */
+        behavior: Behavior;
     }
     
     var nextTypeId: number = 0;
