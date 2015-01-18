@@ -389,6 +389,54 @@ QUnit.test("BoundingBoxToQuadAndBack", function (assert) {
     assert.ok(back.height === boundingBox.height);
 });
 
+TameGame.declareBehavior('test', function () { return { test: function (obj) { obj.tested = true; }} });
+TameGame.declareBehaviorClass('testClass1', { test: { test: function (obj) { obj.testClass1 = true; } } });
+TameGame.declareBehaviorClass('testClass2', { test: { test: function (obj) { obj.testClass2 = true; } } });
+TameGame.declareBehaviorClass('noTestClass', { });
+
+QUnit.test("ClassesAreApplied", function (assert) {
+    var game    = new TameGame.StandardGame();
+    var someObj = game.createObject();
+
+    assert.ok(someObj.behavior.test, 'Test behavior defined');
+
+    assert.ok(!someObj.tested, 'Default behavior not initially invoked');
+    someObj.behavior.test.test(someObj);
+    assert.ok(someObj.tested, 'Default behavior invoked');
+
+    someObj.tested = false;
+    someObj.testClass1 = false;
+    someObj.behavior.addClass('testClass1');
+    someObj.behavior.test.test(someObj);
+    assert.ok(someObj.testClass1, 'First class applied');
+    assert.ok(!someObj.tested, 'Default behavior overridden');
+
+    someObj.tested = false;
+    someObj.testClass1 = false;
+    someObj.testClass2 = false;
+    someObj.behavior.addClass('testClass2');
+    someObj.behavior.test.test(someObj);
+    assert.ok(someObj.testClass2, 'Second class applied');
+    assert.ok(!someObj.testClass1, 'First class overridden');
+    assert.ok(!someObj.tested, 'Default behavior still overridden');
+
+    someObj.tested = false;
+    someObj.testClass1 = false;
+    someObj.testClass2 = false;
+    someObj.behavior.removeClass('testClass2');
+    someObj.behavior.test.test(someObj);
+    assert.ok(someObj.testClass1, 'Second class removed; back to first class');
+    assert.ok(!someObj.testClass2, 'Second class not invoked');
+
+    someObj.tested = false;
+    someObj.testClass1 = false;
+    someObj.testClass2 = false;
+    someObj.behavior.addClass('noTestClass');
+    someObj.behavior.test.test(someObj);
+    assert.ok(someObj.testClass1, 'First test class is used if main class does not implement method');
+    assert.ok(!someObj.tested, 'Default behavior still overridden');
+});
+
 // =====================================
 //  Simple performance test of the core
 // =====================================
