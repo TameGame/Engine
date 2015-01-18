@@ -8,7 +8,11 @@ module TameGame {
      */
     export class DefaultBehavior implements Behavior {
         constructor() {
-            this._classes = [];
+            Object.defineProperty(this, '_classes', { 
+                configurable: false,
+                enumerable: false,
+                value: [] 
+            });
         }
 
         /** Adds a class to this object */
@@ -28,7 +32,7 @@ module TameGame {
      * Clears out all of the classes in a particular behavior
      */
     function clearClasses(b: Behavior) {
-        Object.keys(b).forEach((propName) => {
+        Object.getOwnPropertyNames(b).forEach((propName) => {
             // Reset any property marked as 'fromClass' to null
             if (b[propName]['fromClass']) {
                 b[propName] = null;
