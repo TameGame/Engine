@@ -15,7 +15,7 @@ module TameGame {
         _watchers: RegisteredWatchers;
         objectInScene(id:number): boolean;
         getChildScenes(): InternalScene[];
-        
+
         _firePassStart:     FireFilteredEvent<UpdatePass, UpdatePass>;
         _firePassFinish:    FireFilteredEvent<UpdatePass, UpdatePass>;
         _fireRender:        Event<RenderQueue>;
@@ -40,17 +40,24 @@ module TameGame {
             var _propertyManager: PropertyManager;
             var _immediate: { [propertyName: string]: (obj: TameObject, value: any) => void };
             var _immediateActions: { [propertyName: string]: { priority: number; callback: (obj: TameObject, value: any) => void }[] };
-            
+
             var _firePassStart:     FireFilteredEvent<UpdatePass, UpdatePass>;
             var _firePassFinish:    FireFilteredEvent<UpdatePass, UpdatePass>;
             var _fireRender:        Event<RenderQueue>;
             var _firePerformRender: Event<RenderQueue>;
             var _fireNewScene:      Event<Scene>;
             var _fireCreateScene:   Event<Scene>;
-            
+
             var _renderQueue:       RenderQueue;
             var _currentTime:       number;
             var _lastTime:          number;
+
+            var _objectProto:       TameObject;
+            var _sceneProto:        Scene;
+
+            // Create the prototypes for scenes and objects
+            _objectProto    = <TameObject> { scene: null };
+            _sceneProto     = <Scene> { };
 
             // Display a warning and use an empty message dispatcher if none is passed in
             if (!messageDispatcher) {
@@ -67,7 +74,7 @@ module TameGame {
             _currentTime            = 0;
             _lastTime               = 0;
             _propertyManager        = new PropertyManager(_immediate);
-            
+
             // Set up the events
             var passStartEvent      = createFilteredEvent<UpdatePass, UpdatePass>();
             var passFinishEvent     = createFilteredEvent<UpdatePass, UpdatePass>();
@@ -76,7 +83,7 @@ module TameGame {
             var newSceneEvent       = createEvent<Scene>();
             var createSceneEvent    = createEvent<Scene>();
             var createObjectEvent   = createEvent<TameObject>();
-            
+
             this.events = {
                 onPassStart:        passStartEvent.register,
                 onPassFinish:       passFinishEvent.register,
@@ -86,7 +93,7 @@ module TameGame {
                 onCreateScene:      createSceneEvent.register,
                 onCreateObject:     createObjectEvent.register
             };
-            
+
             _firePassStart     = passStartEvent.fire;
             _firePassFinish    = passFinishEvent.fire;
             _fireRender        = renderEvent.fire;
@@ -106,13 +113,11 @@ module TameGame {
                 var identifier = _nextIdentifier;
                 _nextIdentifier++;
 
-                // Create basic object
-                obj = {
-                    identifier:     identifier,
-                    behavior:       behaviors,
-                    scene:          null
-                };
-                
+                // Create a basic object
+                obj             = Object.create(_objectProto);
+                obj.identifier  = identifier;
+                obj.behavior    = behaviors;
+
                 // Set up the watchable properties and behaviors
                 _propertyManager.initObject(obj);
 
@@ -128,7 +133,7 @@ module TameGame {
                 var objects: { [id: number]: TameObject } = {};
                 var subScenes: { [id: number]: Scene } = {};
                 var sceneWatchers = new RegisteredWatchers();
-                
+
                 // Create the event handlers for this scene
                 var passStartEvent      = createFilteredEvent<UpdatePass, UpdatePass>();
                 var passFinishEvent     = createFilteredEvent<UpdatePass, UpdatePass>();
@@ -143,7 +148,7 @@ module TameGame {
                     if (o.scene) {
                         o.scene.removeObject(o);
                     }
-                    
+
                     objects[o.identifier] = o;
                     addObjectEvent.fire(o, _currentTime, _lastTime);
                     o.scene = this;
@@ -154,7 +159,7 @@ module TameGame {
                         return;
                     }
                     o.scene = null;
-                    
+
                     delete objects[o.identifier];
                     removeObjectEvent.fire(o, _currentTime, _lastTime);
                     return this;
@@ -180,40 +185,40 @@ module TameGame {
                 var identifier = _nextIdentifier;
                 _nextIdentifier++;
 
-                var result: InternalScene = {
-                    _watchers:          sceneWatchers,
-                    _firePassStart:     passStartEvent.fire,
-                    _firePassFinish:    passFinishEvent.fire,
-                    _fireRender:        renderEvent.fire,
-                    objectInScene:      (id) => objects[id]?true:false,
-                    getChildScenes:     () => Object.keys(subScenes).map((key) => <InternalScene> subScenes[key]),
-                    
-                    identifier:         identifier,
-                    addObject:          addObject,
-                    removeObject:       removeObject,
-                    addScene:           addScene,
-                    removeScene:        removeScene,
-                    forAllObjects:      forAllObjects,
-                    forAllSubscenes:    forAllSubscenes,
-                    
-                    watch:              (definition, pass, callback)    => sceneWatchers.watch(definition, pass, callback),
-                    onPass:             (pass, callback)                => sceneWatchers.onPass(pass, callback),
-                    everyPass:          (pass, callback)                => sceneWatchers.everyPass(pass, callback),
-                    
-                    behavior:           new DefaultBehavior(),
-                    events: {
-                        onPassStart:        passStartEvent.register,
-                        onPassFinish:       passFinishEvent.register,
-                        onRender:           renderEvent.register,
-                        onAddObject:        addObjectEvent.register,
-                        onRemoveObject:     removeObjectEvent.register,
-                        onAddSubScene:      addSubSceneEvent.register,
-                        onRemoveSubScene:   removeSubSceneEvent.register
-                    }
-                };
+                var result: InternalScene = <InternalScene> Object.create(_sceneProto);
+
+                result._watchers            = sceneWatchers;
+                result._firePassStart       = passStartEvent.fire;
+                result._firePassFinish      = passFinishEvent.fire;
+                result._fireRender          = renderEvent.fire;
+                result.objectInScene        = (id) => objects[id]?true:false;
+                result.getChildScenes       = () => Object.keys(subScenes).map((key) => <InternalScene> subScenes[key]);
+
+                result.identifier           = identifier;
+                result.addObject            = addObject;
+                result.removeObject         = removeObject;
+                result.addScene             = addScene;
+                result.removeScene          = removeScene;
+                result.forAllObjects        = forAllObjects;
+                result.forAllSubscenes      = forAllSubscenes;
+
+                result.watch                = (definition, pass, callback)    => sceneWatchers.watch(definition, pass, callback);
+                result.onPass               = (pass, callback)                => sceneWatchers.onPass(pass, callback);
+                result.everyPass            = (pass, callback)                => sceneWatchers.everyPass(pass, callback);
+
+                result.behavior             = new DefaultBehavior();
+                result.events               = {
+                    onPassStart:        passStartEvent.register,
+                    onPassFinish:       passFinishEvent.register,
+                    onRender:           renderEvent.register,
+                    onAddObject:        addObjectEvent.register,
+                    onRemoveObject:     removeObjectEvent.register,
+                    onAddSubScene:      addSubSceneEvent.register,
+                    onRemoveSubScene:   removeSubSceneEvent.register
+                }
 
                 result.behavior.addClass("Scene");
-                
+
                 _fireCreateScene(result, _currentTime, _lastTime);
                 return result;
             }
@@ -224,11 +229,11 @@ module TameGame {
             var startScene = (scene: Scene) => {
                 // Update the current scene
                 _currentScene = scene;
-                
+
                 // Fire an event to indicate that the scene has changed
                 _fireNewScene(scene, _currentTime, _lastTime);
             }
-            
+
             /**
              * Retrieves the list of currently active scenes
              */
@@ -237,20 +242,20 @@ module TameGame {
                 if (!_currentScene) {
                     return [];
                 }
-                
+
                 // Get the active scenes recursively
                 var scenes: InternalScene[] = [];
                 var stack: InternalScene[] = [];
-                
+
                 stack.push(<InternalScene> _currentScene);
-                
+
                 while (stack.length > 0) {
                     var nextScene = stack.pop();
                     scenes.push(nextScene);
-                    
+
                     scenes.push.apply(scenes, nextScene.getChildScenes());
                 }
-                
+
                 // Return the results
                 return scenes;
             }
@@ -284,7 +289,7 @@ module TameGame {
                 sceneChanges.forEach((change) => {
                     change.changes.dispatchChanges(pass, change.watchers, milliseconds, lastMilliseconds);
                 });
-                
+
                 if (callback) {
                     callback();
                 }
@@ -292,14 +297,14 @@ module TameGame {
                 sceneChanges.forEach((change) => change.scene._firePassFinish(pass, pass, milliseconds, lastMilliseconds));
                 _firePassFinish(pass, pass, milliseconds, lastMilliseconds);
             }
-            
+
             /**
              * Executes a callback for the running scene and any subscenes it may have
              */
             var forAllActiveScenes = (callback: (scene: Scene) => void) => {
                 getActiveScenes().forEach(callback);
             }
-            
+
             /**
              * Runs a game tick. Time is a time in milliseconds from an arbitrary
              * fixed point (it should always increase)
@@ -314,34 +319,34 @@ module TameGame {
                 // Update the current time
                 _lastTime       = _currentTime;
                 _currentTime    = milliseconds;
-                
+
                 // Retrieve the list of active scenes
                 var activeScenes = getActiveScenes();
-                
+
                 // Get the watchers and filter the change list for each of the scenes
                 var recentChanges = _propertyManager.getRecentChanges();
-                var sceneChanges = activeScenes.map((scene) => { 
+                var sceneChanges = activeScenes.map((scene) => {
                     return { scene: scene, watchers: scene._watchers, changes: recentChanges.filter(scene.objectInScene) }
                 });
-                
+
                 // Run the pre-render passes
                 preRenderPasses.forEach((pass) => runPass(pass, milliseconds, _lastTime, sceneChanges));
-                
+
                 // Run the render pass
                 var queue = _renderQueue;
                 queue.clearQueue();
-                
+
                 if (withRender) {
                     runPass(UpdatePass.Render, milliseconds, _lastTime, sceneChanges, () => {
                         // Send the render event
                         _fireRender(queue, milliseconds, _lastTime);
                         activeScenes.forEach((scene) => scene._fireRender(queue, milliseconds, _lastTime));
-                        
+
                         // Actually perform the render
                         _firePerformRender(queue, milliseconds, _lastTime);
                     });
                 }
-                
+
                 // Run the post-render passes
                 postRenderPasses.forEach((pass) => runPass(pass, milliseconds, _lastTime, sceneChanges));
 
@@ -364,7 +369,7 @@ module TameGame {
                     if (typeof priority === 'undefined' || priority === null) {
                         priority = 0;
                     }
-                    
+
                     // Get the immediate actions for this property
                     var actions = _immediateActions[definition.uniqueName];
 
@@ -379,7 +384,7 @@ module TameGame {
                             var act         = actions;
                             var propName    = definition.givenName;
 
-                            _immediate[definition.uniqueName] = function (obj, val) { 
+                            _immediate[definition.uniqueName] = function (obj, val) {
                                 var x: number;
                                 var length: number = actions.length;
 
@@ -391,11 +396,11 @@ module TameGame {
                     }
 
                     // Append the action
-                    actions.push({ 
+                    actions.push({
                         priority: priority,
                         callback: callback
                     });
-                    
+
                     actions.sort((a, b) => {
                         if (a.priority > b.priority) {
                             return 1;
@@ -442,27 +447,27 @@ module TameGame {
             this.behavior           = behavior;
 
             // == Game is ready for use ==
-            
+
             // Initialise the default behaviours
             var initializedBehavior: { [name: string]: boolean } = {};
             var initBehavior = (name: string) => {
                 if (initializedBehavior[name]) {
                     return;
                 }
-                
+
                 // Mark this behavior as initialised (prevent initialisation loops)
                 initializedBehavior[name] = true;
-                
+
                 // Initialise its dependenceis
                 var dependencies = behaviorDependencies[name];
                 if (dependencies) {
                     dependencies.forEach((dependentName) => initBehavior(dependentName));
                 }
-                
+
                 // Initialise this behavior
                 defaultBehavior[name](this, messageDispatcher);
             }
-            
+
             Object.keys(defaultBehavior).sort().forEach((behaviorName) => initBehavior(behaviorName));
         }
 
@@ -480,7 +485,7 @@ module TameGame {
          * Starts running the specified scene
          */
         startScene: (scene: Scene) => void;
-        
+
         /**
          * Executes a callback for the running scene and any subscenes it may have
          */
