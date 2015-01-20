@@ -403,6 +403,16 @@ module TameGame {
          * Behaviors attached to this game
          */
         behavior: Behavior;
+
+        /**
+         * The prototype used for creating new objects with createObject()
+         */
+        objectPrototype: TameObject;
+
+        /**
+         * The prototype used for creating new scenes with createScene()
+         */
+        scenePrototype: Scene;
     }
     
     var nextTypeId: number = 0;

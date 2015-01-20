@@ -445,6 +445,8 @@ module TameGame {
             this.onPass             = onPass;
             this.everyPass          = everyPass;
             this.behavior           = behavior;
+            this.objectPrototype    = _objectProto;
+            this.scenePrototype     = _sceneProto;
 
             // == Game is ready for use ==
 
@@ -542,5 +544,15 @@ module TameGame {
          * of the active scene and the game hits the specified pass.
          */
         everyPass: (updatePass: UpdatePass, callback: (milliseconds: number) => void) => Cancellable;
+
+        /**
+         * The prototype used for creating new objects with createObject()
+         */
+        objectPrototype: TameObject;
+
+        /**
+         * The prototype used for creating new scenes with createScene()
+         */
+        scenePrototype: Scene;
     }
 }
