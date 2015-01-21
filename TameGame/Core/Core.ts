@@ -1,5 +1,6 @@
 /// <reference path="Interface.ts"/>
 /// <reference path="UninitializedField.ts" />
+/// <reference path="ContextualField.ts" />
 /// <reference path="PropertyManager.ts"/>
 /// <reference path="BehaviorManager.ts"/>
 /// <reference path="Game.ts"/>

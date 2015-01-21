@@ -63,6 +63,20 @@ QUnit.test("PrototypeUninitializedField", function (assert) {
     assert.ok(test3.test === 'Changed', "Can assign a value to an uninitialized field");
 });
 
+QUnit.test("PrototypeContextualField", function (assert) {
+    function obj() { }
+    TameGame.defineContextualField(obj.prototype, "test", { getContext: function () { return this._context; } });
+
+    var test1 = new obj();
+    var test2 = new obj();
+
+    var context1 = test1.test.getContext();
+    var context2 = test2.test.getContext();
+
+    assert.ok(context1 === test1);
+    assert.ok(context2 === test2);
+    assert.ok(context1 !== context2);
+});
 
 QUnit.test("PhysicsPassIsDeferredUntilTick", function(assert) {
     var someGame        = new TameGame.StandardGame();
