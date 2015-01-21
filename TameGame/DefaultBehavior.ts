@@ -4,6 +4,7 @@
 /// <reference path="Input/Input.ts" />
 /// <reference path="Animation/Animation.ts" />
 /// <reference path="Time/Time.ts" />
+/// <reference path="Helper/Helper.ts" />
 
 module TameGame {
     "use strict";
@@ -43,6 +44,8 @@ module TameGame {
         'tInput': defaultInputBehavior,
 
         // Clocks are run off the watchable events for scenes and the game by default
-        'tClock': clockBehavior
+        'tClock': clockBehavior,
+
+        'tHelper': helperBehavior
     }
 }

@@ -9,4 +9,5 @@
 /// <reference path="Animation/Animation.ts"/>
 /// <reference path="WebGlRenderer/WebGlRenderer.ts"/>
 /// <reference path="Time/Time.ts"/>
+/// <reference path="Helper/Helper.ts" />
 /// <reference path="DefaultBehavior.ts"/>
