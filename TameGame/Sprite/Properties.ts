@@ -2,6 +2,8 @@
 /// <reference path="../Core/Core.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * The position property describes where a sprite is on screen
      */

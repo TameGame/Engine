@@ -6,6 +6,8 @@
 /// <reference path="../Input/Input.ts" />
 
 module TameGame {
+    "use strict";
+
     /** The current game */
     export var game: Game;
     

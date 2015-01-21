@@ -4,6 +4,8 @@
 /// <reference path="../Physics/SceneQuadTree.ts" />
 
 module TameGame {
+    "use strict";
+
     var cameraZIndex = -2000000;
     
     /**

@@ -1,6 +1,8 @@
 /// <reference path="Interface.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * Data manager that retrieves resources via AJAX requests
      */

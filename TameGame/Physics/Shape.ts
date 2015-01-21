@@ -1,6 +1,8 @@
 /// <reference path="../RenderQueue/RenderTypes.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * General methods supported by all shapes
      *

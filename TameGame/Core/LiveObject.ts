@@ -2,6 +2,8 @@
 /// <reference path="Event.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * Extends the scene interface so that every scene has a set of live objects
      */

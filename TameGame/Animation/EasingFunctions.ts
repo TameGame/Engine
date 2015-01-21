@@ -1,6 +1,8 @@
 /// <reference path="Interface.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * Creates an easing function that accelerates from 0 up until the endpoint (after which the performance is linear)
      */

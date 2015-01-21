@@ -2,6 +2,8 @@
 /// <reference path="Event.ts" />
 
 module TameGame {
+    "use strict";
+
     export var workerMessages = {
         /** Instruction to the webworker: to start a game defined in a JavaScript file */
         startGame: "start-game",

@@ -2,6 +2,8 @@
 /// <reference path="../Core/Core.ts" />
 
 module TameGame {
+    "use strict";
+
     export interface TameObject {
         /** Contains the transformation applied to this object by the settings in the Presence properties */
         transformationMatrix?: number[];

@@ -1,6 +1,8 @@
 /// <reference path="Interface.ts"/>
 
 module TameGame {
+    "use strict";
+
     /**
      * Creates the functions required to register and fire an event
      */

@@ -1,4 +1,6 @@
 module TameGame {
+    "use strict";
+
     /**
      * Interface representing a point in 2D space
      */

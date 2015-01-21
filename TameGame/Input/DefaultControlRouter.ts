@@ -2,6 +2,8 @@
 /// <reference path="Dispatch.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * Internal class used by the control router
      */

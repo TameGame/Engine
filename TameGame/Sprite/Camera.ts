@@ -2,6 +2,8 @@
 /// <reference path="../RenderQueue/RenderTypes.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * Interface implemented by objects that represent the location of a camera
      */

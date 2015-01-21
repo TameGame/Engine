@@ -2,6 +2,8 @@
 /// <reference path="BasicProperties.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * The simple ambient motion behavior
      *

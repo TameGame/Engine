@@ -1,6 +1,8 @@
 /// <reference path="Interface.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * Represents a base class for object behavior
      *

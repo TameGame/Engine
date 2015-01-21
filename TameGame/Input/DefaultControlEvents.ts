@@ -2,6 +2,8 @@
 /// <reference path="../Core/Event.ts" />
 
 module TameGame {
+    "use strict";
+
     /** Records the state of a control */
     interface ControlState extends ControlMap<ControlInput> {}
 

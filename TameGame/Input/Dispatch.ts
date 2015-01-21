@@ -1,6 +1,8 @@
 /// <reference path="Interface.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * Creates a function that maps a control input to its action name
      *

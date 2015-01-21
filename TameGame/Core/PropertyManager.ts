@@ -2,6 +2,8 @@
 /// <reference path="Watch.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * Information stored for a property
      *

@@ -1,6 +1,8 @@
 /// <reference path="Interface.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * Loads a sprite sheet stored in the TexturePacker 'JSON (Hash)' format using a sprite and data manager
      *

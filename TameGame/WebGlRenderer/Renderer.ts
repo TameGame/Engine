@@ -2,6 +2,8 @@
 /// <reference path="SpriteManager.ts" />
 
 module TameGame {
+    "use strict";
+
     export var ERR_WebGlNotAvailable        = "WebGL is not available in this browser";
     export var ERR_NeedACanvas              = "WebGL initialisation requires a canvas";
     export var ERR_CantCreateShader         = "Unable to create shader";

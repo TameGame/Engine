@@ -1,6 +1,8 @@
 /// <reference path="../Core/Core.ts"/>
 
 module TameGame {
+    "use strict";
+
     var maxCatchup = 8;
 
     /**

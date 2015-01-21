@@ -2,6 +2,8 @@
 /// <reference path="Collision.ts" />
 
 module TameGame {
+    "use strict";
+
     function doesOverlap(a: Projection, b: Projection) {
         if (a.min >= b.max) return false;
         if (b.min >= a.max) return false;

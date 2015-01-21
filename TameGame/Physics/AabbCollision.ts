@@ -6,6 +6,8 @@
 /// <reference path="ShapeCollision.ts" />
 
 module TameGame {
+    "use strict";
+
     // Objects can only collide once per collision pass
     var collisionPass: number = 0;
     

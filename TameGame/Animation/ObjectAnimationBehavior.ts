@@ -2,6 +2,8 @@
 /// <reference path="../Core/Core.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * Interface implemented by objects that can apply animations
      */

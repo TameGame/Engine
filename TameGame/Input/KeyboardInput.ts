@@ -4,6 +4,8 @@
 /// <reference path="../Core/GameLauncher.ts" />
 
 module TameGame {
+    "use strict";
+
     // See https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent.keyCode
     //   keyCode is technically deprecated but seems to be the best approach on Chrome at the moment
     var keyCodeMapping = {

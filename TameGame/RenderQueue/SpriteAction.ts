@@ -3,6 +3,8 @@
 /// <reference path="Actions.ts" />
 
 module TameGame {
+    "use strict";
+
     export interface RenderQueue {
         /**
          * Appends a draw sprite request

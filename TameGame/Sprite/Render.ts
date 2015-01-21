@@ -5,6 +5,8 @@
 /// <reference path="Camera.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * Rendering behaviour for objects that are simple sprites
      */

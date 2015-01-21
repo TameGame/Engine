@@ -7,6 +7,8 @@
 // benefit.
 
 module TameGame {
+    "use strict";
+
     function spriteInit(renderer: WebGlRenderer) {
         // Acquire variables
         var gl          = renderer.getGl();

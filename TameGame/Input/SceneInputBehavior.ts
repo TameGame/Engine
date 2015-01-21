@@ -3,6 +3,8 @@
 /// <reference path="DefaultControlEvents.ts" />
 
 module TameGame {
+    "use strict";
+
     // Extra functions for supporting input in the scene
     export interface Scene {
         /**

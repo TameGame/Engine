@@ -2,6 +2,8 @@
 /// <reference path="../Core/Core.ts" />
 
 module TameGame {
+    "use strict";
+
     // Default maximum number of objects per quad
     var defaultMaxObjects = 4;
     

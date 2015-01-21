@@ -2,6 +2,8 @@
 /// <reference path="../RenderQueue/RenderTypes.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * The 'presence' represents where an object is located in the world as well as what shape it is
      */

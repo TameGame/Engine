@@ -5,6 +5,8 @@
 /// <reference path="SetObjectTransform.ts" />
 
 module TameGame {
+    "use strict";
+
     export interface Scene {
         /** QuadTree of objects in this scene (not defined if quad tree behaviour is turned off) */
         quadTree?: QuadTree;

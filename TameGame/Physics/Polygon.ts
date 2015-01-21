@@ -1,6 +1,8 @@
 /// <reference path="Shape.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * Interface implemented by shapes that are a polygon
      */

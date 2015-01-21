@@ -5,6 +5,8 @@
 /// <reference path="SceneInputBehavior.ts" />
 
 module TameGame {
+    "use strict";
+
     // Extensions to the game interface to support input
     export interface Game {
         /** The main control router for the game */

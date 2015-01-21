@@ -1,3 +1,5 @@
+"use strict";
+
 /// <reference path="TameGame.d.ts" />
 
 /**

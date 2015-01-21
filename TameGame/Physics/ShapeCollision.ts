@@ -3,6 +3,8 @@
 /// <reference path="SatCollision.ts" />
 
 module TameGame {
+    "use strict";
+
     export interface TameObject {
         /** 
          * Optional default priority for processing collisions 

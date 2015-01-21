@@ -3,6 +3,8 @@
 /// <reference path="Actions.ts" />
 
 module TameGame {
+    "use strict";
+
     export interface RenderQueue {
         /** 
          * Set the location of a camera for the 2D renderer

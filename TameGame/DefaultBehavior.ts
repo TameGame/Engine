@@ -6,6 +6,8 @@
 /// <reference path="Time/Time.ts" />
 
 module TameGame {
+    "use strict";
+
     //
     // This is where we describe the default behaviour of TameGame
     //

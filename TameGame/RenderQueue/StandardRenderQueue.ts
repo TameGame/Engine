@@ -3,6 +3,8 @@
 /// <reference path="../Core/Worker.ts" />
 
 module TameGame {
+    "use strict";
+
     // Blocks are 32k each
     var blockSize = 32*1024 / 4;
     

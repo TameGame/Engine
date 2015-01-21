@@ -4,6 +4,8 @@
 /// <reference path="../Core/GameLauncher.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * Sends mouse input from an HTML element to a particular game worker
      */

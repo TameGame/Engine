@@ -2,6 +2,8 @@
 /// <reference path="../ThirdParty/DefinitelyTyped/es6-promise.d.ts"/>
 
 module TameGame {
+    "use strict";
+
     /**
      * The clock can be used to generate timed or regular events events
      */

@@ -1,6 +1,8 @@
 /// <reference path="../Assets/Interface.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * Represents an action on the render queue
      *

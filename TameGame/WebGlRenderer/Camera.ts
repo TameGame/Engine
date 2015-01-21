@@ -1,6 +1,8 @@
 /// <reference path="Renderer.ts" />
 
 module TameGame {
+    "use strict";
+
     function cameraInit(renderer: WebGlRenderer) {
         // Return the rendering function
         // See RenderQueue/CameraAction.ts to see where the values come from

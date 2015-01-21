@@ -1,6 +1,8 @@
 /// <reference path="Interface.ts" />
 
 module TameGame {
+    "use strict";
+
     interface OnPassCallback {
         (milliseconds: number, lastMilliseconds: number): void;
     }

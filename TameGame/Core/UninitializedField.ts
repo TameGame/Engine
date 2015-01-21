@@ -1,4 +1,6 @@
 module TameGame {
+    "use strict";
+
     /**
      * Declares a lazily-initialized field on an object
      *

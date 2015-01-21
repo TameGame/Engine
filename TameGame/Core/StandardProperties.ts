@@ -2,6 +2,8 @@
 /// <reference path="PropertyManager.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * Some identity information about an object
      *

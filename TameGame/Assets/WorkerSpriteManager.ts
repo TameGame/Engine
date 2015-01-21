@@ -2,6 +2,8 @@
 /// <reference path="../Core/Worker.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * Sprite manager for use in the web worker
      */

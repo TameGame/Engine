@@ -1,6 +1,8 @@
 /// <reference path="../RenderQueue/Interface.ts"/>
 
 module TameGame {
+    "use strict";
+
     /**
      * Callback made when a property changes
      */

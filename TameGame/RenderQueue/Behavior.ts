@@ -2,6 +2,8 @@
 /// <reference path="../Core/Interface.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * Behavior that can be implemented by objects that know how to render themselves
      *

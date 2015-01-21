@@ -1,4 +1,6 @@
 module TameGame {
+    "use strict";
+
     /**
      * Interface implemented by objects that identify a control
      */

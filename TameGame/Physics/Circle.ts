@@ -2,6 +2,8 @@
 /// <reference path="../RenderQueue/RenderTypes.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * Represents a circle shape, supporting collision detection throught the SAT algorithm
      *

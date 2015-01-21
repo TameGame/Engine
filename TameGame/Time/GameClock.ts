@@ -2,6 +2,8 @@
 /// <reference path="../Core/Interface.ts" />
 
 module TameGame {
+    "use strict";
+
     export interface Game {
         /**
          * Clock used to schedule events in game

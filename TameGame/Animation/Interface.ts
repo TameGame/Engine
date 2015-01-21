@@ -1,4 +1,6 @@
 module TameGame {
+    "use strict";
+
     /** Function definition representing an action registered to an animation */
     export interface AnimationAction {
         (progress: number, milliseconds: number): void;

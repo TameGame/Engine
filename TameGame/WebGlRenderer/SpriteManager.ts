@@ -1,6 +1,8 @@
 /// <reference path="../RenderQueue/RenderQueue.ts" />
 
 module TameGame {
+    "use strict";
+
     export var ERR_CantCreateTexture = "Unable to create GL texture";
     
     // Generate a 8x8 RGBA cross to represent a texture that doesn't exist

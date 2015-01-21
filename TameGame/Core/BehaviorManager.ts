@@ -4,6 +4,8 @@
 /// <reference path="Behavior.ts" />
 
 module TameGame {
+    "use strict";
+
     /**
      * Information stored for a behavior
      *

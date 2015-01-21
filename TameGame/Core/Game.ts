@@ -7,6 +7,8 @@
 /// <reference path="../RenderQueue/RenderQueue.ts"/>
 
 module TameGame {
+    "use strict";
+
     /**
      * The internal scene interface describes events and properties used
      * to help with dispatching the property changed events
