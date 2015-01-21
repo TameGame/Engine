@@ -1,4 +1,5 @@
 /// <reference path="Shape.ts" />
+/// <reference path="Space.ts" />
 /// <reference path="Polygon.ts" />
 /// <reference path="Circle.ts" />
 /// <reference path="Collision.ts" />
