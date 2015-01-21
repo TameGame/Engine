@@ -72,11 +72,7 @@ module Bounce {
         newWall.setup
             .size(width, height)
             .moveTo(position.x, position.y)
-            .shape(new TameGame.Polygon([
-                { x: -width/2.0, y: -height/2.0 },
-                { x: width/2.0, y: -height/2.0 },
-                { x: width/2.0, y: height/2.0 },
-                { x: -width/2.0, y: height/2.0 } ]));
+            .useBasicShape();
 
         // It does nothing when collided with
         newWall.behavior.shapeCollision = {

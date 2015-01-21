@@ -25,6 +25,11 @@ module TameGame {
         shape(newShape: Shape): ObjectSetup;
 
         /**
+         * Specifies the shape of this object as matching its size (ie, basically a square or a rectangle)
+         */
+        useBasicShape(): ObjectSetup;
+
+        /**
          * Moves this object to a particular location
          */
         moveTo(x: number, y: number): ObjectSetup;
@@ -109,6 +114,23 @@ module TameGame {
             var obj = this._context;
 
             obj.presence.rotation = degrees;
+
+            return this;
+        }
+
+        /**
+         * Specifies the shape of this object as matching its size (ie, basically a square or a rectangle)
+         */
+        useBasicShape(): ObjectSetup {
+            var obj = this._context;
+
+            var pos = obj.position.quad;
+            obj.presence.shape = new Polygon([
+                { x: pos.x3, y: pos.y3 },
+                { x: pos.x4, y: pos.y4 },
+                { x: pos.x2, y: pos.y2 },
+                { x: pos.x1, y: pos.y1 }
+            ]);
 
             return this;
         }
