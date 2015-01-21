@@ -1,6 +1,8 @@
 /// <reference path="TameGame.d.ts" />
 
 module Bounce {
+    "use strict";
+
     var game        = TameGame.game;
     var sprites     = TameGame.sprites;
     var data        = TameGame.data;
@@ -14,24 +16,12 @@ module Bounce {
 
     // Function to create a ball object
     function createBall() {
-        var newBall = game.createObject();
+        var newBall = game.createObject();              // game.create.object() ?
 
-        // Image to use for this item is the ball
-        newBall.sprite.assetId = ballSprite;
-
-        // The position describes where to render the ball relative to its presence
-        newBall.position = {
-            zIndex: 0,
-            quad: { 
-                x1: -ballRadius, y1: ballRadius,
-                x2: ballRadius,  y2: ballRadius,
-                x3: -ballRadius, y3: -ballRadius,
-                x4: ballRadius,  y4: -ballRadius
-            }
-        };
-
-        // Give it a shape for collision detection purposes
-        newBall.presence.shape = ballShape;
+        // Set up the ball with the specified size and shape
+        newBall.setup
+            .sprite(ballSprite, ballRadius*2, ballRadius*2)
+            .shape(ballShape);
 
         // Balls bounce off things that they collide with
         newBall.behavior.shapeCollision = {
@@ -79,13 +69,14 @@ module Bounce {
         var width = size.width;
         var height = size.height;
 
-        // The wall just has a presence and location but no sprite
-        newWall.presence.location   = position;
-        newWall.presence.shape      = new TameGame.Polygon([
-            { x: -width/2.0, y: -height/2.0 },
-            { x: width/2.0, y: -height/2.0 },
-            { x: width/2.0, y: height/2.0 },
-            { x: -width/2.0, y: height/2.0 } ]);
+        newWall.setup
+            .size(width, height)
+            .moveTo(position.x, position.y)
+            .shape(new TameGame.Polygon([
+                { x: -width/2.0, y: -height/2.0 },
+                { x: width/2.0, y: -height/2.0 },
+                { x: width/2.0, y: height/2.0 },
+                { x: -width/2.0, y: height/2.0 } ]));
 
         // It does nothing when collided with
         newWall.behavior.shapeCollision = {
