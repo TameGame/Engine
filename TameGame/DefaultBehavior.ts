@@ -38,7 +38,7 @@ module TameGame {
         'tAabbCollision': generateAabbCollisionBehavior,
     
         // Objects are tracked in a quad tree in each scene
-        'tQuadTree': sceneQuadTreeBehavior,
+        'tSceneSpace': sceneSpaceBehavior,
 
         // Control input is routed using the standard behavior
         'tInput': defaultInputBehavior,

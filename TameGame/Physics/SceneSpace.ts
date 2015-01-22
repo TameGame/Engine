@@ -67,7 +67,7 @@ module TameGame {
     });
     
     /** Attaches scene space tracking behaviour to an existing game */
-    export function sceneQuadTreeBehavior(game: Game) {
+    export function sceneSpaceBehavior(game: Game) {
         // Function to remove an object, update its AABB and then put it back in its scene
         var updateAndMoveObject = (obj: TameObject, space: Space<TameObject>) => {
             if (obj.spaceRef) {

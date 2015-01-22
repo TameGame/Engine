@@ -1,7 +1,7 @@
 /// <reference path="../Core/Core.ts" />
 /// <reference path="BasicProperties.ts" />
 /// <reference path="SetObjectTransform.ts" />
-/// <reference path="QuadTree.ts" />
+/// <reference path="Space.ts" />
 /// <reference path="SceneSpace.ts" />
 /// <reference path="ShapeCollision.ts" />
 
