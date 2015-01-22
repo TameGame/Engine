@@ -9,8 +9,8 @@ module TameGame {
         /** Removes this object from the space it is in */
         removeObject(): void;
 
-        /** Moves this object to a new location within the current space (or via its parent space) */
-        move(newBounds: BoundingBox): void;
+        /** Moves this object to a new location within the current space (or via its parent space). Returns a new reference to the moved object */
+        move(newBounds: BoundingBox): SpaceRef;
     }
 
     /**
@@ -24,9 +24,9 @@ module TameGame {
         addObject(obj: TObject, bounds: BoundingBox): SpaceRef;
 
         /** Adds a space to this space */
-        addSpace(obj: TObject, bounds: BoundingBox): SpaceRef;
+        addSpace(obj: Space<TObject>, bounds: BoundingBox): SpaceRef;
 
-        /** Performs a callback on all objects within the specified bounding box */
+        /** Performs a callback on all objects that overlap the specified bounding box */
         forAllInBounds(bounds: BoundingBox, callback: (obj: TObject, bounds: BoundingBox, ref: SpaceRef) => void): void;
     }
 }
