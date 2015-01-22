@@ -1,26 +1,30 @@
 /// <reference path="../Core/Core.ts" />
 /// <reference path="../Sprite/Sprite.ts" />
 /// <reference path="BasicProperties.ts" />
-/// <reference path="QuadTree.ts" />
+/// <reference path="Space.ts" />
+/// <reference path="SimpleSpace.ts" />
 /// <reference path="SetObjectTransform.ts" />
 
 module TameGame {
     "use strict";
 
     export interface Scene {
-        /** QuadTree of objects in this scene (not defined if quad tree behaviour is turned off) */
-        quadTree?: QuadTree;
+        /** Space containing the objects in this scene */
+        space?: Space<TameObject>;
 
-        /** List of objects that have moved since the last time the quadtree was updated */
+        /** List of objects that have moved since the last time the space was updated */
         movedObjects?: { [id: number]: TameObject };
+
+        /** Makes sure that all of the objects in the scene are up to date */
+        updateMovedObjects?: () => void;
     }
     
     export interface TameObject {
         /** Most recently calculated axis-aligned bounding box */
         aabb?: BoundingBox;
 
-        /** Where this object is located in the scene quadtree */
-        quadTreeRef?: QuadTreeReference;
+        /** Where this object is located in the scene space */
+        spaceRef?: SpaceRef;
     }
 
     /**
@@ -62,18 +66,18 @@ module TameGame {
         };
     });
     
-    /** Attaches scene quadtree tracking behaviour to an existing game */
+    /** Attaches scene space tracking behaviour to an existing game */
     export function sceneQuadTreeBehavior(game: Game) {
         // Function to remove an object, update its AABB and then put it back in its scene
-        var updateAndMoveObject = (obj: TameObject, quadTree: QuadTree) => {
-            if (obj.quadTreeRef) {
-                quadTree.removeObject(obj.quadTreeRef);
+        var updateAndMoveObject = (obj: TameObject, space: Space<TameObject>) => {
+            if (obj.spaceRef) {
+                obj.spaceRef = obj.spaceRef.move(obj.aabb);
+            } else {
+                obj.spaceRef = space.addObject(obj, obj.aabb);
             }
-
-            obj.quadTreeRef = quadTree.addObject(obj.aabb, obj);
         };
 
-        // Marks an object as having been moved since the quadtree was updated
+        // Marks an object as having been moved since the space was updated
         var markAsMoved = (obj: TameObject) => {
             var scene = obj.scene;
             obj['_aabb'] = true;
@@ -101,39 +105,39 @@ module TameGame {
         });
 
         game.events.onCreateScene((scene) => {
-            // Create a QuadTree for this scene
-            var quadTree = new QuadTree();
-            scene.quadTree      = quadTree;
+            // Create a space for this scene
+            scene.space         = new SimpleSpace<TameObject>();
             scene.movedObjects  = {};
             
-            // When objects are added or removed from the scene, add or remove thenm from the appropriate quadTree
+            // When objects are added or removed from the scene, add or remove them from the appropriate space
             scene.events.onAddObject((obj) => {
-                // Add to the quadtree for this scene
-                obj.quadTreeRef = scene.quadTree.addObject(obj.aabb, obj);
+                // Add to the space for this scene
+                obj.spaceRef = scene.space.addObject(obj, obj.aabb);
             });
             
             scene.events.onRemoveObject((obj) => {
-                if (obj.quadTreeRef) {
-                    scene.quadTree.removeObject(obj.quadTreeRef);
-                    delete obj.quadTreeRef;
+                if (obj.spaceRef) {
+                    obj.spaceRef.removeObject();
+                    delete obj.spaceRef;
                 }
 
                 delete scene.movedObjects[obj.identifier];
             });
 
-            // When the quadtree is queried, make sure all of the moved objects are in fact moved
+            // When the space is queried, make sure all of the moved objects are in fact moved
             var updateMovedObjects = () => {
                 var objId;
                 var movedObjects = scene.movedObjects;
+                var space = scene.space;
 
                 for (objId in movedObjects) {
-                    updateAndMoveObject(movedObjects[objId], quadTree);
+                    updateAndMoveObject(movedObjects[objId], space);
                 }
 
                 scene.movedObjects = {};
             };
 
-            quadTree.onUpdate(updateMovedObjects);
+            scene.updateMovedObjects = updateMovedObjects;
         });
         
         game.watch(Position, UpdatePass.Immediate, markAsMoved, Priority.UseDerivedValues);

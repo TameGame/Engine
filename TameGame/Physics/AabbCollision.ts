@@ -2,7 +2,7 @@
 /// <reference path="BasicProperties.ts" />
 /// <reference path="SetObjectTransform.ts" />
 /// <reference path="QuadTree.ts" />
-/// <reference path="SceneQuadTree.ts" />
+/// <reference path="SceneSpace.ts" />
 /// <reference path="ShapeCollision.ts" />
 
 module TameGame {
@@ -99,7 +99,8 @@ module TameGame {
             }
             
             // Find all of the objects that this one could have collided with
-            scene.quadTree.forAllInBounds(aabb, (collideObj) => {
+            scene.updateMovedObjects();
+            scene.space.forAllInBounds(aabb, (collideObj) => {
                 // This will return the original object as well as the objects it has collided with
                 // Only return collisions for other objects
                 if (collideObj === obj) {

@@ -1,6 +1,8 @@
 /// <reference path="Space.ts" />
 
 module TameGame {
+    "use strict";
+
     interface SimpleSpaceObject<TObject> extends SpaceRef {
         id: number;
         obj: TObject;

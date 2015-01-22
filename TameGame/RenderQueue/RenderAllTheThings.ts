@@ -1,7 +1,7 @@
 /// <reference path="../Core/Interface.ts" />
 /// <reference path="../Sprite/Camera.ts" />
 /// <reference path="Behavior.ts" />
-/// <reference path="../Physics/SceneQuadTree.ts" />
+/// <reference path="../Physics/SceneSpace.ts" />
 
 module TameGame {
     "use strict";
@@ -59,9 +59,10 @@ module TameGame {
             
             var cameraBB = quadBoundingBox(cameraQuad);
 
-            if (scene.quadTree) {
+            if (scene.space) {
                 // Render only the objects that intersect the camera bounding box
-                scene.quadTree.forAllInBounds(cameraBB, (obj) => {
+                scene.updateMovedObjects();
+                scene.space.forAllInBounds(cameraBB, (obj) => {
                     var renderBehavior = obj.behavior.render;
                     renderBehavior(obj, renderQueue);
                 });
