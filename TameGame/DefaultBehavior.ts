@@ -46,6 +46,7 @@ module TameGame {
         // Clocks are run off the watchable events for scenes and the game by default
         'tClock': clockBehavior,
 
+        // Helpers provide convenience functions that cut down on typing when setting things up
         'tHelper': helperBehavior
     }
 }
