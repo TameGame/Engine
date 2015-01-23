@@ -33,6 +33,6 @@ module TameGame {
         addSpace(obj: Space<TObject>, bounds: BoundingBox): SpaceRef<Space<TObject>>;
 
         /** Performs a callback on all objects that overlap the specified bounding box */
-        forAllInBounds(bounds: BoundingBox, callback: (obj: TObject, bounds: BoundingBox, ref: SpaceRef<TObject>) => void): void;
+        forAllInBounds(bounds: BoundingBox, callback: (ref: SpaceRef<TObject>) => void): void;
     }
 }

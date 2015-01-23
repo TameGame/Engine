@@ -95,11 +95,11 @@ module TameGame {
             }
 
             // Iterates over all the objects in this space and all the objects in any contained spaces
-            function forAllInBounds(bounds: BoundingBox, callback: (obj: TObject, bounds: BoundingBox, ref: SpaceRef<TObject>) => void) {
+            function forAllInBounds(bounds: BoundingBox, callback: (ref: SpaceRef<TObject>) => void) {
                 // Add all of the objects that overlap this bounding box in this space
                 objects.forEach((candidate) => {
                     if (bbOverlaps(bounds, candidate.bounds)) {
-                        callback(candidate.obj, candidate.bounds, candidate);
+                        callback(candidate);
                     }
                 });
 
@@ -125,6 +125,6 @@ module TameGame {
         addSpace: (obj: Space<TObject>, bounds: BoundingBox) => SpaceRef<Space<TObject>>;
 
         /** Performs a callback on all objects that overlap the specified bounding box */
-        forAllInBounds: (bounds: BoundingBox, callback: (obj: TObject, bounds: BoundingBox, ref: SpaceRef<TObject>) => void) => void;
+        forAllInBounds: (bounds: BoundingBox, callback: (ref: SpaceRef<TObject>) => void) => void;
     }
 }

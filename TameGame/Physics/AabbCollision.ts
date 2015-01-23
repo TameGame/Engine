@@ -100,15 +100,15 @@ module TameGame {
             
             // Find all of the objects that this one could have collided with
             scene.updateMovedObjects();
-            scene.space.forAllInBounds(aabb, (collideObj) => {
+            scene.space.forAllInBounds(aabb, (collideRef) => {
                 // This will return the original object as well as the objects it has collided with
                 // Only return collisions for other objects
-                if (collideObj === obj) {
+                if (collideRef.obj === obj) {
                     return;
                 }
                 
                 // Run the collision behavior
-                obj.behavior.aabbCollision.collided(collideObj, obj);
+                obj.behavior.aabbCollision.collided(collideRef.obj, obj);
             });
             
             // Update the collision pass number of this object
