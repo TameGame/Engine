@@ -24,7 +24,7 @@ module TameGame {
         aabb?: BoundingBox;
 
         /** Where this object is located in the scene space */
-        spaceRef?: SpaceRef;
+        spaceRef?: SpaceRef<TameObject>;
     }
 
     /**

@@ -5,12 +5,18 @@ module TameGame {
     /**
      * Represents an object in space
      */
-    export interface SpaceRef {
+    export interface SpaceRef<TObject> {
         /** Removes this object from the space it is in */
         removeObject(): void;
 
         /** Moves this object to a new location within the current space (or via its parent space). Returns a new reference to the moved object */
-        move(newBounds: BoundingBox): SpaceRef;
+        move(newBounds: BoundingBox): SpaceRef<TObject>;
+
+        /** The bounding box of this object */
+        bounds: BoundingBox;
+
+        /** The object represented by this item */
+        obj: TObject;
     }
 
     /**
@@ -21,12 +27,12 @@ module TameGame {
      */
     export interface Space<TObject> {
         /** Adds an object to this space, or to a contained space if it is contained by it */
-        addObject(obj: TObject, bounds: BoundingBox): SpaceRef;
+        addObject(obj: TObject, bounds: BoundingBox): SpaceRef<TObject>;
 
         /** Adds a space to this space */
-        addSpace(obj: Space<TObject>, bounds: BoundingBox): SpaceRef;
+        addSpace(obj: Space<TObject>, bounds: BoundingBox): SpaceRef<Space<TObject>>;
 
         /** Performs a callback on all objects that overlap the specified bounding box */
-        forAllInBounds(bounds: BoundingBox, callback: (obj: TObject, bounds: BoundingBox, ref: SpaceRef) => void): void;
+        forAllInBounds(bounds: BoundingBox, callback: (obj: TObject, bounds: BoundingBox, ref: SpaceRef<TObject>) => void): void;
     }
 }

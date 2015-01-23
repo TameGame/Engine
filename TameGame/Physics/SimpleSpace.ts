@@ -3,10 +3,8 @@
 module TameGame {
     "use strict";
 
-    interface SimpleSpaceObject<TObject> extends SpaceRef {
+    interface SimpleSpaceObject<TObject> extends SpaceRef<TObject> {
         id: number;
-        obj: TObject;
-        bounds: BoundingBox;
     }
 
    /**
@@ -67,7 +65,7 @@ module TameGame {
 
             // Generates an object adder function for the specified 
             function createObjectAdder<TRefObjType>(storage: SimpleSpaceObject<TRefObjType>[], prototype: SimpleSpaceObject<TRefObjType>, addToSpace: (space: Space<TObject>, obj: TRefObjType, newBounds: BoundingBox) => void) {
-                return (obj: TRefObjType, newBounds: BoundingBox): SpaceRef => {
+                return (obj: TRefObjType, newBounds: BoundingBox): SpaceRef<TRefObjType> => {
                     var targetSpace: SimpleSpaceObject<Space<TObject>> = null;
 
                     // Try to add to a space contained within this object
@@ -97,7 +95,7 @@ module TameGame {
             }
 
             // Iterates over all the objects in this space and all the objects in any contained spaces
-            function forAllInBounds(bounds: BoundingBox, callback: (obj: TObject, bounds: BoundingBox, ref: SpaceRef) => void) {
+            function forAllInBounds(bounds: BoundingBox, callback: (obj: TObject, bounds: BoundingBox, ref: SpaceRef<TObject>) => void) {
                 // Add all of the objects that overlap this bounding box in this space
                 objects.forEach((candidate) => {
                     if (bbOverlaps(bounds, candidate.bounds)) {
@@ -121,12 +119,12 @@ module TameGame {
         }
 
         /** Adds an object to this space, or to a contained space if it is contained by it */
-        addObject: (obj: TObject, bounds: BoundingBox) => SpaceRef;
+        addObject: (obj: TObject, bounds: BoundingBox) => SpaceRef<TObject>;
 
         /** Adds a space to this space */
-        addSpace: (obj: Space<TObject>, bounds: BoundingBox) => SpaceRef;
+        addSpace: (obj: Space<TObject>, bounds: BoundingBox) => SpaceRef<Space<TObject>>;
 
         /** Performs a callback on all objects that overlap the specified bounding box */
-        forAllInBounds: (bounds: BoundingBox, callback: (obj: TObject, bounds: BoundingBox, ref: SpaceRef) => void) => void;
+        forAllInBounds: (bounds: BoundingBox, callback: (obj: TObject, bounds: BoundingBox, ref: SpaceRef<TObject>) => void) => void;
     }
 }
