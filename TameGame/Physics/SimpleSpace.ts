@@ -77,7 +77,7 @@ module TameGame {
                             return false;
                         }
                     })) {
-                        // Add to the target space
+                        // Add to the contained target space
                         addToSpace(targetSpace.obj, obj, newBounds);
                     } else {
                         // Add to this object if this doesn't fit within a contained space
