@@ -7,7 +7,6 @@
 /// <reference path="SatCollision.ts" />
 /// <reference path="BasicProperties.ts" />
 /// <reference path="SimpleMotionBehavior.ts" />
-/// <reference path="QuadTree.ts" />
 /// <reference path="SceneSpace.ts" />
 /// <reference path="SetObjectTransform.ts" />
 /// <reference path="AabbCollision.ts" />

@@ -1,21 +1,29 @@
-QUnit.test("QuadTreeCanAddObject", function (assert) {
-    var tree    = new TameGame.QuadTree();
+QUnit.test("SimpleSpaceCanAddObject", function (assert) {
+    var tree    = new TameGame.SimpleSpace();
     var someRef = tree.addObject({ x: 0.5, y: 0.5, width: 0.25, height: 0.25 }, {});
     
     assert.ok(someRef !== null);
 });
 
 
-QUnit.test("QuadTreeCanRemoveObject", function (assert) {
-    var tree    = new TameGame.QuadTree();
+QUnit.test("SimpleSpaceCanRemoveObject", function (assert) {
+    var tree    = new TameGame.SimpleSpace();
     var someRef = tree.addObject({ x: 0.5, y: 0.5, width: 0.25, height: 0.25 }, {});
-    tree.removeObject(someRef);
-    
-    assert.ok(someRef !== null);
+    var count;
+
+    count = 0;
+    tree.forAllInBounds({ x:-2, y: -2, width: 4, height: 4 }, function (obj) { ++count });
+    assert.ok(count == 1);
+
+    someRef.removeObject();
+
+    count = 0;
+    tree.forAllInBounds({ x:-2, y: -2, width: 4, height: 4 }, function (obj) { ++count });
+    assert.ok(count == 0);
 });
 
-QUnit.test("QuadTreeCanFindObject", function (assert) {
-    var tree    = new TameGame.QuadTree();
+QUnit.test("SimpleSpaceCanFindObject", function (assert) {
+    var tree    = new TameGame.SimpleSpace();
     var someRef = tree.addObject({ x: 0.5, y: 0.5, width: 0.25, height: 0.25 }, {});
     var count   = 0;
     
@@ -25,9 +33,9 @@ QUnit.test("QuadTreeCanFindObject", function (assert) {
     assert.ok(count === 1);
 });
 
-QUnit.test("QuadTreeCanFindHugeObject", function (assert) {
-    var tree    = new TameGame.QuadTree();
-    var someRef = tree.addObject({ x: -100, y: -100, width: 200, height: 200 }, {});            // Forces the quadtree to expand outward
+QUnit.test("SimpleSpaceCanFindHugeObject", function (assert) {
+    var tree    = new TameGame.SimpleSpace();
+    var someRef = tree.addObject({ x: -100, y: -100, width: 200, height: 200 }, {});            // Forces the space to expand outward
     var count   = 0;
     
     tree.forAllInBounds({ x:-2, y: -2, width: 4, height: 4 }, function (obj) { ++count });
@@ -36,8 +44,8 @@ QUnit.test("QuadTreeCanFindHugeObject", function (assert) {
     assert.ok(count === 1);
 });
 
-QUnit.test("QuadTreeExcludeObjectOutOfBounds", function (assert) {
-    var tree    = new TameGame.QuadTree();
+QUnit.test("SimpleSpaceExcludeObjectOutOfBounds", function (assert) {
+    var tree    = new TameGame.SimpleSpace();
     var someRef = tree.addObject({ x: 0.5, y: 0.5, width: 0.25, height: 0.25 }, {});
     var count   = 0;
     
@@ -47,8 +55,8 @@ QUnit.test("QuadTreeExcludeObjectOutOfBounds", function (assert) {
     assert.ok(count === 0);
 });
 
-// Populates a quadtree with a grid of objects from 0,0 to 1,1. Width, height indicate the number of cells in the appropriate dimension
-function populateGrid(quadTree, width, height) {
+// Populates a space with a grid of objects from 0,0 to 1,1. Width, height indicate the number of cells in the appropriate dimension
+function populateGrid(space, width, height) {
     var distX = 1.0 / width;
     var distY = 1.0 / height;
     
@@ -59,7 +67,7 @@ function populateGrid(quadTree, width, height) {
     for (y=0; y<height; ++y) {
         xpos = 0;
         for (x=0; x<width; ++x) {
-            quadTree.addObject({ x: xpos, y: ypos, width: distX, height: distY }, { x: xpos, y: ypos });
+            space.addObject({ x: xpos, y: ypos, width: distX, height: distY }, { x: xpos, y: ypos });
             
             xpos += distX;
         }
@@ -68,9 +76,9 @@ function populateGrid(quadTree, width, height) {
     }
 }
 
-QUnit.test("QuadTreeQuery100Objects", function (assert) {
-    // Create a quadtree with 100 objects in it
-    var tree = new TameGame.QuadTree();
+QUnit.test("SimpleSpaceQuery100Objects", function (assert) {
+    // Create a space with 100 objects in it
+    var tree = new TameGame.SimpleSpace();
     populateGrid(tree, 10, 10);
     var count = 0;
     
@@ -84,13 +92,11 @@ QUnit.test("QuadTreeQuery100Objects", function (assert) {
     tree.forAllInBounds({ x: 0, y: 0, width:1, height: 1 }, function () { ++count; });
     assert.ok(count === 100, "100 objects overall");
     if (count !== 100) console.log('100 !== ', count);
-    
-    console.log('100 object badness: ', tree.calculateMaxBadness());
 });
 
-QUnit.test("QuadTreeQuery100ObjectsExpandTree", function (assert) {
-    // Create a quadtree with 100 objects in it
-    var tree = new TameGame.QuadTree();
+QUnit.test("SimpleSpaceQuery100ObjectsExpandTree", function (assert) {
+    // Create a space with 100 objects in it
+    var tree = new TameGame.SimpleSpace();
     populateGrid(tree, 10, 10);
     var count = 0;
     
@@ -107,13 +113,11 @@ QUnit.test("QuadTreeQuery100ObjectsExpandTree", function (assert) {
     tree.forAllInBounds({ x: 0, y: 0, width:1, height: 1 }, function () { ++count; });
     assert.ok(count === 100, "100 objects overall");
     if (count !== 100) console.log('100 !== ', count);
-    
-    console.log('100 object with expansion badness: ', tree.calculateMaxBadness());
 });
 
-QUnit.test("QuadTreeQuery800Objects", function (assert) {
-    // Create a quadtree with 800 objects in it (overlapped 8 deep)
-    var tree = new TameGame.QuadTree();
+QUnit.test("SimpleSpaceQuery800Objects", function (assert) {
+    // Create a space with 800 objects in it (overlapped 8 deep)
+    var tree = new TameGame.SimpleSpace();
     for (var x=0; x<8; ++x) {
         populateGrid(tree, 10, 10);
     }
@@ -129,13 +133,11 @@ QUnit.test("QuadTreeQuery800Objects", function (assert) {
     tree.forAllInBounds({ x: 0, y: 0, width:1, height: 1 }, function () { ++count; });
     assert.ok(count === 800, "800 objects overall");
     if (count !== 800) console.log('800 !== ', count);
-    
-    console.log('800 object badness: ', tree.calculateMaxBadness());
 });
 
-QUnit.test("QuadTreeQuery100ObjectsPlusSomeMore", function (assert) {
-    // Create a quadtree with 100 objects in it
-    var tree = new TameGame.QuadTree();
+QUnit.test("SimpleSpaceQuery100ObjectsPlusSomeMore", function (assert) {
+    // Create a space with 100 objects in it
+    var tree = new TameGame.SimpleSpace();
     populateGrid(tree, 10, 10);
     var count = 0;
     
@@ -153,6 +155,4 @@ QUnit.test("QuadTreeQuery100ObjectsPlusSomeMore", function (assert) {
     tree.forAllInBounds({ x: 0, y: 0, width:1, height: 1 }, function () { ++count; });
     assert.ok(count === 102, "102 objects overall");
     if (count !== 102) console.log('102 !== ', count);
-    
-    console.log('100 object plus more badness: ', tree.calculateMaxBadness());
 });
