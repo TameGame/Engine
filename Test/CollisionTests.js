@@ -138,31 +138,26 @@ QUnit.test("DoesCollideJustInsideMtv", function(assert) {
     assert.ok(collides2.collided === true, 'Triangles are in collision slightly inside the MTV');
 });
 
-QUnit.test("AabbCollisionDuringPass", function (assert) {
+QUnit.test("ObjectCollisionDuringPass", function (assert) {
     var someGame = new TameGame.StandardGame();
     var someScene = someGame.createScene();
 
     // Create two objects and move them into collision by changing their presence
-    var objPos = { quad: { x1: -1, y1: -1, x2: 1, y2: -1, x3: 1, y3: 1, x4: -1, y4: 1 } };
-    
     var obj1 = someGame.createObject();
     var obj2 = someGame.createObject();
 
     someScene.addObject(obj1);
     someScene.addObject(obj2);
     someGame.startScene(someScene);
-    
-    obj1.position = objPos;
-    obj2.position = objPos;
-    
-    obj1.presence.location = { x: .5, y: .5 };
-    obj2.presence.location = { x: -.5, y: -.5 };
+
+    obj1.setup.size(2,2).moveTo({ x: .5, y: .5 }).useBasicShape();
+    obj2.setup.size(2,2).moveTo({ x: -.5, y: -.5 }).useBasicShape();
     
     // Count the number of collisions
     var collideCount1 = 0;
     var collideCount2 = 0;
-    obj1.behavior.aabbCollision.collided = function () { ++collideCount1; };
-    obj2.behavior.aabbCollision.collided = function () { ++collideCount2; };
+    obj1.behavior.objectCollision.collided = function () { ++collideCount1; };
+    obj2.behavior.objectCollision.collided = function () { ++collideCount2; };
     
     // Run the pass
     someGame.tick(0);
@@ -179,7 +174,7 @@ QUnit.test("AabbCollisionDuringPass", function (assert) {
 
     someGame.tick(1);               // Nothing moves, so no more collisions
 
-    assert.ok(collideCount1 === 1 && collideCount2 === 1, "Collisions don't reoccur");
+    assert.ok(collideCount1 === 2 && collideCount2 === 2, "Collision occur each pass");
 });
 
 QUnit.test("NoCollisionIfNotOverlapping", function (assert) {
