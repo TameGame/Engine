@@ -1,5 +1,5 @@
 /// <reference path="Interface.ts" />
-/// <reference path="RenderTypes.ts" />
+/// <reference path="../Algorithms/Algorithms.ts" />
 /// <reference path="Actions.ts" />
 
 module TameGame {

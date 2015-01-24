@@ -1,4 +1,4 @@
-/// <reference path="../RenderQueue/RenderTypes.ts" />
+/// <reference path="../Algorithms/Algorithms.ts" />
 /// <reference path="../Core/Core.ts" />
 
 module TameGame {

@@ -1,5 +1,5 @@
 /// <reference path="../Core/Core.ts" />
-/// <reference path="../RenderQueue/RenderTypes.ts" />
+/// <reference path="../Algorithms/Algorithms.ts" />
 
 module TameGame {
     "use strict";

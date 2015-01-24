@@ -1,5 +1,5 @@
 /// <reference path="../ThirdParty/DefinitelyTyped/es6-promise.d.ts"/>
-/// <reference path="../RenderQueue/RenderTypes.ts" />
+/// <reference path="../Algorithms/Algorithms.ts" />
 
 module TameGame {
     "use strict";

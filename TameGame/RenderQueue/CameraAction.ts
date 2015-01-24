@@ -1,4 +1,4 @@
-/// <reference path="RenderTypes.ts" />
+/// <reference path="../Algorithms/Algorithms.ts" />
 /// <reference path="Interface.ts" />
 /// <reference path="Actions.ts" />
 

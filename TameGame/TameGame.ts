@@ -1,5 +1,6 @@
 /// <reference path="ThirdParty/DefinitelyTyped/es6-promise.d.ts"/>
 
+/// <reference path="Algorithms/Algorithms.ts"/>
 /// <reference path="Core/Core.ts"/>
 /// <reference path="RenderQueue/RenderQueue.ts"/>
 /// <reference path="Input/Input.ts"/>
