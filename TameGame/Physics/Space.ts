@@ -34,5 +34,18 @@ module TameGame {
 
         /** Performs a callback on all objects that overlap the specified bounding box */
         forAllInBounds(bounds: BoundingBox, callback: (ref: SpaceRef<TObject>) => void): void;
+
+        /** 
+         * Finds all possible collision pairs in this space 
+         *
+         * The two arrays passed in (which should normally be empty) are filled with the collisions that
+         * exist in this space. Spaces should use an efficient algorithm to discover objects with
+         * overlapping bounding boxes.
+         *
+         * For every collision, one object is added to left and one to right, representing the two objects
+         * that have collided. Provided the arrays are empty (or contain the same number of objects) when
+         * this is called, this means that for every index x, there is a collision pair { left[x], right[x] }
+         */
+        findCollisionPairs(left: SpaceRef<TObject>[], right: SpaceRef<TObject>[]): void;
     }
 }

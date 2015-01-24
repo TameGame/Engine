@@ -134,14 +134,12 @@ module TameGame {
                 var pos: number;
 
                 // Add all of the objects that overlap this bounding box in this space
-                pos = binarySearch(objects, <SimpleSpaceObject<TObject>> { bounds: { x: maxX } }, orderXAxis)-1;          // First object positioned after end of the bounds
-                for (; pos>=0; --pos) {
+                pos = binarySearch(objects, <SimpleSpaceObject<TObject>> { bounds: { x: maxX } }, orderXAxis)-1;        // First object positioned after end of the bounds
+                for (; pos>=0; --pos) {                                                                                 // Have to iterate back to the beginning as we can't exclude any objects before the initial point with just one array
                     var candidate = objects[pos];
 
                     if (bbOverlaps(bounds, candidate.bounds)) {
                         callback(candidate);
-                    } else if (candidate.bounds.x+candidate.bounds.width < minX) {
-                        //break;
                     }
                 }
 
@@ -154,10 +152,57 @@ module TameGame {
                 });
             }
 
+            // Finds all the collision pairs in this object
+            function findCollisionPairs(left: SpaceRef<TObject>[], right: SpaceRef<TObject>[]): void {
+                // This is a basic sort-and-sweep algorithm, based along the X-axis
+                // Note that it will be inefficient if substantial numbers of objects are clustered this way
+
+                // Sort the objects along the X-axis (will be fast provided the array is substantially in order)
+                if (!sorted) {
+                    sortObjects(objects);
+                    sortObjects(spaces);
+                    sorted = true;
+                }
+
+                // Find collision pairs by searching the object list
+                var leftIndex: number;
+                var numObjects = objects.length;
+                for (leftIndex = 0; leftIndex < numObjects; ++leftIndex) {
+                    // Search for colliding objects that are to the right of this one
+                    // Objects to the left have already been checked by previous iterations of this loop
+                    var leftObj     = objects[leftIndex];
+                    var leftBounds  = leftObj.bounds;
+
+                    // We'll stop once we find an object with a min x position (which the array is sorted by) beyond the end of this object
+                    // (At this point, no further objects can overlap)
+                    var maxX    = leftBounds.x + leftBounds.width;
+
+                    for (var rightIndex = leftIndex + 1; rightIndex < numObjects; ++rightIndex) {
+                        var rightObj    = objects[rightIndex];
+                        var rightBounds = rightObj.bounds;
+
+                        // If this object starts after the end of the current object, then it can't be in collision and neither can any object further to the right
+                        if (rightBounds.x > maxX) {
+                            break;
+                        }
+
+                        // Check for collision and add to the arrays if it exists
+                        if (bbOverlaps(leftBounds, rightBounds)) {
+                            left.push(leftObj);
+                            right.push(rightObj);
+                        }
+                    }
+                }
+
+                // Look for collisions in any subspaces
+                spaces.forEach((collisionSpace) => collisionSpace.obj.findCollisionPairs(left, right));
+            }
+
             // Genereate the functions for this object
-            this.addObject      = createObjectAdder(objects, objectRefPrototype, function (space, obj, bounds) { space.addObject(obj, bounds); });
-            this.addSpace       = createObjectAdder(spaces, spaceRefPrototype, function (space, obj, bounds) { space.addSpace(obj, bounds); });
-            this.forAllInBounds = forAllInBounds;
+            this.addObject          = createObjectAdder(objects, objectRefPrototype, function (space, obj, bounds) { space.addObject(obj, bounds); });
+            this.addSpace           = createObjectAdder(spaces, spaceRefPrototype, function (space, obj, bounds) { space.addSpace(obj, bounds); });
+            this.forAllInBounds     = forAllInBounds;
+            this.findCollisionPairs = findCollisionPairs;
         }
 
         /** Adds an object to this space, or to a contained space if it is contained by it */
@@ -168,5 +213,18 @@ module TameGame {
 
         /** Performs a callback on all objects that overlap the specified bounding box */
         forAllInBounds: (bounds: BoundingBox, callback: (ref: SpaceRef<TObject>) => void) => void;
+
+        /** 
+         * Finds all possible collision pairs in this space 
+         *
+         * The two arrays passed in (which should normally be empty) are filled with the collisions that
+         * exist in this space. Spaces should use an efficient algorithm to discover objects with
+         * overlapping bounding boxes.
+         *
+         * For every collision, one object is added to left and one to right, representing the two objects
+         * that have collided. Provided the arrays are empty (or contain the same number of objects) when
+         * this is called, this means that for every index x, there is a collision pair { left[x], right[x] }
+         */
+        findCollisionPairs: (left: SpaceRef<TObject>[], right: SpaceRef<TObject>[]) => void;
     }
 }
