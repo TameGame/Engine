@@ -16,8 +16,8 @@ module TameGame {
         /** Returns a transformed version of this shape */
         transform(matrix: number[]): Shape;
         
-        /** Retrieves the bounding box for this shape */
-        getBoundingBox(): BoundingBox;
+        /** Retrieves the bounding box for this shape (optionally when transformed through a matrix) */
+        getBoundingBox(matrix?: number[]): BoundingBox;
         
         /** Finds the center of this shape */
         getCenter(): Point2D;

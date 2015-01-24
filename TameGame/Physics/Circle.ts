@@ -32,8 +32,14 @@ module TameGame {
             }
 
             // Returns the bounding box of this circle
-            var cGetBoundingBox = () => {
-                return { x: cX - radius, y: cY - radius, width: radius*2, height: radius*2 };
+            var cGetBoundingBox = (matrix?: number[]) => {
+                var bounds = { x: cX - radius, y: cY - radius, width: radius*2, height: radius*2 };
+
+                if (matrix) {
+                    bounds = transformBoundingBox(bounds, matrix);
+                }
+
+                return bounds;
             }
 
             // Retrieves the center of this circle
@@ -92,7 +98,7 @@ module TameGame {
         transform: (matrix: number[]) => Shape;
         
         /** Retrieves the bounding box for this shape */
-        getBoundingBox: () => BoundingBox;
+        getBoundingBox: (matrix?: number[]) => BoundingBox;
         
         /** Finds the center of this shape */
         getCenter: () => Point2D;

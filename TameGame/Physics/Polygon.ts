@@ -102,7 +102,7 @@ module TameGame {
      * A polygon with a transformation
      */
     class TransformedPolygon implements PolygonShape {
-        constructor(initVertices: Point2D[], initCenter: Point2D, matrix: number[]) {
+        constructor(initVertices: Point2D[], initCenter: Point2D, originalBoundingBox: BoundingBox, matrix: number[]) {
             var vertices: Point2D[];
             
             var getVertices = () => {
@@ -117,12 +117,15 @@ module TameGame {
             this.getAxes            = () => getAxes(getVertices());
             this.projectOntoAxis    = (axis) => projectOntoAxis(getVertices(), axis);
             this.closestPoint       = (point) => closestPoint(getVertices(), point);
-            this.transform          = (transformMatrix) => new TransformedPolygon(initVertices, center, multiplyMatrix(matrix, transformMatrix));
+            this.transform          = (transformMatrix) => new TransformedPolygon(initVertices, center, originalBoundingBox, multiplyMatrix(matrix, transformMatrix));
             this.getVertices        = () => getVertices();
-            this.getBoundingBox     = () => {
-                var boundingBox = getBoundingBox(getVertices());
-                this.getBoundingBox = () => boundingBox;
-                return boundingBox;
+            this.getBoundingBox     = (boundingMatrix?: number[]) => {
+                var transform = matrix;
+                if (boundingMatrix) {
+                    transform = multiplyMatrix(transform, boundingMatrix);
+                }
+
+                return transformBoundingBox(originalBoundingBox, transform);
             };
         }
         
@@ -175,13 +178,19 @@ module TameGame {
             this.getCenter          = () => { return center; };
             this.getAxes            = () => getAxes(vertices);
             this.projectOntoAxis    = (axis) => projectOntoAxis(vertices, axis);
-            this.transform          = (matrix) => new TransformedPolygon(vertices, center, matrix);
+            this.transform          = (matrix) => new TransformedPolygon(vertices, center, this.getBoundingBox(), matrix);
             this.closestPoint       = (point) => closestPoint(vertices, point);
             this.getVertices        = () => vertices;
-            this.getBoundingBox     = () => {
+            this.getBoundingBox     = (matrix?: number[]) => {
                 var boundingBox = getBoundingBox(vertices);
-                this.getBoundingBox = () => boundingBox;
-                return boundingBox;
+                this.getBoundingBox = (matrix?: number[]) => {
+                    if (matrix) {
+                        return transformBoundingBox(boundingBox, matrix);
+                    } else {
+                        return boundingBox;
+                    }
+                }
+                return this.getBoundingBox(matrix);
             };
         }
         
@@ -201,7 +210,7 @@ module TameGame {
         getVertices: () => Point2D[];
 
         /** Retrieves the bounding box for this shape */
-        getBoundingBox: () => BoundingBox;
+        getBoundingBox: (matrix?: number[]) => BoundingBox;
 
         /** The closest point on this shape to the specified point */
         closestPoint: (point: Point2D) => Point2D;

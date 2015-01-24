@@ -45,23 +45,20 @@ module TameGame {
     export var AabbBehavior: TypeDefinition<IAabbBehavior> = declareBehavior<IAabbBehavior>('aabb', () => {
         return { 
             calculateBounds: (obj) => {
-                var pos         = obj.position;
-                var presence    = obj.presence;
-                var quad: Quad  = pos.quad;
+                var presence            = obj.presence;
+                var transform: number[] = obj.transformationMatrix;
+                var bounds: BoundingBox;
 
                 // If there's a shape, use the shape to get the quad instead
                 if (presence.shape) {
-                    var shapeBounds = presence.shape.getBoundingBox();
-                    quad = bbToQuad(shapeBounds);
+                    return presence.shape.getBoundingBox(transform);
+                } else {
+                    if (transform) {
+                        return transformBoundingBox(quadBoundingBox(obj.position.quad), transform);
+                    } else {
+                        return quadBoundingBox(obj.position.quad);
+                    }
                 }
-
-                // Transform according to the presence settings
-                if (obj.transformationMatrix) {
-                    quad = transformQuad(obj.transformationMatrix, quad);
-                }
-
-                // Convert to a bounding box and return
-                return quadBoundingBox(quad);
             }
         };
     });
