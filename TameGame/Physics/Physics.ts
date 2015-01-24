@@ -11,3 +11,4 @@
 /// <reference path="SetObjectTransform.ts" />
 /// <reference path="AabbCollision.ts" />
 /// <reference path="ShapeCollision.ts" />
+/// <reference path="ObjectCollision.ts" />

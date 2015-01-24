@@ -1,6 +1,7 @@
 /// <reference path="../Core/Core.ts" />
 /// <reference path="BasicProperties.ts" />
 /// <reference path="SatCollision.ts" />
+/// <reference path="ObjectCollision.ts" />
 
 module TameGame {
     "use strict";
@@ -41,39 +42,30 @@ module TameGame {
     }
     
     export interface Behavior {
+        /** Resolves collisions between shapes in a scene */
         shapeCollision?: ISceneShapeCollisionBehavior;
     }
     
-    export var ShapeCollisionBehavior = declareBehavior<ISceneShapeCollisionBehavior>('shapeCollision', () => {
+    export var SceneShapeCollisionBehavior = declareBehavior<ISceneShapeCollisionBehavior>('shapeCollision', () => {
         return { 
-            resolveShapeCollisions: (left: TameObject[], right: TameObject[], collision: Collision[]) => { 
+            resolveShapeCollisions: (left: TameObject[], right: TameObject[]) => { 
                 // The basic collision behaviour is to move the objects so that they are no longer colliding
                 for (var index = 0; index<left.length; ++index) {
                     // Fetch details of this collision
                     var leftObj             = left[index];
                     var rightObj            = right[index];
-                    var collisionDetails    = collision[index];
 
-                    var leftPresence        = leftObj.presence;
-                    var rightPresence       = rightObj.presence;
+                    // Default behavior is just to invoke the object collision behavior
+                    var leftCollided        = leftObj.behavior.objectCollision.collided;
+                    var rightCollided       = rightObj.behavior.objectCollision.collided;
 
-                    // The MTV is the minimum distance the objects need to move so that they no longer overlap
-                    var mtv = collisionDetails.getMtv();
+                    if (leftCollided) {
+                        leftCollided(leftObj, rightObj);
+                    }
 
-                    // Both objects move by half the mtv
-                    mtv.x /= 2.0;
-                    mtv.y /= 2.0;
-
-                    // Move the objects so that they're no longer collided
-                    var oldPos = leftPresence.location;
-                    var newPos = { x: oldPos.x + mtv.x, y: oldPos.y + mtv.y };
-
-                    leftPresence.location = newPos;
-
-                    oldPos = rightPresence.location;
-                    newPos = { x: oldPos.x - mtv.x, y: oldPos.y - mtv.y };
-
-                    rightPresence.location = newPos;
+                    if (rightCollided) {
+                        rightCollided(leftObj, rightObj);
+                    }
                 }
             } 
         };
