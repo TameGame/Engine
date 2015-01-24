@@ -89,30 +89,31 @@ module TameGame {
         });
         
         // When the presence for an object is updated, check for collisions and react if necessary
-        game.watch(Presence, UpdatePass.PhysicsCollision, (obj, presence) => {
-            // Get the object's location
-            var aabb    = obj.aabb;
-            var scene   = obj.scene;
-            
-            if (!aabb || !scene) {
-                return;
-            }
-            
-            // Find all of the objects that this one could have collided with
-            scene.updateMovedObjects();
-            scene.space.forAllInBounds(aabb, (collideRef) => {
-                // This will return the original object as well as the objects it has collided with
-                // Only return collisions for other objects
-                if (collideRef.obj === obj) {
-                    return;
+        game.events.onCreateScene((newScene) => {
+            newScene.events.onPassStart(UpdatePass.PhysicsCollision, () => {
+                // Update any object that has moved
+                newScene.updateMovedObjects();
+
+                if (newScene.space) {
+                    // Find all the collisions in this scene's space
+                    var left: SpaceRef<TameObject>[] = [];
+                    var right: SpaceRef<TameObject>[] = [];
+
+                    newScene.space.findCollisionPairs(left, right);
+
+                    // Generate AABB collision events
+                    for (var index=0; index<left.length; ++index) {
+                        var leftObj = left[index].obj;
+                        var rightObj = right[index].obj;
+
+                        leftObj.behavior.aabbCollision.collided(rightObj, leftObj);
+                        leftObj.lastCollisionPass = collisionPass;
+                        
+                        rightObj.behavior.aabbCollision.collided(leftObj, rightObj);
+                        rightObj.lastCollisionPass = collisionPass;
+                    }
                 }
-                
-                // Run the collision behavior
-                obj.behavior.aabbCollision.collided(collideRef.obj, obj);
             });
-            
-            // Update the collision pass number of this object
-            obj.lastCollisionPass = collisionPass;
         });
     }
 }
