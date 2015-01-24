@@ -13,7 +13,7 @@ module TameGame {
             y: matrix[3]*point.x + matrix[4]*point.y + matrix[5]
         };
     }
-    
+
     /** 
      * Multiplies two matrices 
      */
@@ -120,5 +120,39 @@ module TameGame {
         }
 
         return r;
+    }
+
+    var min = Math.min;
+    var max = Math.max;
+
+    /**
+     * Transforms a bounding box using a matrix
+     */
+    export function transformBoundingBox(bounds: BoundingBox, matrix: number[]): BoundingBox {
+        // Get the min/max coordinates
+        var minX = bounds.x;
+        var minY = bounds.y;
+        var maxX = minX + bounds.width;
+        var maxY = minY + bounds.height;
+
+        // Multiply by the matrix columns
+        var xa  = [ minX*matrix[0], minX*matrix[3] ];
+        var xb  = [ maxX*matrix[0], maxX*matrix[3] ];
+
+        var ya  = [ minY*matrix[1], minY*matrix[4] ];
+        var yb  = [ maxY*matrix[1], maxY*matrix[4] ];
+
+        // Combine to produce the result
+        var newMinX = min(xa[0], xb[0]) + min(ya[0], yb[0]) + matrix[2];
+        var newMinY = min(xa[1], xb[1]) + min(ya[1], yb[1]) + matrix[5];
+        var newMaxX = max(xa[0], xb[0]) + max(ya[0], yb[0]) + matrix[2];
+        var newMaxY = max(xa[1], xb[1]) + max(ya[1], yb[1]) + matrix[5];
+
+        return {
+            x: newMinX,
+            y: newMinY,
+            width: newMaxX - newMinX,
+            height: newMaxY - newMinY
+        };
     }
 }
