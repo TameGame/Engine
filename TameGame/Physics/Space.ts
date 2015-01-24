@@ -45,6 +45,9 @@ module TameGame {
          * For every collision, one object is added to left and one to right, representing the two objects
          * that have collided. Provided the arrays are empty (or contain the same number of objects) when
          * this is called, this means that for every index x, there is a collision pair { left[x], right[x] }
+         *
+         * If two subspaces overlap and contain colliding objects then this call will not generate collision
+         * pairs for them.
          */
         findCollisionPairs(left: SpaceRef<TObject>[], right: SpaceRef<TObject>[]): void;
     }
