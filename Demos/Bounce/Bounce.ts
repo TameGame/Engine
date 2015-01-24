@@ -1,5 +1,12 @@
 /// <reference path="TameGame.d.ts" />
 
+module TameGame {
+    // Add an 'isBall' property to the TameObject type
+    export interface TameObject {
+        isBall?: boolean;
+    }
+}
+
 module Bounce {
     "use strict";
 
@@ -16,42 +23,15 @@ module Bounce {
 
     // Function to create a ball object
     function createBall() {
-        var newBall = game.createObject();              // game.create.object() ?
+        var newBall = game.createObject();
 
         // Set up the ball with the specified size and shape
         newBall.setup
             .sprite(ballSprite, ballRadius*2, ballRadius*2)
             .shape(ballShape);
 
-        // Balls bounce off things that they collide with
-        newBall.behavior.shapeCollision = {
-            shapeCollision: (collision: TameGame.Collision, withObject: TameGame.TameObject, thisObject: TameGame.TameObject) => {
-                // Get the 'minimum translation vector' for the collision
-                var mtv = collision.getMtv();
-
-                // Move this object away from the object it collided with
-                var oldPos = newBall.presence.location;
-                var newPos = {
-                    x: oldPos.x + mtv.x/2,
-                    y: oldPos.y + mtv.y/2
-                };
-                newBall.presence.location = newPos;
-
-                // If the ball is not moving away from the point of collision, then make it bounce in a different direction
-                var direction       = newBall.motion.velocity;
-                if (TameGame.dot(mtv, direction) < 0) {
-                    // Change the direction of this ball
-                    newBall.motion.velocity = {
-                        x: Math.random()*4-2,
-                        y: Math.random()*4-2
-                    };
-                }
-
-                // Returning false ensures the collision is processed for the other object too
-                return false;
-            }
-        };
-
+        // Mark as a ball for the collision resolution algorithm
+        newBall.isBall = true;
 
         // This is the result
         return newBall;
@@ -74,15 +54,63 @@ module Bounce {
             .moveTo(position.x, position.y)
             .useBasicShape();
 
-        // It does nothing when collided with
-        newWall.behavior.shapeCollision = {
-            shapeCollision: (collision: TameGame.Collision, withObject: TameGame.TameObject, thisObject: TameGame.TameObject) => {
-                return false;
-            }
-        };
-
         return newWall;
     }
+
+    // Picks a velocity for a collision with a particular MTV
+    function pickNewVelocity(mtv: TameGame.Point2D, velocity: TameGame.Point2D) : TameGame.Point2D {
+        while (TameGame.dot(mtv, velocity) > 0 || TameGame.magnitude(velocity) < .5) {
+            // Change the direction of this ball
+            velocity = {
+                x: Math.random()*4-2,
+                y: Math.random()*4-2
+            };
+        }
+
+        return velocity;
+    }
+
+    // Define what happens when things collide with each other in the bounce scene
+    // (Demonstrates how to complete customise how collisions affect a scene)
+    var addVector = TameGame.addVector;
+    bounceScene.behavior.shapeCollision.resolveShapeCollisions = (left: TameGame.TameObject[], right: TameGame.TameObject[], collision: TameGame.Collision[]) => {
+        // Resolve the collisions
+        for (var index=0; index<left.length; ++index) {
+            // Details of this collision
+            var leftObj     = left[index];
+            var rightObj    = right[index];
+            var collide     = collision[index];
+
+            // Ignore collisions between two things that aren't balls
+            if (!leftObj.isBall && !rightObj.isBall) {
+                continue;
+            }
+
+            // Work out how far the objects move
+            var leftMtv = collide.getMtv();
+            var rightMtv = { x: -leftMtv.x, y: -leftMtv.y };
+
+            if (leftObj.isBall && rightObj.isBall) {
+                // Both are balls: move them apart by an equal amount
+                leftMtv.x /= 2.0; rightMtv.x /= 2.0;
+                leftMtv.y /= 2.0; rightMtv.y /= 2.0;
+            } else if (!leftObj.isBall) {
+                // Hit a wall on the left (walls don't move)
+                leftMtv = { x: 0, y: 0 };
+            } else if (!rightObj.isBall) {
+                // Hit a wall on the right (walls don't move)
+                rightMtv = { x: 0, y: 0 };
+            }
+
+            // Move the items apart
+            leftObj.presence.location = addVector(leftObj.presence.location, leftMtv);
+            rightObj.presence.location = addVector(rightObj.presence.location, rightMtv);
+
+            // Decide on a new velocity for both items
+            leftObj.motion.velocity = pickNewVelocity(leftObj.motion.velocity, leftMtv);
+            rightObj.motion.velocity = pickNewVelocity(rightObj.motion.velocity, rightMtv);
+        }
+    };
 
     // Walls around the edges
     bounceScene.addObject(createWall({ x: 0, y: 7 }, { width: 22, height: 2 }));

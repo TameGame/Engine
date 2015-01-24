@@ -51,20 +51,7 @@ module TameGame {
                 }
 
                 // Pass the objects on to the shape collider
-                for (var index = 0; index < filteredLeft.length; ++index) {
-                    var leftObj     = filteredLeft[index];
-                    var rightObj    = filteredRight[index];
-                    var collision   = collisions[index];
-
-                    leftObj.behavior.shapeCollision.shapeCollision(collision, rightObj, leftObj);
-                    rightObj.behavior.shapeCollision.shapeCollision({
-                        collided: true,
-                        getMtv: () => {
-                            var mtv = collision.getMtv()
-                            return { x: -mtv.x, y: -mtv.y }
-                        }
-                    }, leftObj, rightObj);
-                }
+                scene.behavior.shapeCollision.resolveShapeCollisions(filteredLeft, filteredRight, collisions);
             }
         };
     });
