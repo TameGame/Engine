@@ -17,63 +17,53 @@ module TameGame {
     }
     
     /**
-     * Object behavior that defines what happens when the axis-aligned bounding box of two objects collide
-     *
-     * This call is made during the PhysicsCollision update pass. It doesn't necessarily mean that the objects
-     * have collided, only that their bounding boxes are overlapping. 
+     * Scene behavior that defines what happens when some objects have overlapping axis-aligned bounding boxes
      */
-    export interface IAabbCollisionBehavior {
+    export interface ISceneAabbCollisionBehavior {
         /**
-         * Indicates an axis-aligned bounding box collision between collidedWith and thisObject
-         *
-         * thisObject is the object that moved to create the collision.
-         * This will be called on both sides if both objects are in motion. It will only be
-         * called once if collidedWith is stationary.
+         * Called with a list of all of the objects in a scene that are involved in a collision
          */
-        collided(collidedWith: TameObject, thisObject: TameObject): void;
+        resolveCollisions(left: SpaceRef<TameObject>[], right: SpaceRef<TameObject>[], scene: Scene);
     }
     
     export interface Behavior {
-        aabbCollision?: IAabbCollisionBehavior;
+        aabbCollision?: ISceneAabbCollisionBehavior;
     }
     
-    export var AabbCollisionBehavior: TypeDefinition<IAabbCollisionBehavior> = declareBehavior('aabbCollision', () => {
+    export var SceneAabbCollisionBehavior: TypeDefinition<ISceneAabbCollisionBehavior> = declareBehavior('aabbCollision', () => {
         return {
-            collided: (collidedWith: TameObject, thisObject: TameObject) => {
-                // Do no further checking if the object we've collided with has already been processed
-                // Any collisions that it will have had with this object will already have been taken care of
-                if (collidedWith.lastCollisionPass === collisionPass) {
-                    return;
+            resolveCollisions: (left: SpaceRef<TameObject>[], right: SpaceRef<TameObject>[], scene: Scene) => {
+                // Search for which pairs are still collided using the object's own collision detection
+                var filteredLeft: TameObject[] = [];
+                var filteredRight: TameObject[] = [];
+                var collisions: Collision[] = [];
+
+                for (var index = 0; index < left.length; ++index) {
+                    var leftObj     = left[index].obj;
+                    var rightObj    = right[index].obj;
+                    var collision   = areCollided(leftObj, rightObj);
+
+                    if (collision && collision.collided) {
+                        filteredLeft.push(leftObj);
+                        filteredRight.push(rightObj);
+                        collisions.push(collision);
+                    }
                 }
 
-                // By default, we check if the shapes are collided
-                var collision = areCollided(thisObject, collidedWith);
+                // Pass the objects on to the shape collider
+                for (var index = 0; index < filteredLeft.length; ++index) {
+                    var leftObj     = filteredLeft[index];
+                    var rightObj    = filteredRight[index];
+                    var collision   = collisions[index];
 
-                // If they are, then call appropriate method to indicate that the shapes are colliding
-                if (collision) {
-                    // Retrieve the reverse collision (in case we need to call both objects)
-                    // TODO: maybe we can just ask the original collision to reverse its perspective for better performance
-                    // This isn't elegant but it will work.
-                    var thatCollision = areCollided(collidedWith, thisObject);
-
-                    // Get the behaviour for both objects
-                    var thisCollide = thisObject.behavior.shapeCollision;
-                    var thatCollide = collidedWith.behavior.shapeCollision;
-
-                    // Get the priority for the two objects
-                    var thisPriority = thisCollide.priority?thisCollide.priority(collidedWith): (thisObject.collisionPriority || 0);
-                    var thatPriority = thatCollide.priority?thatCollide.priority(thisObject): (collidedWith.collisionPriority || 0);
-
-                    // Call the behaviours in the appropriate orders
-                    if (thisPriority >= thatPriority) {
-                        if (!thisCollide.shapeCollision(collision, collidedWith, thisObject)) {
-                            thatCollide.shapeCollision(thatCollision, thisObject, collidedWith);
+                    leftObj.behavior.shapeCollision.shapeCollision(collision, rightObj, leftObj);
+                    rightObj.behavior.shapeCollision.shapeCollision({
+                        collided: true,
+                        getMtv: () => {
+                            var mtv = collision.getMtv()
+                            return { x: -mtv.x, y: -mtv.y }
                         }
-                    } else {
-                        if (!thatCollide.shapeCollision(thatCollision, thisObject, collidedWith)) {
-                            thisCollide.shapeCollision(collision, collidedWith, thisObject);
-                        }
-                    }
+                    }, leftObj, rightObj);
                 }
             }
         };
@@ -101,16 +91,9 @@ module TameGame {
 
                     newScene.space.findCollisionPairs(left, right);
 
-                    // Generate AABB collision events
-                    for (var index=0; index<left.length; ++index) {
-                        var leftObj = left[index].obj;
-                        var rightObj = right[index].obj;
-
-                        leftObj.behavior.aabbCollision.collided(rightObj, leftObj);
-                        leftObj.lastCollisionPass = collisionPass;
-                        
-                        rightObj.behavior.aabbCollision.collided(leftObj, rightObj);
-                        rightObj.lastCollisionPass = collisionPass;
+                    // Resolve any collisions that might have occurred
+                    if (left.length > 0) {
+                        newScene.behavior.aabbCollision.resolveCollisions(left, right, newScene);
                     }
                 }
             });
