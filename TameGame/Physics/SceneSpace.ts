@@ -77,28 +77,22 @@ module TameGame {
         // Marks an object as having been moved since the space was updated
         var markAsMoved = (obj: TameObject) => {
             var scene = obj.scene;
-            obj['_aabb'] = true;
+            obj['_aabb'] = null;
             if (scene) {
                 scene.movedObjects[obj.identifier] = obj;
             }
         }
 
-        game.events.onCreateObject((newObj) => {
-            var aabb: BoundingBox = { x: 0, y: 0, width: 0, height: 0 };
-
-            Object.defineProperty(newObj, 'aabb', {
-                get: () => {
-                        if (newObj['_aabb']) {
-                            newObj['_aabb'] = false;
-                            aabb = newObj.behavior.aabb.calculateBounds(newObj);
-                        }
-                        return aabb;
-                    },
-                set: (val) => {
-                    aabb = val;
-                    newObj['_aabb'] = false;
+        Object.defineProperty(game.objectPrototype, 'aabb', {
+            get: function () {
+                if (!this['_aabb']) {
+                    this['_aabb'] = this.behavior.aabb.calculateBounds(this);
                 }
-            });
+                return this['_aabb'];
+            },
+            set: function (val) {
+                this['_aabb'] = val;
+            }
         });
 
         game.events.onCreateScene((scene) => {
