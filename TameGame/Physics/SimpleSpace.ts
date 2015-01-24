@@ -1,4 +1,5 @@
 /// <reference path="Space.ts" />
+/// <reference path="../Algorithms/Algorithms.ts" />
 
 module TameGame {
     "use strict";
@@ -15,6 +16,7 @@ module TameGame {
             var nextId: number                              = 0;
             var objects: SimpleSpaceObject<TObject>[]       = [];
             var spaces: SimpleSpaceObject<Space<TObject>>[] = [];
+            var sorted: boolean                             = true;
 
             // Creates the prototype space ref for either the spaces or the objects
             function createRefPrototype<TRefObjType>(storage: SimpleSpaceObject<TRefObjType>[]): SimpleSpaceObject<TRefObjType> {
@@ -37,6 +39,9 @@ module TameGame {
                         // Just set the bounding box
                         this.bounds = newBounds;
 
+                        // Objects are no longer known to be sorted
+                        sorted = false;
+
                         return this;
                     }
                 };
@@ -44,6 +49,8 @@ module TameGame {
                 // Move should move the object into the parent if we have a bounding box and it's outside
                 if (parent && bounds) {
                     refPrototype.move = function (newBounds: BoundingBox) {
+                        sorted = false;
+
                         if (!bbContains(bounds, newBounds)) {
                             // Move into the parent
                             this.removeObject();
@@ -87,6 +94,8 @@ module TameGame {
                         newRef.obj      = obj;
                         newRef.bounds   = newBounds;
 
+                        sorted = false;
+
                         storage.push(newRef);
                         nextId++;
                         return newRef;
@@ -94,14 +103,47 @@ module TameGame {
                 };
             }
 
+            // Orders objects along the X-axis
+            function orderXAxis<TRefObjType>(a: SimpleSpaceObject<TRefObjType>, b: SimpleSpaceObject<TRefObjType>) {
+                if (a.bounds.x > b.bounds.x) {
+                    return 1;
+                } else if (a.bounds.x < b.bounds.x) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+
+            // Sorts objects along the x-axis
+            // (Efficient provided objects do not move a lot between frames and do not commonly cluster on the X-axis)
+            function sortObjects<TRefObjType>(objs: SimpleSpaceObject<TRefObjType>[]) {
+                insertionSort(objs, orderXAxis);
+            }
+
             // Iterates over all the objects in this space and all the objects in any contained spaces
             function forAllInBounds(bounds: BoundingBox, callback: (ref: SpaceRef<TObject>) => void) {
+                // Sort the objects along the X-axis
+                if (!sorted) {
+                    sortObjects(objects);
+                    sortObjects(spaces);
+                    sorted = true;
+                }
+
+                var minX = bounds.x;
+                var maxX = bounds.x + bounds.width;
+                var pos: number;
+
                 // Add all of the objects that overlap this bounding box in this space
-                objects.forEach((candidate) => {
+                pos = binarySearch(objects, <SimpleSpaceObject<TObject>> { bounds: { x: maxX } }, orderXAxis)-1;          // First object positioned after end of the bounds
+                for (; pos>=0; --pos) {
+                    var candidate = objects[pos];
+
                     if (bbOverlaps(bounds, candidate.bounds)) {
                         callback(candidate);
+                    } else if (candidate.bounds.x+candidate.bounds.width < minX) {
+                        //break;
                     }
-                });
+                }
 
                 // Also iterate over any child spaces that overlap this bounding box
                 spaces.forEach((candidate) => {
