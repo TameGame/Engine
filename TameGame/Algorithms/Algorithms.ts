@@ -4,3 +4,4 @@
 /// <reference path="Point2D.ts" />
 /// <reference path="Quad2D.ts" />
 /// <reference path="BinarySearch.ts" />
+/// <reference path="InsertionSort.ts" />

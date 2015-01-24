@@ -458,7 +458,7 @@ QUnit.test("ClassesAreApplied", function (assert) {
     assert.ok(someObj.tested, 'Removing all classes reverts behavior back to default');
 });
 
-QUnit.test("binarySearch", function (assert) {
+QUnit.test("BinarySearch", function (assert) {
     function compareNums(a,b) {
         if (a < b) {
             return -1;
@@ -473,6 +473,35 @@ QUnit.test("binarySearch", function (assert) {
     assert.ok(binarySearch([ 1, 2, 3, 4, 5, 6, 7 ], 2, compareNums) == 1, "Find exact item");
     assert.ok(binarySearch([ 1, 2, 2, 2, 5, 6, 7 ], 2, compareNums) == 1, "Find first item in sequence");
     assert.ok(binarySearch([ 1, 2, 2, 2, 5, 6, 7 ], 3, compareNums) == 4, "Find first item after missing item");
+});
+
+QUnit.test("InsertionSort", function (assert) {
+    function compareNums(a,b) {
+        if (a < b) {
+            return -1;
+        } else if (a > b) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+    function isOrdered(array) {
+        for (var x=0; x<array.length-1; ++x) {
+            if (array[x] > array[x+1]) {
+                return false;
+            }
+        }
+        return true;
+    }
+    var insertionSort = TameGame.insertionSort;
+
+    assert.ok(!isOrdered([ 2,3,1 ]), "Ordering test works unordered");
+    assert.ok(isOrdered([ 1,2,3 ]), "Ordering test works ordered");
+
+    assert.ok(isOrdered(insertionSort([ 1, 2, 3, 4, 5, 6, 7 ], compareNums)), "Sort ordered array");
+    assert.ok(isOrdered(insertionSort([ 1, 2, 3, 5, 4, 6, 7 ], compareNums)), "Sort array with one swap");
+    assert.ok(isOrdered(insertionSort([ 7, 6, 5, 4, 3, 2, 1 ], compareNums)), "Sort reverse array");
+    assert.ok(isOrdered(insertionSort([ 6, 6, 0, 6, 0, 5, 1, 0, 2, 4, 2 ], compareNums)), "Sort random array");
 });
 
 TameGame.declareBehaviorState('state1', { test: { test: function (obj) { obj.testState1 = true; } } });
