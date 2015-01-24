@@ -458,6 +458,23 @@ QUnit.test("ClassesAreApplied", function (assert) {
     assert.ok(someObj.tested, 'Removing all classes reverts behavior back to default');
 });
 
+QUnit.test("binarySearch", function (assert) {
+    function compareNums(a,b) {
+        if (a < b) {
+            return -1;
+        } else if (a > b) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+    var binarySearch = TameGame.binarySearch;
+
+    assert.ok(binarySearch([ 1, 2, 3, 4, 5, 6, 7 ], 2, compareNums) == 1, "Find exact item");
+    assert.ok(binarySearch([ 1, 2, 2, 2, 5, 6, 7 ], 2, compareNums) == 1, "Find first item in sequence");
+    assert.ok(binarySearch([ 1, 2, 2, 2, 5, 6, 7 ], 3, compareNums) == 4, "Find first item after missing item");
+});
+
 TameGame.declareBehaviorState('state1', { test: { test: function (obj) { obj.testState1 = true; } } });
 TameGame.declareBehaviorState('state2', { test: { test: function (obj) { obj.testState2 = true; } } });
 TameGame.declareBehaviorClassState('testClass1', 'state1', { test: { test: function (obj) { obj.testClass1State1 = true; } } });
