@@ -20,11 +20,12 @@ module TameGame {
             'attribute vec2 texCoord;\n'                    +
             ''                                              +
             'uniform mat4 cameraTransform;\n'               +
+            'uniform mat4 objectTransform;\n'               +
             ''                                              +
             'varying highp vec2 vTexCoord;\n'               +
             ''                                              +
             'void main() {\n'                               +
-            '  gl_Position = cameraTransform * position;\n'  +
+            '  gl_Position = cameraTransform * objectTransform * position;\n'  +
             '  vTexCoord = texCoord;\n'                     +
             '}\n'                                           ;
         
@@ -45,6 +46,7 @@ module TameGame {
         var positionAttr        = gl.getAttribLocation(spriteShader, 'position');
         var texCoordAttr        = gl.getAttribLocation(spriteShader, 'texCoord');
         var cameraTransformUni  = gl.getUniformLocation(spriteShader, 'cameraTransform');
+        var objectTransformUni  = gl.getUniformLocation(spriteShader, 'objectTransform');
         var samplerUni          = gl.getUniformLocation(spriteShader, 'shader');
         var marginUni           = gl.getUniformLocation(spriteShader, 'margin');
         
@@ -76,7 +78,8 @@ module TameGame {
             gl.uniform4fv(marginUni, sprite.margin);
             
             // Generate the vertices
-            var vertexArray = item.floatValues.subarray(0, 8);
+            var vertexArray     = item.floatValues.subarray(0, 8);
+            var transformArray  = item.floatValues.subarray(8, 24);
             
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, vertexArray, gl.STATIC_DRAW);
@@ -85,6 +88,7 @@ module TameGame {
             gl.enableVertexAttribArray(positionAttr);
             
             gl.uniformMatrix4fv(cameraTransformUni, false, renderer.cameraMatrix[cameraId]);
+            gl.uniformMatrix4fv(objectTransformUni, false, transformArray);
             
             // Draw the texture with pre-multiplied alpha
             gl.enable(gl.BLEND);
