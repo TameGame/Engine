@@ -5,6 +5,7 @@
 /// <reference path="RenderQueue/RenderQueue.ts"/>
 /// <reference path="Input/Input.ts"/>
 /// <reference path="Physics/Physics.ts"/>
+/// <reference path="p2js/p2js.ts"/>
 /// <reference path="Assets/Assets.ts"/>
 /// <reference path="Sprite/Sprite.ts"/>
 /// <reference path="Animation/Animation.ts"/>
