@@ -18,6 +18,39 @@ module TameGame {
             var spaces: SimpleSpaceObject<Space<TObject>>[] = [];
             var sorted: boolean                             = true;
 
+            // Calculates the bounds of a location
+            function calculateBounds(where: SpaceLocation): BoundingBox {
+                var tile        = where.tile;
+                var presence    = where.presence;
+
+                var baseBounds: BoundingBox;
+
+                // Bounding box is defined by the sprite tile (required for rendering)
+                if (!tile.bounds) {
+                    tile.bounds = quadBoundingBox(tile.quad);
+                }
+
+                baseBounds = tile.bounds;
+
+                // If there's a shape, we need to incorporate the shape bounds as well
+                if (presence.shape) {
+                    if (!presence.bounds) {
+                        presence.bounds = presence.shape.getBoundingBox();
+                    }
+
+                    // Use the shape bounds instead of the tile bounds
+                    // This assumes the shape includes all pixels of the sprite
+                    baseBounds = presence.bounds;
+                }
+
+                // Compute the transformation matrix for this location
+                var location    = where.location;
+                var transform   = rotateTranslateMatrix(location.angle, location.pos);
+
+                // Result is the bounding box transformed by the matrix
+                return transformBoundingBox(baseBounds, transform);
+            }
+
             // Creates the prototype space ref for either the spaces or the objects
             function createRefPrototype<TRefObjType>(storage: SimpleSpaceObject<TRefObjType>[]): SimpleSpaceObject<TRefObjType> {
                 var refPrototype = {
@@ -35,7 +68,9 @@ module TameGame {
                         }
                     },
 
-                    move: function (newBounds: BoundingBox) {
+                    move: function (where: SpaceLocation) {
+                        var newBounds = calculateBounds(where);
+
                         // Just set the bounding box
                         this.bounds = newBounds;
 
@@ -48,13 +83,14 @@ module TameGame {
 
                 // Move should move the object into the parent if we have a bounding box and it's outside
                 if (parent && bounds) {
-                    refPrototype.move = function (newBounds: BoundingBox) {
+                    refPrototype.move = function (where: SpaceLocation) {
+                        var newBounds = calculateBounds(where);
                         sorted = false;
 
                         if (!bbContains(bounds, newBounds)) {
                             // Move into the parent
                             this.removeObject();
-                            return parent.addObject(this.obj, newBounds);
+                            return parent.addObject(this.obj, where);
                         } else {
                             // Store in this object
                             this.bounds = newBounds;
@@ -71,8 +107,9 @@ module TameGame {
             var spaceRefPrototype   = createRefPrototype<Space<TObject>>(spaces);
 
             // Generates an object adder function for the specified 
-            function createObjectAdder<TRefObjType>(storage: SimpleSpaceObject<TRefObjType>[], prototype: SimpleSpaceObject<TRefObjType>, addToSpace: (space: Space<TObject>, obj: TRefObjType, newBounds: BoundingBox) => void) {
-                return (obj: TRefObjType, newBounds: BoundingBox): SpaceRef<TRefObjType> => {
+            function createObjectAdder<TRefObjType>(storage: SimpleSpaceObject<TRefObjType>[], prototype: SimpleSpaceObject<TRefObjType>, addToSpace: (space: Space<TObject>, obj: TRefObjType, where: SpaceLocation) => void) {
+                return (obj: TRefObjType, where: SpaceLocation): SpaceRef<TRefObjType> => {
+                    var newBounds = calculateBounds(where);
                     var targetSpace: SimpleSpaceObject<Space<TObject>> = null;
 
                     // Try to add to a space contained within this object
@@ -85,7 +122,7 @@ module TameGame {
                         }
                     })) {
                         // Add to the contained target space
-                        addToSpace(targetSpace.obj, obj, newBounds);
+                        addToSpace(targetSpace.obj, obj, where);
                     } else {
                         // Add to this object if this doesn't fit within a contained space
                         var newRef: SimpleSpaceObject<TRefObjType> = Object.create(prototype);
@@ -206,10 +243,10 @@ module TameGame {
         }
 
         /** Adds an object to this space, or to a contained space if it is contained by it */
-        addObject: (obj: TObject, bounds: BoundingBox) => SpaceRef<TObject>;
+        addObject: (obj: TObject, where: SpaceLocation) => SpaceRef<TObject>;
 
         /** Adds a space to this space */
-        addSpace: (obj: Space<TObject>, bounds: BoundingBox) => SpaceRef<Space<TObject>>;
+        addSpace: (obj: Space<TObject>, where: SpaceLocation) => SpaceRef<Space<TObject>>;
 
         /** Performs a callback on all objects that overlap the specified bounding box */
         forAllInBounds: (bounds: BoundingBox, callback: (ref: SpaceRef<TObject>) => void) => void;

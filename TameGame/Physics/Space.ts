@@ -10,7 +10,7 @@ module TameGame {
         removeObject(): void;
 
         /** Moves this object to a new location within the current space (or via its parent space). Returns a new reference to the moved object */
-        move(newBounds: BoundingBox): SpaceRef<TObject>;
+        move(where: SpaceLocation): SpaceRef<TObject>;
 
         /** The bounding box of this object */
         bounds: BoundingBox;
@@ -24,13 +24,13 @@ module TameGame {
      */
     export interface SpaceLocation {
         /** Where the object is drawn (relative to its location) */
-        tile: ITile;
+        tile?: ITile;
 
         /** Where the object is located */
-        location: ILocation;
+        location?: ILocation;
 
         /** The object's physical properties */
-        presence: IPresence;
+        presence?: IPresence;
     }
 
     /**
@@ -41,10 +41,10 @@ module TameGame {
      */
     export interface Space<TObject> {
         /** Adds an object to this space, or to a contained space if it is contained by it */
-        addObject(obj: TObject, bounds: BoundingBox): SpaceRef<TObject>;
+        addObject(obj: TObject, where: SpaceLocation): SpaceRef<TObject>;
 
         /** Adds a space to this space */
-        addSpace(obj: Space<TObject>, bounds: BoundingBox): SpaceRef<Space<TObject>>;
+        addSpace(obj: Space<TObject>, where: SpaceLocation): SpaceRef<Space<TObject>>;
 
         /** Performs a callback on all objects that overlap the specified bounding box */
         forAllInBounds(bounds: BoundingBox, callback: (ref: SpaceRef<TObject>) => void): void;

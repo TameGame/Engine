@@ -68,9 +68,9 @@ module TameGame {
         // Function to remove an object, update its AABB and then put it back in its scene
         var updateAndMoveObject = (obj: TameObject, space: Space<TameObject>) => {
             if (obj.spaceRef) {
-                obj.spaceRef = obj.spaceRef.move(obj.aabb);
+                obj.spaceRef = obj.spaceRef.move(obj);
             } else {
-                obj.spaceRef = space.addObject(obj, obj.aabb);
+                obj.spaceRef = space.addObject(obj, obj);
             }
         };
 
@@ -103,7 +103,7 @@ module TameGame {
             // When objects are added or removed from the scene, add or remove them from the appropriate space
             scene.events.onAddObject((obj) => {
                 // Add to the space for this scene
-                obj.spaceRef = scene.space.addObject(obj, obj.aabb);
+                obj.spaceRef = scene.space.addObject(obj, obj);
             });
             
             scene.events.onRemoveObject((obj) => {
