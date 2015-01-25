@@ -20,17 +20,8 @@ module TameGame {
 
             // Calculates the bounds of a location
             function calculateBounds(where: SpaceLocation): BoundingBox {
-                var tile        = where.tile;
                 var presence    = where.presence;
-
                 var baseBounds: BoundingBox;
-
-                // Bounding box is defined by the sprite tile (required for rendering)
-                if (!tile.bounds) {
-                    tile.bounds = quadBoundingBox(tile.quad);
-                }
-
-                baseBounds = tile.bounds;
 
                 // If there's a shape, we need to incorporate the shape bounds as well
                 if (presence.shape) {
@@ -41,6 +32,14 @@ module TameGame {
                     // Use the shape bounds instead of the tile bounds
                     // This assumes the shape includes all pixels of the sprite
                     baseBounds = presence.bounds;
+                } else {
+                    // Bounding box is defined by the sprite tile (required for rendering)
+                    var tile = where.tile;
+                    if (!tile.bounds) {
+                        tile.bounds = quadBoundingBox(tile.quad);
+                    }
+
+                    baseBounds = tile.bounds;
                 }
 
                 // Compute the transformation matrix for this location
