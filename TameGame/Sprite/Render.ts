@@ -10,8 +10,9 @@ module TameGame {
     /**
      * Rendering behaviour for objects that are simple sprites
      */
-    var theSpriteRenderBehavior = (obj: TameObject, queue: RenderQueue) => {
+    var theSpriteRenderBehavior = (ref: SpaceRef<TameObject>, queue: RenderQueue) => {
         // Get the position of this sprite
+        var obj         = ref.obj;
         var cameraId    = 0;
         var assetId     = obj.sprite.assetId;
         var tile        = obj.tile;
@@ -22,12 +23,7 @@ module TameGame {
 
         // Render it if it exists
         if (assetId !== -1) {
-            if (obj.transformationMatrix) {
-                var transformedPos      = transformQuad(obj.transformationMatrix, tile.quad);
-                queue.drawSprite(assetId, cameraId, tile.zIndex, transformedPos);
-            } else {
-                queue.drawSprite(assetId, cameraId, tile.zIndex, tile.quad);
-            }
+            queue.drawSprite(assetId, cameraId, tile.zIndex, tile.quad, ref.matrix);
         }
     };
     

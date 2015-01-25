@@ -12,6 +12,9 @@ module TameGame {
         /** Moves this object to a new location within the current space (or via its parent space). Returns a new reference to the moved object */
         move(where: SpaceLocation): SpaceRef<TObject>;
 
+        // Defines the transformation matrix for this item
+        matrix: number[];
+
         /** The bounding box of this object */
         bounds: BoundingBox;
 

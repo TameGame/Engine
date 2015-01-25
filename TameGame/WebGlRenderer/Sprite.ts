@@ -19,12 +19,13 @@ module TameGame {
             'attribute vec4 position;\n'                    +
             'attribute vec2 texCoord;\n'                    +
             ''                                              +
-            'uniform mat4 transformation;\n'                +
+            'uniform mat4 cameraTransform;\n'               +
+            'uniform mat4 objectTransform;\n'               +
             ''                                              +
             'varying highp vec2 vTexCoord;\n'               +
             ''                                              +
             'void main() {\n'                               +
-            '  gl_Position = transformation * position;\n'  +
+            '  gl_Position = cameraTransform * objectTransform * position;\n'  +
             '  vTexCoord = texCoord;\n'                     +
             '}\n'                                           ;
         
@@ -44,11 +45,11 @@ module TameGame {
         var spriteShader        = renderer.compileShaderProgram(spriteVertexShaderSource, spriteFragmentShaderSource);
         var positionAttr        = gl.getAttribLocation(spriteShader, 'position');
         var texCoordAttr        = gl.getAttribLocation(spriteShader, 'texCoord');
-        var transformationUni   = gl.getUniformLocation(spriteShader, 'transformation');
+        var cameraTransformUni  = gl.getUniformLocation(spriteShader, 'cameraTransform');
+        var objectTransformUni  = gl.getUniformLocation(spriteShader, 'objectTransform');
         var samplerUni          = gl.getUniformLocation(spriteShader, 'shader');
         var marginUni           = gl.getUniformLocation(spriteShader, 'margin');
         
-        var vertexArray         = new Float32Array(8);
         var vertexBuffer        = gl.createBuffer();
         var texCoordBuffer      = gl.createBuffer();
         
@@ -77,14 +78,8 @@ module TameGame {
             gl.uniform4fv(marginUni, sprite.margin);
             
             // Generate the vertices
-            vertexArray[0] = item.floatValues[0];
-            vertexArray[1] = item.floatValues[1];
-            vertexArray[2] = item.floatValues[2];
-            vertexArray[3] = item.floatValues[3];
-            vertexArray[4] = item.floatValues[4];
-            vertexArray[5] = item.floatValues[5];
-            vertexArray[6] = item.floatValues[6];
-            vertexArray[7] = item.floatValues[7];
+            var vertexArray     = item.floatValues.subarray(0, 8);
+            var transformArray  = item.floatValues.subarray(8, 24);
             
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, vertexArray, gl.STATIC_DRAW);
@@ -92,7 +87,8 @@ module TameGame {
             gl.vertexAttribPointer(positionAttr, 2, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(positionAttr);
             
-            gl.uniformMatrix4fv(transformationUni, false, renderer.cameraMatrix[cameraId]);
+            gl.uniformMatrix4fv(cameraTransformUni, false, renderer.cameraMatrix[cameraId]);
+            gl.uniformMatrix4fv(objectTransformUni, false, transformArray);
             
             // Draw the texture with pre-multiplied alpha
             gl.enable(gl.BLEND);

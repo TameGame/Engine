@@ -38,6 +38,49 @@ module TameGame {
         /**
          * The integer values associated with this action
          */
+        intValues: Int32Array;
+        
+        /**
+         * The floating point values associated with this action
+         */
+        floatValues: Float32Array;
+    }
+
+    /**
+     * Represents an action on the render queue
+     *
+     * In its standard incarnation, TameGame takes the approach of redrawing the entire scene
+     * every frame.
+     *
+     * TameGame buffers up rendering operations for later execution rather than executing them
+     * immediately. This makes it possible to abort a rendering operation when the renderer
+     * gets behind (so the framerate drops but there's no latency introduced). This also allows
+     * for the game to run as a webworker. Finally, this is a mechanism to allow for a 'raw'
+     * version of the engine to be produced that runs in v8 JavaScript with a native backend
+     * instead of in a browser.
+     */
+    export interface RenderQueueItemJs {
+        /** 
+         * The Z-Index, or ordering of this item
+         *
+         * Rendering actions are performed from the lowest Z-Index from the highest. Rendering
+         * actions that are added to a queue with equal Z-Indexes are performed in the order
+         * that they arrived.
+         */
+        zIndex: number;
+        
+        /**
+         * The action represented by this item
+         *
+         * Actions are assigned unique numbers: presently this is in Actions.ts, and there's no
+         * real mechanism for adding new actions. Being able to create new drawing actions is
+         * important, however, so this will be added at some later date.
+         */
+        action: number;
+        
+        /**
+         * The integer values associated with this action
+         */
         intValues: number[];
         
         /**
@@ -54,7 +97,7 @@ module TameGame {
         /**
          * Adds an item to this queue
          */
-        addItem(item: RenderQueueItem): RenderQueue;
+        addItem(item: RenderQueueItemJs): RenderQueue;
         
         /**
          * Empties this render queue
@@ -131,7 +174,7 @@ module TameGame {
         /**
          * Adds an item to this queue
          */
-        addItem(item: RenderQueueItem): RenderQueue { throw "Not implemented"; }
+        addItem(item: RenderQueueItemJs): RenderQueue { throw "Not implemented"; }
         
         /**
          * Empties this render queue
