@@ -29,6 +29,7 @@ module TameGame {
                 var presence = where.presence;
 
                 // Update the p2body
+                // TODO: also the shape
                 var pos = location.pos;
                 body.position[0]    = pos.x;
                 body.position[1]    = pos.y;
@@ -60,8 +61,8 @@ module TameGame {
                         return this;
                     },
 
-                    bounds: null,
-                    matrix: null,
+                    bounds: null,           // TODO: get from the AABB
+                    matrix: null,           // TODO: calculate from the values in the body
                     obj: obj,
                     p2Body: body
                 };
