@@ -52,7 +52,9 @@ module TameGame {
 
             var _renderQueue:       RenderQueue;
             var _currentTime:       number;
+            var _gameTime:          number;
             var _lastTime:          number;
+            var _lastTick:          number;
 
             var _objectProto:       TameObject;
             var _sceneProto:        Scene;
@@ -308,6 +310,19 @@ module TameGame {
             }
 
             /**
+             * First tick: initialises time (and runs no passes)
+             */
+            var firstTick = (milliseconds: number, withRender: boolean) => {
+                _lastTime = _currentTime = _gameTime = 0;
+                _lastTick = milliseconds;
+                this.tick = tick;
+            }
+
+            // Maximum amount of time to process in one tick
+            // (Provides the maximum latency and minimum framerate the engine will permit)
+            var maxTimePassed = 100.0;
+
+            /**
              * Runs a game tick. Time is a time in milliseconds from an arbitrary
              * fixed point (it should always increase)
              *
@@ -318,9 +333,57 @@ module TameGame {
              * so that time can be measured to a high degree of accuracy.
              */
             var tick = (milliseconds: number, withRender: boolean) => {
-                // Update the current time
-                _lastTime       = _currentTime;
-                _currentTime    = milliseconds;
+                // Work out how much time has passed since the last tick
+                var timePassed  = milliseconds - _lastTick;
+
+                // Avoid catching up too much if we're running slowly
+                if (timePassed > maxTimePassed) {
+                    timePassed = maxTimePassed;
+                }
+
+                // Work out the next time in 'game ticks'
+                _gameTime += timePassed;
+                var nextTime    = _gameTime;
+                var tickRate    = this.tickRate;
+
+                // Update the last tick time
+                _lastTick = milliseconds;
+
+                // Reset tickrate to 30fps if it's set to something ridiculous
+                if (tickRate <= 1) {
+                    console.warn('Resetting bad tick rate');
+                    tickRate = this.tickRate = 1000.0/30.0;
+                }
+
+                // Do nothing if not enough time has passed
+                if (_currentTime + tickRate > nextTime) {
+                    return;
+                }
+
+                while (_currentTime + tickRate <= nextTime) {
+                    // Update the current time to the next tick
+                    _lastTime       = _currentTime;
+                    _currentTime    = _currentTime + tickRate;
+
+                    // Retrieve the list of active scenes
+                    var activeScenes = getActiveScenes();
+
+                    // Get the watchers and filter the change list for each of the scenes
+                    var recentChanges = _propertyManager.getRecentChanges();
+                    var sceneChanges = activeScenes.map((scene) => {
+                        return { scene: scene, watchers: scene._watchers, changes: recentChanges.filter(scene.objectInScene) }
+                    });
+
+                    // Run the pre-render passes
+                    preRenderPasses.forEach((pass) => runPass(pass, milliseconds, _lastTime, sceneChanges));
+
+                    // Clear out any property changes: they are now all handled
+                    recentChanges.clearChanges();
+                }
+
+                // Run the render pass
+                var queue = _renderQueue;
+                queue.clearQueue();
 
                 // Retrieve the list of active scenes
                 var activeScenes = getActiveScenes();
@@ -330,13 +393,6 @@ module TameGame {
                 var sceneChanges = activeScenes.map((scene) => {
                     return { scene: scene, watchers: scene._watchers, changes: recentChanges.filter(scene.objectInScene) }
                 });
-
-                // Run the pre-render passes
-                preRenderPasses.forEach((pass) => runPass(pass, milliseconds, _lastTime, sceneChanges));
-
-                // Run the render pass
-                var queue = _renderQueue;
-                queue.clearQueue();
 
                 if (withRender) {
                     runPass(UpdatePass.Render, milliseconds, _lastTime, sceneChanges, () => {
@@ -351,9 +407,6 @@ module TameGame {
 
                 // Run the post-render passes
                 postRenderPasses.forEach((pass) => runPass(pass, milliseconds, _lastTime, sceneChanges));
-
-                // Clear out any property changes: they are now all handled
-                recentChanges.clearChanges();
             }
 
             /**
@@ -442,7 +495,8 @@ module TameGame {
             this.createScene        = createScene;
             this.startScene         = startScene;
             this.forAllActiveScenes = forAllActiveScenes;
-            this.tick               = tick;
+            this.tickRate           = 1000.0/120.0;
+            this.tick               = firstTick;
             this.watch              = watch;
             this.onPass             = onPass;
             this.everyPass          = everyPass;
@@ -494,6 +548,18 @@ module TameGame {
          * Executes a callback for the running scene and any subscenes it may have
          */
         forAllActiveScenes: (callback: (scene: Scene) => void) => void;
+
+        /**
+         * The number of milliseconds between game engine ticks
+         *
+         * The default value is 8.3, corresponding to a frame rate of 120fps.
+         *
+         * This defines how often the game loop runs and the size of a tick as far as
+         * the game's physics is concerned. If the game is unable to consistently
+         * run through its passes in this length of time, this number should be
+         * reduced (lowering the framerate)
+         */
+        tickRate: number;
 
         /**
          * Runs a game tick. Time is a time in milliseconds from an arbitrary

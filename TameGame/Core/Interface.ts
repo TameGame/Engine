@@ -382,6 +382,18 @@ module TameGame {
         forAllActiveScenes(callback: (scene: Scene) => void): void;
 
         /**
+         * The number of milliseconds between game engine ticks
+         *
+         * The default value is 8.3, corresponding to a frame rate of 120fps.
+         *
+         * This defines how often the game loop runs and the size of a tick as far as
+         * the game's physics is concerned. If the game is unable to consistently
+         * run through its passes in this length of time, this number should be
+         * reduced (lowering the framerate)
+         */
+        tickRate: number;
+
+        /**
          * Runs a game tick. Time is a time in milliseconds from an arbitrary
          * fixed point (it should always increase)
          *

@@ -134,27 +134,16 @@ module TameGame {
                     
                     // They are called at 60fps. If the game engine is running slow they get called multiple times
                     // to catch up
-                    //
-                    // If the ticks take too long to process then we only process them until we hit maxPassTime
-                    // This deals with cases where the game is suspended or is running slow
-                    var processingStartTime = perf.now();
-                    var processingEndTime   = processingStartTime + maxPassTime;
-                    
                     for (var tickTime = lastTime; tickTime < time; tickTime += tickDuration) {
                         // Call the tick functions
                         onTick({ duration: tickDuration, liveObjects: tickObjects }, lastTick, lastTick-tickDuration);
                         lastTick += tickDuration;
-                        
-                        // Don't process beyond the end time
-                        if (perf.now() > processingEndTime) {
-                            break;
-                        }
                     }
                 });
             });
             
             // Time updates post-render
-            scene.events.onPassFinish(UpdatePass.PostRender, (pass, time: number) => {
+            scene.events.onPassFinish(UpdatePass.PreRender, (pass, time: number) => {
                 lastTime = time;
             });
             
