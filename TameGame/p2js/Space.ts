@@ -61,6 +61,7 @@ module TameGame {
                     },
 
                     bounds: null,
+                    matrix: null,
                     obj: obj,
                     p2Body: body
                 };
