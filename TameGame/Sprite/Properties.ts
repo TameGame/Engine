@@ -5,9 +5,9 @@ module TameGame {
     "use strict";
 
     /**
-     * The position property describes where a sprite is on screen
+     * The position property describes the tile that a sprite is drawn on
      */
-    export interface IPosition {
+    export interface ITile {
         /** The location of this item, as a quad */
         quad: Quad;
 
@@ -16,13 +16,13 @@ module TameGame {
     }
     
     export interface TameObject {
-        position?: IPosition;
+        tile?: ITile;
     }
     
     /**
      * The position property describes where a sprite is on screen
      */
-    export var Position: PropertyDefinition<IPosition> = declareProperty("position", () => {
+    export var Tile: PropertyDefinition<ITile> = declareProperty("tile", () => {
         return {
             quad: {
                 x1: 0, y1: 0,
@@ -34,7 +34,7 @@ module TameGame {
             zIndex: 0
         };
     });
-            
+
     /**
      * The sprite property describes the sprite that should be displayed by a particular object
      */

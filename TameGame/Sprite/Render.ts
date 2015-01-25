@@ -14,7 +14,7 @@ module TameGame {
         // Get the position of this sprite
         var cameraId    = 0;
         var assetId     = obj.sprite.assetId;
-        var pos         = obj.position;
+        var tile        = obj.tile;
 
         if (obj.scene && obj.scene.cameraId) {
             cameraId = obj.scene.cameraId;
@@ -23,10 +23,10 @@ module TameGame {
         // Render it if it exists
         if (assetId !== -1) {
             if (obj.transformationMatrix) {
-                var transformedPos      = transformQuad(obj.transformationMatrix, pos.quad);
-                queue.drawSprite(assetId, cameraId, pos.zIndex, transformedPos);
+                var transformedPos      = transformQuad(obj.transformationMatrix, tile.quad);
+                queue.drawSprite(assetId, cameraId, tile.zIndex, transformedPos);
             } else {
-                queue.drawSprite(assetId, cameraId, pos.zIndex, pos.quad);
+                queue.drawSprite(assetId, cameraId, tile.zIndex, tile.quad);
             }
         }
     };

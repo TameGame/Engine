@@ -75,7 +75,7 @@ module TameGame {
             var halfWidth   = width/2.0;
             var halfHeight  = height/2.0;
 
-            obj.position.quad = {
+            obj.tile.quad = {
                 x1: -halfWidth, y1: halfHeight,
                 x2: halfWidth,  y2: halfHeight,
                 x3: -halfWidth, y3: -halfHeight,
@@ -124,7 +124,7 @@ module TameGame {
         useBasicShape(): ObjectSetup {
             var obj = this._context;
 
-            var pos = obj.position.quad;
+            var pos = obj.tile.quad;
             obj.presence.shape = new Polygon([
                 { x: pos.x1, y: pos.y1 },
                 { x: pos.x2, y: pos.y2 },

@@ -54,9 +54,9 @@ module TameGame {
                     return presence.shape.getBoundingBox(transform);
                 } else {
                     if (transform) {
-                        return transformBoundingBox(quadBoundingBox(obj.position.quad), transform);
+                        return transformBoundingBox(quadBoundingBox(obj.tile.quad), transform);
                     } else {
-                        return quadBoundingBox(obj.position.quad);
+                        return quadBoundingBox(obj.tile.quad);
                     }
                 }
             }
@@ -131,7 +131,7 @@ module TameGame {
             scene.updateMovedObjects = updateMovedObjects;
         });
         
-        game.watch(Position, UpdatePass.Immediate, markAsMoved, Priority.UseDerivedValues);
+        game.watch(Tile, UpdatePass.Immediate, markAsMoved, Priority.UseDerivedValues);
         game.watch(Presence, UpdatePass.Immediate, markAsMoved, Priority.UseDerivedValues);
     }
 }
