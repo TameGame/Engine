@@ -23,12 +23,8 @@ module TameGame {
 
         // Render it if it exists
         if (assetId !== -1) {
-            if (obj.transformationMatrix) {
-                var transformedPos      = transformQuad(obj.transformationMatrix, tile.quad);
-                queue.drawSprite(assetId, cameraId, tile.zIndex, transformedPos);
-            } else {
-                queue.drawSprite(assetId, cameraId, tile.zIndex, tile.quad);
-            }
+            var transformedPos = transformQuad(ref.matrix, tile.quad);
+            queue.drawSprite(assetId, cameraId, tile.zIndex, transformedPos);
         }
     };
     

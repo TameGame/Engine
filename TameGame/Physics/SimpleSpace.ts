@@ -18,8 +18,18 @@ module TameGame {
             var spaces: SimpleSpaceObject<Space<TObject>>[] = [];
             var sorted: boolean                             = true;
 
+            // Calculates the transformation matrix for a particular location
+            function calculateMatrix(where: SpaceLocation): number[] {
+                // Compute the transformation matrix for this location
+                var location    = where.location;
+                var transform   = rotateTranslateMatrix(location.angle, location.pos);
+
+                // Result is the bounding box transformed by the matri
+                return transform;
+            }
+
             // Calculates the bounds of a location
-            function calculateBounds(where: SpaceLocation): BoundingBox {
+            function calculateBounds(where: SpaceLocation, matrix: number[]): BoundingBox {
                 var presence    = where.presence;
                 var baseBounds: BoundingBox;
 
@@ -42,12 +52,8 @@ module TameGame {
                     baseBounds = tile.bounds;
                 }
 
-                // Compute the transformation matrix for this location
-                var location    = where.location;
-                var transform   = rotateTranslateMatrix(location.angle, location.pos);
-
                 // Result is the bounding box transformed by the matrix
-                return transformBoundingBox(baseBounds, transform);
+                return transformBoundingBox(baseBounds, matrix);
             }
 
             // Creates the prototype space ref for either the spaces or the objects
@@ -68,7 +74,8 @@ module TameGame {
                     },
 
                     move: function (where: SpaceLocation) {
-                        var newBounds = calculateBounds(where);
+                        this.matrix     = calculateMatrix(where);
+                        var newBounds   = calculateBounds(where, this.matrix);
 
                         // Just set the bounding box
                         this.bounds = newBounds;
@@ -90,7 +97,8 @@ module TameGame {
             // Generates an object adder function for the specified 
             function createObjectAdder<TRefObjType>(storage: SimpleSpaceObject<TRefObjType>[], prototype: SimpleSpaceObject<TRefObjType>, addToSpace: (space: Space<TObject>, obj: TRefObjType, where: SpaceLocation) => void) {
                 return (obj: TRefObjType, where: SpaceLocation): SpaceRef<TRefObjType> => {
-                    var newBounds = calculateBounds(where);
+                    var matrix      = calculateMatrix(where);
+                    var newBounds   = calculateBounds(where, matrix);
                     var targetSpace: SimpleSpaceObject<Space<TObject>> = null;
 
                     // Add to this object if this doesn't fit within a contained space
@@ -99,6 +107,7 @@ module TameGame {
                     newRef.id       = nextId;
                     newRef.obj      = obj;
                     newRef.bounds   = newBounds;
+                    newRef.matrix   = matrix;
 
                     sorted = false;
 
