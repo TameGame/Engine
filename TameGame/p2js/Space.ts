@@ -7,7 +7,28 @@ module TameGame {
     export class P2Space<TObject> implements Space<TObject> {
         constructor() {
             // Create the world
-            var world = new p2.world();
+            var world = new p2.World();
+
+            // Updates a p2 body's location from a location
+            function updateLocation(body: p2.Body, where: SpaceLocation) {
+                // Get the locaiton and presence
+                var location = where.location;
+                var presence = where.presence;
+
+                // Update the p2body
+                var pos = location.pos;
+                body.position[0]    = pos.x;
+                body.position[1]    = pos.y;
+                body.angle          = location.angle;
+            }
+
+            // Creates a p2 body from a location
+            function createBody(where: SpaceLocation): p2.Body {
+                // Create a new body and return it
+                var result = new p2.Body();
+                updateLocation(result, where);
+                return result;
+            }
         }
 
         /** Adds an object to this space, or to a contained space if it is contained by it */
