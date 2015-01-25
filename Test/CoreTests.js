@@ -87,10 +87,11 @@ QUnit.test("PhysicsPassIsDeferredUntilTick", function(assert) {
                    TameGame.UpdatePass.PhysicsMotion,
                    (function (obj, newvalue) { changeProcessed = true; }));
     
+    someGame.tick(0);
     assert.ok(changeProcessed === false, "Initially false");
     someObject.details.objectName = "Test value";
     assert.ok(changeProcessed === false, "Watch update doesn't occur immediately");
-    someGame.tick(0);
+    someGame.tick(someGame.tickRate);
     assert.ok(changeProcessed === true, "Watch update occurs during game tick");
 });
 
@@ -100,15 +101,16 @@ QUnit.test("PhysicsPassUpdatesOnlyOccurOnce", function(assert) {
     var changeProcessed = false;
     var numUpdates = 0;
     
+    someGame.tick(0);
     someGame.watch(TameGame.ObjectDetails,
                    TameGame.UpdatePass.PhysicsMotion,
                    (function (obj, newvalue) { changeProcessed = true; numUpdates++; }));
     
     someObject.details.objectName = "Test value";
-    someGame.tick(0);
+    someGame.tick(someGame.tickRate);
     assert.ok(changeProcessed === true, "Watch update occurs during game tick");
     assert.ok(numUpdates === 1, "Update occurs once only");
-    someGame.tick(1);
+    someGame.tick(someGame.tickRate*2);
     assert.ok(numUpdates === 1, "Update doesn't reoccur on the next tick");
 });
 
@@ -116,13 +118,14 @@ QUnit.test("SceneSinglePassEventFires", function(assert) {
     var someGame = new TameGame.StandardGame();
     var someScene = someGame.createScene();
     someGame.startScene(someScene);
+    someGame.tick(0);
 
     var fireCount = 0;
     someScene.onPass(TameGame.UpdatePass.PhysicsMotion, function () { fireCount++ });
     assert.ok(fireCount === 0, "Count initially 0");
-    someGame.tick(0);
+    someGame.tick(someGame.tickRate);
     assert.ok(fireCount === 1, "Fires during tick");
-    someGame.tick(1);
+    someGame.tick(someGame.tickRate*2);
     assert.ok(fireCount === 1, "Fires only once");
 });
 
@@ -130,17 +133,18 @@ QUnit.test("SceneEveryPassEventFires", function(assert) {
     var someGame = new TameGame.StandardGame();
     var someScene = someGame.createScene();
     someGame.startScene(someScene);
+    someGame.tick(0);
 
     var fireCount = 0;
     var toCancel = someScene.everyPass(TameGame.UpdatePass.PhysicsMotion, function () { fireCount++ });
     assert.ok(fireCount === 0, "Count initially 0");
-    someGame.tick(0);
+    someGame.tick(someGame.tickRate);
     assert.ok(fireCount === 1, "Fires during tick");
-    someGame.tick(1);
+    someGame.tick(someGame.tickRate*2);
     assert.ok(fireCount === 2, "Fires every pass");
 
     toCancel.cancel();
-    someGame.tick(2);
+    someGame.tick(someGame.tickRate*3);
     assert.ok(fireCount === 2, "Stops firing when cancelled");
 });
 
@@ -148,13 +152,14 @@ QUnit.test("GameSinglePassEventFires", function(assert) {
     var someGame = new TameGame.StandardGame();
     var someScene = someGame.createScene();
     someGame.startScene(someScene);
+    someGame.tick(0);
 
     var fireCount = 0;
     someGame.onPass(TameGame.UpdatePass.PhysicsMotion, function () { fireCount++ });
     assert.ok(fireCount === 0, "Count initially 0");
-    someGame.tick(0);
+    someGame.tick(someGame.tickRate);
     assert.ok(fireCount === 1, "Fires during tick");
-    someGame.tick(1);
+    someGame.tick(someGame.tickRate*2);
     assert.ok(fireCount === 1, "Fires only once");
 });
 
@@ -162,17 +167,18 @@ QUnit.test("GameEveryPassEventFires", function(assert) {
     var someGame = new TameGame.StandardGame();
     var someScene = someGame.createScene();
     someGame.startScene(someScene);
+    someGame.tick(0);
 
     var fireCount = 0;
     var toCancel = someGame.everyPass(TameGame.UpdatePass.PhysicsMotion, function () { fireCount++ });
     assert.ok(fireCount === 0, "Count initially 0");
-    someGame.tick(0);
+    someGame.tick(someGame.tickRate);
     assert.ok(fireCount === 1, "Fires during tick");
-    someGame.tick(1);
+    someGame.tick(someGame.tickRate*2);
     assert.ok(fireCount === 2, "Fires every pass");
 
     toCancel.cancel();
-    someGame.tick(2);
+    someGame.tick(someGame.tickRate*3);
     assert.ok(fireCount === 2, "Stops firing when cancelled");
 });
 
@@ -224,6 +230,7 @@ QUnit.test("SceneWatchesOnlyOccurOnObjectsInThatScene", function(assert) {
     var numUpdates = 0;
     var sceneObjectChanged = false;
     var nonSceneObjectChanged = false;
+    someGame.tick(0);
     
     someScene.watch(TameGame.ObjectDetails,
                     TameGame.UpdatePass.PhysicsMotion,
@@ -240,7 +247,7 @@ QUnit.test("SceneWatchesOnlyOccurOnObjectsInThatScene", function(assert) {
                     
     someObject.details.objectName = "Test";
     someOtherObject.details.objectName = "Test";
-    someGame.tick(0);
+    someGame.tick(someGame.tickRate);
     
     assert.ok(sceneObjectChanged, "Object in scene changed");
     assert.ok(!nonSceneObjectChanged, "Object outside of scene not changed");

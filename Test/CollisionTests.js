@@ -141,6 +141,7 @@ QUnit.test("DoesCollideJustInsideMtv", function(assert) {
 QUnit.test("ObjectCollisionDuringPass", function (assert) {
     var someGame = new TameGame.StandardGame();
     var someScene = someGame.createScene();
+    someGame.tick(0);
 
     // Create two objects and move them into collision by changing their presence
     var obj1 = someGame.createObject();
@@ -160,7 +161,7 @@ QUnit.test("ObjectCollisionDuringPass", function (assert) {
     obj2.behavior.objectCollision.collided = function () { ++collideCount2; };
     
     // Run the pass
-    someGame.tick(0);
+    someGame.tick(someGame.tickRate);
     
     if (collideCount1 !== 1) {
         console.log('1 !==', collideCount1);
@@ -172,9 +173,9 @@ QUnit.test("ObjectCollisionDuringPass", function (assert) {
     assert.ok(collideCount1 === 1, "Caused a single AABB collision on first object");
     assert.ok(collideCount2 === 1, "Caused a single AABB collision on second object");
 
-    someGame.tick(1);               // Nothing moves, so no more collisions
+    someGame.tick(someGame.tickRate*2);               // Nothing moves, so no more collisions
 
-    assert.ok(collideCount1 === 2 && collideCount2 === 2, "Collision occur each pass");
+    assert.ok(collideCount1 === 2 && collideCount2 === 2, "Collision occurs each pass");
 });
 
 QUnit.test("NoCollisionIfNotOverlapping", function (assert) {
