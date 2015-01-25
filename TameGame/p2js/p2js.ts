@@ -1,10 +1,13 @@
 /// <reference path="../Physics/Physics.ts" />
 /// <reference path="p2.d.ts" />
 
+declare var WorkerGlobalScope;
+
 module TameGame {
-    // Load p2 into the TameGame namespace if possible
-    export var p2: any;
-    if (importScripts) {
-        p2 = importScripts("p2.js");
+    "use strict";
+
+    // If we're running in a web worker, load the p2.js file
+    if (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope) {
+        importScripts("p2.js");
     }
 }
