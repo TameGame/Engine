@@ -15,18 +15,18 @@ module TameGame {
         // Calculate the transformation matrix lazily
         game.events.onCreateObject(newObj => {
             // Previous dependent values
-            var lastX = newObj.presence.location.x;
-            var lastY = newObj.presence.location.y;
-            var lastRot = newObj.presence.rotation;
+            var lastX = newObj.location.pos.x;
+            var lastY = newObj.location.pos.y;
+            var lastRot = newObj.location.angle;
 
             // The transformation matrix
-            var transformationMatrix = rotateTranslateMatrix(newObj.presence.rotation, newObj.presence.location);
+            var transformationMatrix = rotateTranslateMatrix(newObj.location.angle, newObj.location.pos);
 
             // Lazily evaluate the transformation matrix when requested
             Object.defineProperty(newObj, 'transformationMatrix', {
                 get: () => {
-                    var location = newObj.presence.location;
-                    var rotation = newObj.presence.rotation;
+                    var location = newObj.location.pos;
+                    var rotation = newObj.location.angle;
 
                     if (location.x !== lastX || location.y !== lastY || rotation !== lastRot) {
                         // Refresh the matrix

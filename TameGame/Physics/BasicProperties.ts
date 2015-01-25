@@ -5,30 +5,23 @@ module TameGame {
     "use strict";
 
     /**
-     * The 'presence' represents where an object is located in the world as well as what shape it is
+     * A location describes where an object is located in the world
+     */
+    export interface ILocation {
+        /** Where this object is located */
+        pos: Point2D;
+        
+        /** The angle at which this object is rotated (clockwise, in degrees) */
+        angle: number;
+    }
+
+    /**
+     * The 'presence' describes the physical properties of an object
      */
     export interface IPresence {
         /** The shape of this object. Can be null for objects that can't be collided with */
         shape: Shape;
-        
-        /** Where this object is located */
-        location: Point2D;
-        
-        /** The angle at which this object is rotated (clockwise, in degrees) */
-        rotation: number;
     }
-    
-    export interface TameObject {
-        presence?: IPresence;
-    }
-
-    export var Presence: PropertyDefinition<IPresence> = declareProperty("presence", () => {
-        return {
-            shape: null,
-            location: { x: 0, y: 0 },
-            rotation: 0
-        }
-    });
     
     /**
      * Motion represents how an object is moving
@@ -42,13 +35,28 @@ module TameGame {
     }
     
     export interface TameObject {
+        location?: ILocation;
+        presence?: IPresence;
         motion?: IMotion;
     }
+
+    export var Location: PropertyDefinition<ILocation> = declareProperty("location", () => {
+        return {
+            pos: { x: 0, y: 0 },
+            angle: 0
+        };
+    });
+
+    export var Presence: PropertyDefinition<IPresence> = declareProperty("presence", () => {
+        return {
+            shape: null
+        };
+    });
 
     export var Motion: PropertyDefinition<IMotion> = declareProperty("motion", () => {
         return {
             velocity: { x:0, y:0 },
             rotationVelocity: 0
-        }
+        };
     });
 }

@@ -10,7 +10,7 @@ var spriteIds   = TameGame.loadTpJsonSpriteSheet(sprites, data, 'Sprites/SpriteS
     function createSprite() {
         var spriteObject = game.createObject();
         spriteObject.sprite.assetId = someSprite;
-        spriteObject.position = {
+        spriteObject.tile = {
             zIndex: 0,
             quad: { 
                 x1: -1, y1: 1,
@@ -32,10 +32,10 @@ var spriteIds   = TameGame.loadTpJsonSpriteSheet(sprites, data, 'Sprites/SpriteS
     // Rotate at 20 degress/second
     spriteObject.motion.rotationVelocity = 20.0;
     
-    secondObj.presence.location = { x: -5, y: 0 };
+    secondObj.location.pos = { x: -5, y: 0 };
     //secondObj.motion.rotationVelocity = 10.0;
     secondObj.motion.velocity = { x: 0.5, y: 0 };
-    secondObj.presence.rotation = 45;
+    secondObj.location.angle = 45;
     
     spriteObject.collisionPriority = -1;
 

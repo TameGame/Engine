@@ -36,17 +36,17 @@ module TameGame {
             // Apply motion to each of the live objects
             liveObjects.forEach((obj) => {
                 var motion              = obj.motion;
-                var presence            = obj.presence;
+                var location            = obj.location;
 
                 var velocity            = motion.velocity;
                 var rotationVelocity    = motion.rotationVelocity;
                 
                 if (velocity.x !== 0 || velocity.y !== 0) {
-                    presence.location = addVector(presence.location, scaleVector(velocity, durationSeconds));
+                    location.pos = addVector(location.pos, scaleVector(velocity, durationSeconds));
                 }
 
                 if (rotationVelocity !== 0) {
-                    presence.rotation = presence.rotation + rotationVelocity*durationSeconds;
+                    location.angle = location.angle + rotationVelocity*durationSeconds;
                 }
             });
         });

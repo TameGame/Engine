@@ -102,7 +102,7 @@ module TameGame {
         moveTo(x: number, y: number): ObjectSetup {
             var obj = this._context;
 
-            obj.presence.location = { x: x, y: y };
+            obj.location.pos = { x: x, y: y };
 
             return this;
         }
@@ -113,7 +113,7 @@ module TameGame {
         rotateTo(degrees: number): ObjectSetup {
             var obj = this._context;
 
-            obj.presence.rotation = degrees;
+            obj.location.angle = degrees;
 
             return this;
         }
