@@ -76,6 +76,7 @@ module TameGame {
             this.addSpace           = null;
             this.forAllInBounds     = null;
             this.findCollisionPairs = null;
+            this.world              = world;
         }
 
         /** Adds an object to this space, or to a contained space if it is contained by it */
@@ -107,5 +108,10 @@ module TameGame {
          * pairs for them.
          */
         findCollisionPairs: (left: SpaceRef<TObject>[], right: SpaceRef<TObject>[]) => void;
+
+        /**
+         * The P2 world that this space represents
+         */
+        world: p2.World;
     }
 }
