@@ -133,5 +133,6 @@ module TameGame {
         
         game.watch(Tile, UpdatePass.Immediate, markAsMoved, Priority.UseDerivedValues);
         game.watch(Presence, UpdatePass.Immediate, markAsMoved, Priority.UseDerivedValues);
+        game.watch(Location, UpdatePass.Immediate, markAsMoved, Priority.UseDerivedValues);
     }
 }
