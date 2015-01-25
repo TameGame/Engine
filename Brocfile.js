@@ -48,6 +48,12 @@ var tameLaunchJs = compileTypeScript(launch, {
     declaration: true
 });
 
+// p2js comes from the thirdparty directory
+var p2js = pickFiles(thirdParty, {
+    srcDir:     '/ThirdParty/p2.js/build/',
+    destDir:    '/'
+})
+
 // Create the demos
 bounceDemo = mergeTrees([bounceDemo, engineDefinitions]);
 
@@ -63,7 +69,7 @@ var bounceSupport = pickFiles(bounceDemo, {
     destDir: '/'
 });
 
-var completeBounceDemo = mergeTrees([bounceSupport, bounceJs, engineJs, tameLaunchJs]);
+var completeBounceDemo = mergeTrees([bounceSupport, bounceJs, engineJs, p2js, tameLaunchJs]);
 completeBounceDemo = pickFiles(completeBounceDemo, {
     srcDir: '/',
     destDir: '/Demos/Bounce'
@@ -83,4 +89,4 @@ var minifySource = mergeTrees([launchMinSource, engineMinSource]);
 var engineMinified = uglifyJs(minifySource, {
 });
 
-module.exports = mergeTrees([ engineJs, engineMinified, tameLaunchJs, test, completeBounceDemo ]);
+module.exports = mergeTrees([ engineJs, p2js, engineMinified, tameLaunchJs, test, completeBounceDemo ]);
