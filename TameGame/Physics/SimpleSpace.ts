@@ -12,7 +12,7 @@ module TameGame {
      * Basic space class that does not perform any explicit subdivision
      */
     export class SimpleSpace<TObject> implements Space<TObject> {
-        constructor(parent?: Space<TObject>, bounds?: BoundingBox) {
+        constructor() {
             var nextId: number                              = 0;
             var objects: SimpleSpaceObject<TObject>[]       = [];
             var spaces: SimpleSpaceObject<Space<TObject>>[] = [];
@@ -81,24 +81,6 @@ module TameGame {
                     }
                 };
 
-                // Move should move the object into the parent if we have a bounding box and it's outside
-                if (parent && bounds) {
-                    refPrototype.move = function (where: SpaceLocation) {
-                        var newBounds = calculateBounds(where);
-                        sorted = false;
-
-                        if (!bbContains(bounds, newBounds)) {
-                            // Move into the parent
-                            this.removeObject();
-                            return parent.addObject(this.obj, where);
-                        } else {
-                            // Store in this object
-                            this.bounds = newBounds;
-                            return this;
-                        }
-                    }
-                }
-
                 return <SimpleSpaceObject<TRefObjType>> refPrototype;
             }
 
@@ -112,31 +94,18 @@ module TameGame {
                     var newBounds = calculateBounds(where);
                     var targetSpace: SimpleSpaceObject<Space<TObject>> = null;
 
-                    // Try to add to a space contained within this object
-                    if (spaces.some(candidateSpace => {
-                        if (bbContains(candidateSpace.bounds, newBounds)) {
-                            targetSpace = candidateSpace;
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    })) {
-                        // Add to the contained target space
-                        addToSpace(targetSpace.obj, obj, where);
-                    } else {
-                        // Add to this object if this doesn't fit within a contained space
-                        var newRef: SimpleSpaceObject<TRefObjType> = Object.create(prototype);
+                    // Add to this object if this doesn't fit within a contained space
+                    var newRef: SimpleSpaceObject<TRefObjType> = Object.create(prototype);
 
-                        newRef.id       = nextId;
-                        newRef.obj      = obj;
-                        newRef.bounds   = newBounds;
+                    newRef.id       = nextId;
+                    newRef.obj      = obj;
+                    newRef.bounds   = newBounds;
 
-                        sorted = false;
+                    sorted = false;
 
-                        storage.push(newRef);
-                        nextId++;
-                        return newRef;
-                    }
+                    storage.push(newRef);
+                    nextId++;
+                    return newRef;
                 };
             }
 

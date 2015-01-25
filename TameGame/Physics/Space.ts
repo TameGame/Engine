@@ -43,7 +43,12 @@ module TameGame {
         /** Adds an object to this space, or to a contained space if it is contained by it */
         addObject(obj: TObject, where: SpaceLocation): SpaceRef<TObject>;
 
-        /** Adds a space to this space */
+        /** 
+         * Adds a subspace to this space 
+         *
+         * Subspaces are searched when performing collision detection and when searching for objects inside
+         * a particular bounding box. Objects are not added or moved to a subspace.
+         */
         addSpace(obj: Space<TObject>, where: SpaceLocation): SpaceRef<Space<TObject>>;
 
         /** Performs a callback on all objects that overlap the specified bounding box */
