@@ -20,6 +20,20 @@ module TameGame {
     }
 
     /**
+     * Interface implemented by objects that describe a location in space
+     */
+    export interface SpaceLocation {
+        /** Where the object is drawn (relative to its location) */
+        tile: ITile;
+
+        /** Where the object is located */
+        location: ILocation;
+
+        /** The object's physical properties */
+        presence: IPresence;
+    }
+
+    /**
      * The Space interface is implemented by any class that can represent where an object is in space
      *
      * Spaces can contain either objects or other spaces. When searching for objects, spaces are

@@ -21,6 +21,9 @@ module TameGame {
     export interface IPresence {
         /** The shape of this object. Can be null for objects that can't be collided with */
         shape: Shape;
+
+        /** The bounding box of this shape (null or unset if they haven't been calculated yet) */
+        bounds?: BoundingBox;
     }
     
     /**
@@ -49,7 +52,8 @@ module TameGame {
 
     export var Presence: PropertyDefinition<IPresence> = declareProperty("presence", () => {
         return {
-            shape: null
+            shape: null,
+            bounds: null
         };
     });
 

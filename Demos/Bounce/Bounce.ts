@@ -103,8 +103,8 @@ module Bounce {
             }
 
             // Move the items apart
-            leftObj.presence.location = addVector(leftObj.presence.location, leftMtv);
-            rightObj.presence.location = addVector(rightObj.presence.location, rightMtv);
+            leftObj.location.pos = addVector(leftObj.location.pos, leftMtv);
+            rightObj.location.pos = addVector(rightObj.location.pos, rightMtv);
 
             // Decide on a new velocity for both items
             leftObj.motion.velocity = pickNewVelocity(leftObj.motion.velocity, leftMtv);
@@ -128,7 +128,7 @@ module Bounce {
         var ball = createBall();
 
         // Place it at a random point
-        ball.presence.location = { x: Math.random()*10-5, y: Math.random()*10-5 };
+        ball.setup.moveTo(Math.random()*10-5, Math.random()*10-5);
 
         // Start it moving in a random direction
         ball.motion.velocity = { x: Math.random()*4-2, y: Math.random()*4-2 };

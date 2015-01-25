@@ -13,6 +13,9 @@ module TameGame {
 
         /** Where this sprite should be rendered relative to other sprites */
         zIndex: number
+
+        /** The bounding box of this sprite (or null if they haven't been calculated) */
+        bounds?: BoundingBox;
     }
     
     export interface TameObject {
@@ -31,7 +34,8 @@ module TameGame {
                 x4: 0, y4: 0
             },
             
-            zIndex: 0
+            zIndex: 0,
+            bounds: null
         };
     });
 
