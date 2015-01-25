@@ -322,6 +322,12 @@ module TameGame {
             // (Provides the maximum latency and minimum framerate the engine will permit)
             var maxTimePassed = 100.0;
 
+            // Number of ticks that require more than 2 passes
+            var behindCount = 0;
+
+            // Amount of time dropped so far
+            var droppedTime = 0;
+
             /**
              * Runs a game tick. Time is a time in milliseconds from an arbitrary
              * fixed point (it should always increase)
@@ -335,16 +341,26 @@ module TameGame {
             var tick = (milliseconds: number, withRender: boolean) => {
                 // Work out how much time has passed since the last tick
                 var timePassed  = milliseconds - _lastTick;
+                var tickRate    = this.tickRate;
 
                 // Avoid catching up too much if we're running slowly
                 if (timePassed > maxTimePassed) {
+                    droppedTime += timePassed-maxTimePassed;
                     timePassed = maxTimePassed;
+
+                    // Catch up less in the next iteration
+                    maxTimePassed = maxTimePassed / 2.0;
+                    if (maxTimePassed <= tickRate*2) {
+                        maxTimePassed = tickRate*2;
+                    }
+                } else {
+                    // Caught up: reset back to the previous delay
+                    maxTimePassed = 100.0;
                 }
 
                 // Work out the next time in 'game ticks'
                 _gameTime += timePassed;
                 var nextTime    = _gameTime;
-                var tickRate    = this.tickRate;
 
                 // Update the last tick time
                 _lastTick = milliseconds;
@@ -360,10 +376,13 @@ module TameGame {
                     return;
                 }
 
+                var passCount = 0;
                 while (_currentTime + tickRate <= nextTime) {
                     // Update the current time to the next tick
                     _lastTime       = _currentTime;
                     _currentTime    = _currentTime + tickRate;
+
+                    ++passCount;
 
                     // Retrieve the list of active scenes
                     var activeScenes = getActiveScenes();
@@ -407,6 +426,24 @@ module TameGame {
 
                 // Run the post-render passes
                 postRenderPasses.forEach((pass) => runPass(pass, milliseconds, _lastTime, sceneChanges));
+
+                if (passCount === 1) {
+                    behindCount = 0;
+                } else if (passCount >= 2) {
+                    ++behindCount;
+                }
+
+                if (behindCount > 10) {
+                    console.warn('Unable to keep up with requested tick rate');
+                    behindCount = 0;
+                } 
+
+                if (droppedTime > 100.0) {
+                    var rounded = Math.floor(droppedTime/100.0)*100.0;
+
+                    console.warn('Dropped ' + rounded + 'ms of updates');
+                    droppedTime -= rounded;
+                }
             }
 
             /**
