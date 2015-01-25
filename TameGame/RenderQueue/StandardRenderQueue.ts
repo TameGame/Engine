@@ -78,7 +78,7 @@ module TameGame {
                 
                 while (iPos < intPos) {
                     // Fetch the header bits
-                    var items       = read(integers, Math.floor(iPos/blockSize), iPos%blockSize, 3);
+                    var items       = readi(integers, Math.floor(iPos/blockSize), iPos%blockSize, 3);
                     var action      = items[0];
                     var intLen      = items[1];
                     var floatLen    = items[2];
@@ -100,9 +100,9 @@ module TameGame {
                 return { intOffsets: intOffsets, floatOffsets: floatOffsets, ordering: ordering };
             }
             
-            // Reads some items from an array
-            var read = (source: any[], block: number, pos: number, len: number) => {
-                var result = [];
+            // Reads some items from an integer array
+            var readi = (source: Int32Array[], block: number, pos: number, len: number): Int32Array => {
+                var result: Int32Array = null;
                 
                 var remaining = len;
                 
@@ -118,9 +118,14 @@ module TameGame {
                         toRead = blockSize - pos;
                     }
                     
-                    var curBlock = source[block];
-                    for (var i=0; i<toRead; ++i) {
-                        result.push(curBlock[pos+i]);
+                    var subarray = source[block].subarray(pos, pos+toRead);
+                    if (!result) {
+                        result = subarray;
+                    } else {
+                        var newResult = new Int32Array(result.length + toRead);
+                        newResult.set(result);
+                        newResult.set(subarray, result.length);
+                        result = newResult;
                     }
                     
                     remaining -= toRead;
@@ -128,11 +133,46 @@ module TameGame {
                     ++block;
                 }
                 
-                return <number[]> result;
+                return result;
+            };
+
+            var readf = (source: Float32Array[], block: number, pos: number, len: number): Float32Array => {
+                var result: Float32Array = null;
+                
+                var remaining = len;
+                
+                while (pos > blockSize) {
+                    pos -= blockSize;
+                    ++block;
+                }
+                
+                while (remaining > 0) {
+                    // Read toRead items from pos
+                    var toRead = len;
+                    if (pos + toRead > blockSize) {
+                        toRead = blockSize - pos;
+                    }
+                    
+                    var subarray = source[block].subarray(pos, pos+toRead);
+                    if (!result) {
+                        result = subarray;
+                    } else {
+                        var newResult = new Float32Array(result.length + toRead);
+                        newResult.set(result);
+                        newResult.set(subarray, result.length);
+                        result = newResult;
+                    }
+                    
+                    remaining -= toRead;
+                    pos = 0;
+                    ++block;
+                }
+                
+                return result;
             };
             
             // Given an offset (as [iBlock, iPos, fBlock, fPos]), returns a RenderQueueItem
-            var decodeOffset = (iPos: number, fPos: number) => {
+            var decodeOffset = (iPos: number, fPos: number): RenderQueueItem => {
                 var iBlock  = Math.floor(iPos/blockSize);
                 var fBlock  = Math.floor(fPos/blockSize);
                 
@@ -142,14 +182,14 @@ module TameGame {
                 var result: RenderQueueItem;
 
                 // Read the header
-                var header      = read(integers, iBlock, iPos, 3);
+                var header      = readi(integers, iBlock, iPos, 3);
                 var action      = header[0];
                 var intLen      = header[1];
                 var floatLen    = header[2];
                 
                 // Read the values
-                var actionIntValues = read(integers, iBlock, iPos+3, intLen);
-                var actionFloatValues = read(floats, fBlock, fPos, floatLen+1);
+                var actionIntValues     = readi(integers, iBlock, iPos+3, intLen);
+                var actionFloatValues   = readf(floats, fBlock, fPos, floatLen+1);
                 
                 var zIndex = actionFloatValues[0];
                 
@@ -158,14 +198,14 @@ module TameGame {
                     action: action,
                     zIndex: zIndex,
                     intValues: actionIntValues,
-                    floatValues: actionFloatValues.slice(1)
+                    floatValues: actionFloatValues.subarray(1)
                 };
                 
                 return result;
             }
             
             // Exported function definitions
-            this.addItem = (item) => {
+            this.addItem = (item: RenderQueueItemJs) => {
                 var intValues   = item.intValues || [];
                 var floatValues = item.floatValues || [];
                 
