@@ -48,7 +48,6 @@ module TameGame {
         var samplerUni          = gl.getUniformLocation(spriteShader, 'shader');
         var marginUni           = gl.getUniformLocation(spriteShader, 'margin');
         
-        var vertexArray         = new Float32Array(8);
         var vertexBuffer        = gl.createBuffer();
         var texCoordBuffer      = gl.createBuffer();
         
@@ -77,14 +76,7 @@ module TameGame {
             gl.uniform4fv(marginUni, sprite.margin);
             
             // Generate the vertices
-            vertexArray[0] = item.floatValues[0];
-            vertexArray[1] = item.floatValues[1];
-            vertexArray[2] = item.floatValues[2];
-            vertexArray[3] = item.floatValues[3];
-            vertexArray[4] = item.floatValues[4];
-            vertexArray[5] = item.floatValues[5];
-            vertexArray[6] = item.floatValues[6];
-            vertexArray[7] = item.floatValues[7];
+            var vertexArray = item.floatValues.subarray(0, 8);
             
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, vertexArray, gl.STATIC_DRAW);
