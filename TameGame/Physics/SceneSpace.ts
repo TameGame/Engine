@@ -20,48 +20,9 @@ module TameGame {
     }
     
     export interface TameObject {
-        /** Most recently calculated axis-aligned bounding box */
-        aabb?: BoundingBox;
-
         /** Where this object is located in the scene space */
         spaceRef?: SpaceRef<TameObject>;
     }
-
-    /**
-     * Behavior that describes how an object calculates its axis-aligned bounding box (aka the AABB)
-     */
-    export interface IAabbBehavior {
-        /** Calculates the axis-aligned bounding box for this object */
-        calculateBounds(obj: TameObject): BoundingBox;
-    }
-    
-    export interface Behavior {
-        aabb?: IAabbBehavior;
-    }
-    
-    /**
-     * Type definition for object render behaviour
-     */
-    export var AabbBehavior: TypeDefinition<IAabbBehavior> = declareBehavior<IAabbBehavior>('aabb', () => {
-        return { 
-            calculateBounds: (obj) => {
-                var presence            = obj.presence;
-                var transform: number[] = obj.transformationMatrix;
-                var bounds: BoundingBox;
-
-                // If there's a shape, use the shape to get the quad instead
-                if (presence.shape) {
-                    return presence.shape.getBoundingBox(transform);
-                } else {
-                    if (transform) {
-                        return transformBoundingBox(quadBoundingBox(obj.tile.quad), transform);
-                    } else {
-                        return quadBoundingBox(obj.tile.quad);
-                    }
-                }
-            }
-        };
-    });
     
     /** Attaches scene space tracking behaviour to an existing game */
     export function sceneSpaceBehavior(game: Game) {
