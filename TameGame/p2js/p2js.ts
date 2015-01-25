@@ -11,3 +11,5 @@ module TameGame {
         importScripts("p2.js");
     }
 }
+
+/// <reference path="Space.ts" />
