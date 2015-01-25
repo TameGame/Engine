@@ -19,12 +19,12 @@ module TameGame {
             'attribute vec4 position;\n'                    +
             'attribute vec2 texCoord;\n'                    +
             ''                                              +
-            'uniform mat4 transformation;\n'                +
+            'uniform mat4 cameraTransform;\n'               +
             ''                                              +
             'varying highp vec2 vTexCoord;\n'               +
             ''                                              +
             'void main() {\n'                               +
-            '  gl_Position = transformation * position;\n'  +
+            '  gl_Position = cameraTransform * position;\n'  +
             '  vTexCoord = texCoord;\n'                     +
             '}\n'                                           ;
         
@@ -44,7 +44,7 @@ module TameGame {
         var spriteShader        = renderer.compileShaderProgram(spriteVertexShaderSource, spriteFragmentShaderSource);
         var positionAttr        = gl.getAttribLocation(spriteShader, 'position');
         var texCoordAttr        = gl.getAttribLocation(spriteShader, 'texCoord');
-        var transformationUni   = gl.getUniformLocation(spriteShader, 'transformation');
+        var cameraTransformUni  = gl.getUniformLocation(spriteShader, 'cameraTransform');
         var samplerUni          = gl.getUniformLocation(spriteShader, 'shader');
         var marginUni           = gl.getUniformLocation(spriteShader, 'margin');
         
@@ -92,7 +92,7 @@ module TameGame {
             gl.vertexAttribPointer(positionAttr, 2, gl.FLOAT, false, 0, 0);
             gl.enableVertexAttribArray(positionAttr);
             
-            gl.uniformMatrix4fv(transformationUni, false, renderer.cameraMatrix[cameraId]);
+            gl.uniformMatrix4fv(cameraTransformUni, false, renderer.cameraMatrix[cameraId]);
             
             // Draw the texture with pre-multiplied alpha
             gl.enable(gl.BLEND);
