@@ -33,19 +33,15 @@ module TameGame {
                     renderQueue.moveCamera(cameraZIndex, scene.cameraId, scene.camera.center, scene.camera.height, scene.camera.rotation);
 
                     // Ask the scene to render itself
-                    scene.behavior.render(scene, renderQueue);
+                    scene.behavior.renderScene(scene, renderQueue);
                 }
             });
-        });
-
-        game.events.onRender((renderQueue) => {
-            game.behavior.render(game, renderQueue);
         });
     }
 
     // Declare how scenes should render themselves by default
     declareBehaviorClass('Scene', {
-        render: (scene: Scene, renderQueue: RenderQueue) => {
+        renderScene: (scene: Scene, renderQueue: RenderQueue) => {
             // Calculate where the camera is located
             var renderDims  = renderQueue.getDimensions();
             var ratio       = renderDims.width/renderDims.height;
@@ -64,13 +60,7 @@ module TameGame {
                 scene.updateMovedObjects();
                 scene.space.forAllInBounds(cameraBB, (ref) => {
                     var renderBehavior = ref.obj.behavior.render;
-                    renderBehavior(ref.obj, renderQueue);
-                });
-            } else {
-                // Just render all the objects in this scene - don't bother to try to optimise anything
-                scene.forAllObjects((obj) => {
-                    var renderBehavior = obj.behavior.render;
-                    renderBehavior(obj, renderQueue);
+                    renderBehavior(ref, renderQueue);
                 });
             }
         }

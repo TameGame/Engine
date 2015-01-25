@@ -10,8 +10,9 @@ module TameGame {
     /**
      * Rendering behaviour for objects that are simple sprites
      */
-    var theSpriteRenderBehavior = (obj: TameObject, queue: RenderQueue) => {
+    var theSpriteRenderBehavior = (ref: SpaceRef<TameObject>, queue: RenderQueue) => {
         // Get the position of this sprite
+        var obj         = ref.obj;
         var cameraId    = 0;
         var assetId     = obj.sprite.assetId;
         var tile        = obj.tile;
