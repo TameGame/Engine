@@ -1,0 +1,3 @@
+[submodule "ThirdParty/p2.js"]
+	path = ThirdParty/p2.js
+	url = https://github.com/schteppe/p2.js.git
