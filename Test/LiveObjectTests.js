@@ -17,8 +17,12 @@ QUnit.test("CanGetLiveTicks", function(assert) {
     someGame.startScene(someScene);
     
     someGame.tick(0);
-    someGame.tick(999.0);
-    
+    var time = 0;
+    do {
+        time += someGame.tickRate;
+        someGame.tick(time);
+    } while (time <= 1008.0);
+
     assert.ok(numTicks > 0, "Got some ticks");
     assert.ok(numTicks === 120, "Running at 120 ticks per second");
 });
