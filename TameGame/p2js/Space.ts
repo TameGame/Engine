@@ -1,6 +1,19 @@
 /// <reference path="../Physics/Physics.ts" />
 
 module TameGame {
+    "use strict";
+
+    /**
+     * Reference to an object stored in a P2Space 
+     */
+    export interface P2SpaceRef<TObject> extends SpaceRef<TObject> {
+        /** The representation of this object in P2 */
+        p2Body: p2.Body;
+
+        /** Moves this object to a new location within the current space (or via its parent space). Returns a new reference to the moved object */
+        move(where: SpaceLocation): P2SpaceRef<TObject>;
+    }
+
     /**
      * Implements a space that is implemented by a p2js world
      */
@@ -29,10 +42,44 @@ module TameGame {
                 updateLocation(result, where);
                 return result;
             }
+
+            // Adds an object to this space
+            function addObject(obj: TObject, where: SpaceLocation): P2SpaceRef<TObject> {
+                // Create the body
+                var body = createBody(where);
+                world.addBody(body);
+
+                // Create the ref for this body
+                var spaceRef: P2SpaceRef<TObject> = {
+                    removeObject: function() {
+                        world.removeBody(body);
+                    },
+
+                    move: function (where: SpaceLocation): P2SpaceRef<TObject> {
+                        updateLocation(body, where);
+                        return this;
+                    },
+
+                    bounds: null,
+                    obj: obj,
+                    p2Body: body
+                };
+
+                // Store the ref in the body (typescript won't let us extend the class to contain this property, so do it without typing)
+                body['spaceRef'] = spaceRef;
+
+                return spaceRef;
+            }
+
+            // Store the function definitions
+            this.addObject          = addObject;
+            this.addSpace           = null;
+            this.forAllInBounds     = null;
+            this.findCollisionPairs = null;
         }
 
         /** Adds an object to this space, or to a contained space if it is contained by it */
-        addObject: (obj: TObject, where: SpaceLocation) => SpaceRef<TObject>;
+        addObject: (obj: TObject, where: SpaceLocation) => P2SpaceRef<TObject>;
 
         /** 
          * Adds a subspace to this space 

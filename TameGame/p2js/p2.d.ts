@@ -4,6 +4,8 @@
 
 declare module p2 {
     class World {
+        addBody(body: Body);
+        removeBody(body: Body);
     }
 
     class Body {
