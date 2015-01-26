@@ -44,11 +44,31 @@ module TameGame {
                 return result;
             }
 
+            // Gets the bounding box of a p2.js body
+            function getBounds(body: p2.Body): BoundingBox {
+                var aabb    = body.getAABB();
+                var bounds  = { x: aabb.lowerBound[0], y: aabb.lowerBound[1], width: aabb.upperBound[0]-aabb.lowerBound[0], height: aabb.upperBound[1]-aabb.lowerBound[1] };
+                return bounds;
+            }
+
+            // Gets the matrix for a p2 body
+            function getMatrix(body: p2.Body): number[] {
+                if (body.interpolatedPosition) {
+                    return rotateTranslateMatrix(body.interpolatedAngle, { x: body.interpolatedPosition[0], y: body.interpolatedPosition[1] });
+                } else {
+                    return rotateTranslateMatrix(body.angle, { x: body.position[0], y: body.position[1] });
+                }
+            }
+
             // Adds an object to this space
             function addObject(obj: TObject, where: SpaceLocation): P2SpaceRef<TObject> {
                 // Create the body
                 var body = createBody(where);
                 world.addBody(body);
+
+                // Get the bounds
+                var bounds = getBounds(body);
+                var matrix = getMatrix(body);
 
                 // Create the ref for this body
                 var spaceRef: P2SpaceRef<TObject> = {
@@ -61,8 +81,8 @@ module TameGame {
                         return this;
                     },
 
-                    bounds: null,           // TODO: get from the AABB
-                    matrix: null,           // TODO: calculate from the values in the body
+                    bounds: bounds,
+                    matrix: matrix,
                     obj: obj,
                     p2Body: body
                 };

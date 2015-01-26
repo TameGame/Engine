@@ -37,7 +37,7 @@ declare module p2 {
         angularDamping: number;
         type: number;
         boundingRadius: number;
-        aabb: any;
+        aabb: AABB;
         aabbNeedsUpdate: boolean;
         allowSleep: boolean;
         wantsToSleep: boolean;
@@ -51,7 +51,7 @@ declare module p2 {
         updateSolveMassProperties();
         setDensity(density: number);
         getArea(): number;
-        getAABB(): any;
+        getAABB(): AABB;
         updateAABB();
         updateBoundingRadius();
         addShape(shape: any, offset: number[], angle: number);
@@ -77,5 +77,15 @@ declare module p2 {
         AWAKE: number;
         SLEEPY: number;
         SLEEPING: number;
+    }
+
+    class AABB {
+        lowerBound: number[];
+        upperBound: number[];
+
+        setFromPoints(points: number[][], position?: number[], angle?: number, skinSize?: number);
+        copy(aabb: AABB);
+        extend(aabb: AABB);
+        overlaps(aabb: AABB);
     }
 }
