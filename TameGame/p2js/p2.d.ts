@@ -11,8 +11,8 @@ declare module p2 {
     class Body {
         id: number;
         world: World;
-        shapes: any;
-        shapeOffsets: any;
+        shapes: Shape[];
+        shapeOffsets: number[][];
         shapeAngles: number[];
         mass: number;
         invMass: number;
@@ -87,5 +87,30 @@ declare module p2 {
         copy(aabb: AABB);
         extend(aabb: AABB);
         overlaps(aabb: AABB);
+    }
+
+    class Shape {
+        type: number;
+        id: number;
+        boundingRadius: number;
+        collisionGroup: number;
+        collisionResponse: boolean;
+        collisionMask: number;
+        material: any;
+        area: number;
+        sensor: boolean;
+
+        computeMomentOfInertia(mass: number): number;
+        updateBoundingRadius(): number;
+        updateArea();
+        computeAABB(out: AABB, position: number, angle: number);
+    }
+
+    class Circle extends Shape {
+        constructor(radius: number);
+    }
+
+    class Convex extends Shape {
+        constructor(vertices: number[][], axes?: number[][])
     }
 }

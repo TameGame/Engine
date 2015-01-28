@@ -22,6 +22,33 @@ module TameGame {
             // Create the world
             var world = new p2.World();
 
+            // Updates the shape for a body
+            function updateShape(body: p2.Body, shape: Shape) {
+                // Delete the old shape
+                if (body.shapes) {
+                    body.shapes.forEach((oldShape) => body.removeShape(oldShape));
+                }
+
+                // Nothing to do if no shape was passed in
+                if (!shape) {
+                    return;
+                }
+
+                // Replay the new shape into this one
+                shape.replay({
+                    unknownShape: () => {},
+                    polygon: (vertices) => {
+                        var p2vertices = vertices.map((vertex) => [ vertex.x, vertex.y ]);
+                        var convex = new p2.Convex(p2vertices);
+                        body.addShape(convex, [ 0, 0 ], 0);
+                    },
+                    circle: (center, radius) => {
+                        var circle = new p2.Circle(radius);
+                        body.addShape(circle, [ center.x, center.y ], 0);
+                    }
+                });
+            }
+
             // Updates a p2 body's location from a location
             function updateLocation(body: p2.Body, where: SpaceLocation) {
                 // Get the locaiton and presence
@@ -29,11 +56,13 @@ module TameGame {
                 var presence = where.presence;
 
                 // Update the p2body
-                // TODO: also the shape
                 var pos = location.pos;
                 body.position[0]    = pos.x;
                 body.position[1]    = pos.y;
                 body.angle          = location.angle;
+
+                // Update the shape
+                updateShape(body, presence.shape);
             }
 
             // Creates a p2 body from a location
