@@ -27,7 +27,19 @@ module TameGame {
 
         var setting: boolean = false;
         function setFunction(val: TFieldType) {
-            Object.defineProperty(this, fieldName, { configurable: true, enumerable: true, writable: true, value: val });
+            var propertyDescriptor = null;
+            var self = this;
+
+            initialize(self, (descriptor) => {
+                Object.defineProperty(self, fieldName, descriptor);
+                propertyDescriptor = descriptor;
+            });
+
+            if (propertyDescriptor && propertyDescriptor.set) {
+                propertyDescriptor.set.apply(self, arguments);
+            } else {
+                Object.defineProperty(this, fieldName, { configurable: true, enumerable: true, writable: true, value: val });
+            }
         }
 
         Object.defineProperty(obj, fieldName, {

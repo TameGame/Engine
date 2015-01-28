@@ -12,12 +12,12 @@ QUnit.test("CanCreateObject", function(assert) {
 QUnit.test("CanUseUninitializedField", function (assert) {
     var obj = {};
     var initCount = 0;
-    TameGame.defineUnintializedField(obj, 'test', function () {
+    TameGame.defineUninitializedField(obj, 'test', function () {
         initCount++;
         return 'InitialVal' + initCount;
     });
 
-    TameGame.defineUnintializedField(obj, 'test2', function () {
+    TameGame.defineUninitializedField(obj, 'test2', function () {
         initCount++;
         return 'InitialVal' + initCount;
     });
@@ -34,10 +34,27 @@ QUnit.test("CanUseUninitializedField", function (assert) {
     assert.ok(obj.test2 === 'StartWithInit', "Can replace the value without initialization");
 });
 
+QUnit.test("CanSetNewUninitializedFieldViaFunction", function (assert) {
+    var obj = {};
+    var initCount = 0;
+    var setOk = false;
+    TameGame.defineUninitializedField(obj, 'test', function (obj, defineProperty) {
+        defineProperty({
+            get: function () {},
+            set: function () { setOk = true; }
+        })
+        initCount++;
+        return 'InitialVal' + initCount;
+    });
+
+    obj.test = 'test';
+    assert.ok(setOk, 'Called field setter');
+});
+
 QUnit.test("PrototypeUninitializedField", function (assert) {
     function obj() { }
     var initCount = 0;
-    TameGame.defineUnintializedField(obj.prototype, 'test', function () {
+    TameGame.defineUninitializedField(obj.prototype, 'test', function () {
         initCount++;
         return 'InitialVal' + initCount;
     });
