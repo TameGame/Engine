@@ -85,6 +85,14 @@ module TameGame {
                 ];
             };
 
+            var cReplay = (target: ShapeReplay) => {
+                if (!target.circle) {
+                    target.unknownShape();
+                } else {
+                    target.circle(center, radius);
+                }
+            }
+
             // Set up this object
             this.transform          = cTransform;
             this.getBoundingBox     = cGetBoundingBox;
@@ -92,6 +100,7 @@ module TameGame {
             this.getAxes            = cGetAxes;
             this.projectOntoAxis    = cProjectOntoAxis;
             this.closestPoint       = cClosestPoint;
+            this.replay             = cReplay;
         }
 
         /** Returns a transformed version of this shape */
@@ -111,5 +120,8 @@ module TameGame {
 
         /** The closest point on this shape to the specified point */
         closestPoint: (point: Point2D) => Point2D;
+
+        /** 'Replays' this shape into a target */
+        replay: (target: ShapeReplay) => void;
     }
 }

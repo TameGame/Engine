@@ -10,6 +10,14 @@ module TameGame {
         /** Retrieves the vertices making up this polygon */
         getVertices(): Point2D[];
     }
+
+    function replay(vertices: Point2D[], replay: ShapeReplay) {
+        if (replay.polygon) {
+            replay.unknownShape();
+        } else {
+            replay.polygon(vertices);
+        }
+    }
     
     function getBoundingBox(vertices: Point2D[]): BoundingBox {
         if (vertices.length <= 0) {
@@ -119,6 +127,7 @@ module TameGame {
             this.closestPoint       = (point) => closestPoint(getVertices(), point);
             this.transform          = (transformMatrix) => new TransformedPolygon(initVertices, center, originalBoundingBox, multiplyMatrix(matrix, transformMatrix));
             this.getVertices        = () => getVertices();
+            this.replay             = (target) => replay(getVertices(), target);
             this.getBoundingBox     = (boundingMatrix?: number[]) => {
                 var transform = matrix;
                 if (boundingMatrix) {
@@ -149,6 +158,9 @@ module TameGame {
 
         /** The closest point on this shape to the specified point */
         closestPoint: (point: Point2D) => Point2D;
+
+        /** 'Replays' this shape into a target */
+        replay: (target: ShapeReplay) => void;
     }
     
     /**
@@ -181,6 +193,7 @@ module TameGame {
             this.transform          = (matrix) => new TransformedPolygon(vertices, center, this.getBoundingBox(), matrix);
             this.closestPoint       = (point) => closestPoint(vertices, point);
             this.getVertices        = () => vertices;
+            this.replay             = (target) => replay(vertices, target);
             this.getBoundingBox     = (matrix?: number[]) => {
                 var boundingBox = getBoundingBox(vertices);
                 this.getBoundingBox = (matrix?: number[]) => {
@@ -214,5 +227,8 @@ module TameGame {
 
         /** The closest point on this shape to the specified point */
         closestPoint: (point: Point2D) => Point2D;
+
+        /** 'Replays' this shape into a target */
+        replay: (target: ShapeReplay) => void;
     }
 }

@@ -21,6 +21,9 @@ module TameGame {
         
         /** Finds the center of this shape */
         getCenter(): Point2D;
+
+        /** 'Replays' this shape into a target */
+        replay(target: ShapeReplay);
     }
     
     /** 
@@ -59,5 +62,33 @@ module TameGame {
     export interface ComplexShape extends Shape {
         /** The smaller shapes that make up this one */
         components: Shape[];
+    }
+
+    /**
+     * Interface used by objects that can 'replay' the contents of a shape
+     *
+     * This is used to export the contents of a shape as represented by TameGame into a
+     * different physics engine.
+     */
+    export interface ShapeReplay {
+        /**
+         * Called for shapes that don't have a function in this method
+         */
+        unknownShape();
+
+        /**
+         * Called to indicate that this is a complex shape made up of other shapes
+         */
+        complexShape?: () => void;
+
+        /**
+         * Called for a polygon
+         */
+        polygon?: (vertices: Point2D[]) => void;
+
+        /**
+         * Called for a circle
+         */
+        circle?: (center: Point2D, radius: number) => void;
     }
 }
