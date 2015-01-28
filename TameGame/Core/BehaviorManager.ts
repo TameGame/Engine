@@ -130,7 +130,7 @@ module TameGame {
         };
 
         // Add to the default behavior prototype
-        defineUnintializedField(DefaultBehavior.prototype, name, (newBehavior, defineProperty) => {
+        defineUninitializedField(DefaultBehavior.prototype, name, (newBehavior, defineProperty) => {
             // An initial value of null indicates to use the state/class to retrieve the behavior
             var currentValue = null;
 

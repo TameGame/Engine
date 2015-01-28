@@ -59,7 +59,7 @@ module TameGame {
             }
         });
 
-        defineUnintializedField(game.scenePrototype, 'space', (obj, defineProperty) => {
+        defineUninitializedField(game.scenePrototype, 'space', (obj, defineProperty) => {
             var theSpace: Space<TameObject> = null;
 
             // Whenever the Space field is updated, set the 'spaceChanged' flag
