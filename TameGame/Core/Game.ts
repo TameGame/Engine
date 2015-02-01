@@ -111,7 +111,6 @@ module TameGame {
             var createObject = (): TameObject => {
                 // An object contains some properties and behaviors, which we declare here
                 var properties = {};
-                var behaviors = new DefaultBehavior();
                 var obj: TameObject;
 
                 var identifier = _nextIdentifier;
@@ -119,6 +118,7 @@ module TameGame {
 
                 // Create a basic object
                 obj             = Object.create(_objectProto);
+                var behaviors   = new TameObjectBehavior(obj);
                 obj.identifier  = identifier;
                 obj.behavior    = behaviors;
 
