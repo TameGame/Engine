@@ -210,7 +210,7 @@ module TameGame {
                 result.onPass               = (pass, callback)                => sceneWatchers.onPass(pass, callback);
                 result.everyPass            = (pass, callback)                => sceneWatchers.everyPass(pass, callback);
 
-                result.behavior             = new DefaultBehavior();
+                result.behavior             = new SceneBehavior(result);
                 result.events               = {
                     onPassStart:        passStartEvent.register,
                     onPassFinish:       passFinishEvent.register,
