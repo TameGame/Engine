@@ -35,11 +35,12 @@ module TameGame {
             targetWorker.postMessage(mouseMessage);
         }
 
-        // Function to return the position relative to the canvas as a whole (from 0,0 to 1,1)
+        // Function to return the position relative to the canvas as a whole (with the height going from -1 to 1)
         var getPosition = (evt: MouseEvent): number[] => {
             var clientPos   = [ evt.offsetX, evt.offsetY ];
             var canvasSize  = [ canvas.offsetWidth, canvas.offsetHeight ];
-            var relativePos = [ clientPos[0]/canvasSize[0], clientPos[1]/canvasSize[1] ];
+            var halfSize    = [ canvasSize[0]/2.0, canvasSize[1]/2.0 ];
+            var relativePos = [ (clientPos[0]-halfSize[0])/halfSize[1], (halfSize[1]-clientPos[1])/halfSize[1] ];
 
             return relativePos;
         }
