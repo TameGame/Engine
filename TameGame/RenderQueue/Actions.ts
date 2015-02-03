@@ -5,7 +5,10 @@ module TameGame {
      * Maps action names to render queue bytecode values
      */
     export var Actions = {
-        drawSprite: 0,
-        moveCamera: 1
+        moveCamera: 0,
+        drawSprite: 1,
+        drawLine: 2,
+        drawCircle: 3,
+        drawTriangle: 4
     }
 }
