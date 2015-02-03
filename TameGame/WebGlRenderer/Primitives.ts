@@ -38,14 +38,15 @@ module TameGame {
 
         return (item: RenderQueueItem) => {
             var cameraId    = item.intValues[0];
+            var numPoints   = item.intValues[1];
             gl.useProgram(primitiveShader);
 
             gl.uniform1i(samplerUni, 0);
             
             // Generate the vertices
             var colorArray      = item.floatValues.subarray(0, 4);
-            var vertexArray     = item.floatValues.subarray(4, 8);
-            var transformArray  = item.floatValues.subarray(9, 25);
+            var transformArray  = item.floatValues.subarray(4, 20);
+            var vertexArray     = item.floatValues.subarray(21, 21+numPoints*2);
             
             gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
             gl.bufferData(gl.ARRAY_BUFFER, vertexArray, gl.STATIC_DRAW);
@@ -62,7 +63,7 @@ module TameGame {
             gl.blendFuncSeparate(gl.ONE, gl.ONE_MINUS_SRC_ALPHA, gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
             gl.lineWidth(1.0);
 
-            gl.drawArrays(gl.LINES, 0, 2);
+            gl.drawArrays(gl.LINES, 0, numPoints);
         };
     }
 
