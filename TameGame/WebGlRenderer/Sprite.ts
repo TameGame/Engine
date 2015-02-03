@@ -1,11 +1,5 @@
 /// <reference path="Renderer.ts" />
 
-// TODO: it might be useful to make it possible to draw multiple sprites with one 
-// request to reduce the time spent setting things up
-// It's possible that the overhead imposed by JavaScript will overshadow any gains
-// to be made, so I'm not doing this until it's possible to actually measure the
-// benefit.
-
 module TameGame {
     "use strict";
 

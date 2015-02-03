@@ -110,9 +110,9 @@ module TameGame {
                 
                 var compiledOk = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
                 if (!compiledOk) {
+                    var error = gl.getShaderInfoLog(shader);
                     gl.deleteShader(shader);
                     
-                    var error = gl.getShaderInfoLog(shader);
                     console.error('Failed to compile shader: ', error);
                     throw ERR_CantCompileShader;
                 }
