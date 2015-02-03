@@ -49,7 +49,7 @@ module TameGame {
             var width       = height * ratio;
             
             var cameraQuad      = bbToQuad({ x: -width/2.0, y: -height/2.0, width: width, height: height });
-            var cameraTransform = multiplyMatrix(translateMatrix(scene.camera.center), rotationMatrix(scene.camera.rotation));
+            var cameraTransform = rotateTranslateMatrix(scene.camera.rotation, scene.camera.center);
             
             cameraQuad = transformQuad(cameraTransform, cameraQuad);
             
