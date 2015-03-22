@@ -30,7 +30,9 @@ declare module p2 {
         keys: number[];
     }
 
-    class Body {
+    interface Body {
+        constructor(options?: any);
+
         id: number;
         world: World;
         shapes: Shape[];
@@ -92,6 +94,10 @@ declare module p2 {
         sleep();
         sleepTick(time: number, dontSleep: boolean, dt: number);
         overlaps(body: Body): boolean;
+    }
+
+    var Body: {
+        new (value?: any): Body;
 
         STATIC: number;
         DYNAMIC: number;

@@ -44,7 +44,7 @@ module TameGame {
                         
                         // TODO: This is just a hack to make polygons stay still (makes the bounce demo work)
                         body.mass = 10000;
-                        body.type = body.STATIC;
+                        body.type = p2.Body.STATIC;
                         body.sleep();
 
                         body.addShape(convex, [ 0, 0 ], 0);
@@ -74,7 +74,7 @@ module TameGame {
                 // Create a new body and return it
                 var result = new p2.Body();
 
-                result.type = result.DYNAMIC;
+                result.type = p2.Body.DYNAMIC;
                 result.mass = 10;
 
                 updateShape(result, where.presence.shape);
