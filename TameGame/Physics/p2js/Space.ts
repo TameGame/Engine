@@ -43,9 +43,7 @@ module TameGame {
                         var convex = new p2.Convex(p2vertices);
                         
                         // TODO: This is just a hack to make polygons stay still (makes the bounce demo work)
-                        body.mass = 10000;
                         body.type = p2.Body.STATIC;
-                        body.sleep();
 
                         body.addShape(convex, [ 0, 0 ], 0);
                     },
