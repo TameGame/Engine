@@ -19,7 +19,7 @@ QUnit.test("CanGetLiveTicks", function(assert) {
     someGame.tick(0);
     var time = 0;
     do {
-        time += someGame.tickRate;
+        time += someGame.tickRate/4.0;
         someGame.tick(time);
     } while (time <= 1008.0);
 
