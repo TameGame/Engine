@@ -35,6 +35,13 @@ module TameGame {
     export function subtractVector(p1: Point2D, p2: Point2D) {
         return { x: p1.x - p2.x, y: p1.y - p2.y };
     }
+
+    /**
+     * Negates a vector
+     */
+    export function negateVector(p1: Point2D) : Point2D {
+        return { x: -p1.x, y: -p1.y };
+    }
     
     /**
      * Scale a vector by a factor

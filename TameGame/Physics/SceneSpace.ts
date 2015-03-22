@@ -12,6 +12,9 @@ module TameGame {
         /** Space containing the objects in this scene */
         space?: Space<TameObject>;
 
+        /** Set to true if the objects in this scene need to be re-added to the space */
+        spaceChanged?: boolean;
+
         /** List of objects that have moved since the last time the space was updated */
         movedObjects?: { [id: number]: TameObject };
 
@@ -56,10 +59,28 @@ module TameGame {
             }
         });
 
+        defineUninitializedField(game.scenePrototype, 'space', (obj, defineProperty) => {
+            var theSpace: Space<TameObject> = null;
+
+            // Whenever the Space field is updated, set the 'spaceChanged' flag
+            defineProperty({
+                enumerable: true,
+                configurable: true,
+                get: () => theSpace,
+                set: function (val) {
+                    theSpace = val;
+                    this.spaceChanged = true;
+                }
+            });
+
+            return theSpace;
+        });
+
         game.events.onCreateScene((scene) => {
             // Create a space for this scene
             scene.space         = new SimpleSpace<TameObject>();
             scene.movedObjects  = {};
+            scene.spaceChanged  = false;
             
             // When objects are added or removed from the scene, add or remove them from the appropriate space
             scene.events.onAddObject((obj) => {
@@ -70,17 +91,34 @@ module TameGame {
             scene.events.onRemoveObject((obj) => {
                 if (obj.spaceRef) {
                     obj.spaceRef.removeObject();
-                    delete obj.spaceRef;
+                    obj.spaceRef = null;
                 }
 
                 delete scene.movedObjects[obj.identifier];
             });
 
-            // When the space is queried, make sure all of the moved objects are in fact moved
+            // Add a way to make sure that all of the objects are updated in a scene
             var updateMovedObjects = () => {
                 var objId;
                 var movedObjects = scene.movedObjects;
                 var space = scene.space;
+
+                if (scene.spaceChanged && space) {
+                    // Re-add all of the objects to the current space
+                    scene.forAllObjects((obj) => {
+                        // Remove from any space this object is already in
+                        if (obj.spaceRef) {
+                            obj.spaceRef.removeObject();
+                            obj.spaceRef = null;
+                        }
+
+                        // Add to the new space
+                        obj.spaceRef = space.addObject(obj, obj);
+                    });
+
+                    // Space is up to date, don't need to do any more work
+                    scene.spaceChanged = false;
+                }
 
                 for (objId in movedObjects) {
                     updateAndMoveObject(movedObjects[objId], space);

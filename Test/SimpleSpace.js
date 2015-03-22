@@ -175,3 +175,18 @@ QUnit.test("SimpleSpaceQuery100ObjectsPlusSomeMore", function (assert) {
     assert.ok(count === 102, "102 objects overall");
     if (count !== 102) console.log('102 !== ', count);
 });
+
+QUnit.test("SimpleSpaceScene", function (assert) {
+    var game = new TameGame.StandardGame();
+    var scene = game.createScene();
+
+    scene.updateMovedObjects();
+    assert.ok(scene.space, 'Scene has a space');
+    assert.ok(!scene.spaceChanged, 'Scene space not changed');
+
+    scene.space = new TameGame.SimpleSpace();
+    assert.ok(scene.spaceChanged, 'Scene space marked as changed when set');
+
+    scene.updateMovedObjects();
+    assert.ok(!scene.spaceChanged, 'Scene space is refilled after object update');
+});

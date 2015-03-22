@@ -90,4 +90,104 @@ module TameGame {
         },
         enumerable: false
     });
+
+    /**
+     * Behavior that invokes the add/remove callbacks for a particular scene
+     */
+    export class SceneBehavior extends DefaultBehavior {
+        constructor(scene: Scene) {
+            Object.defineProperty(this, '_scene', { 
+                configurable: false,
+                enumerable: false,
+                writable: true,
+                value: scene
+            });
+
+            super();
+        }
+
+        _scene: Scene;
+    }
+
+    SceneBehavior.prototype.addClass = function(newClass: string) {
+        // Add the class
+        this._classes.unshift(newClass);
+        clearClasses(this);
+
+        // Invoke the 'add class' behavior
+        var classOptions = getOptionsForBehaviorClass(newClass);
+        if (classOptions.onApplyToScene) {
+            classOptions.onApplyToScene(this._scene);
+        }
+    }
+
+    SceneBehavior.prototype.removeClass = function(oldClass: string) {
+        // Splice out everwhere this class is used
+        var classes = this._classes;
+        for (var x=0; x<classes.length; ++x) {
+            if (classes[x] === oldClass) {
+                classes.splice(x, 1);
+                --x;
+            }
+        }
+
+        // Reset class values
+        clearClasses(this);
+
+        // Invoke the 'add class' behavior
+        var classOptions = getOptionsForBehaviorClass(oldClass);
+        if (classOptions.onRemoveFromScene) {
+            classOptions.onRemoveFromScene(this._scene);
+        }
+    }
+
+    /**
+     * Behavior that invokes the add/remove callbacks for a particular object
+     */
+    export class TameObjectBehavior extends DefaultBehavior {
+        constructor(obj: TameObject) {
+            Object.defineProperty(this, '_tameObject', { 
+                configurable: false,
+                enumerable: false,
+                writable: true,
+                value: obj
+            });
+
+            super();
+        }
+
+        _tameObject: TameObject;
+    }
+
+    TameObjectBehavior.prototype.addClass = function(newClass: string) {
+        // Add the class
+        this._classes.unshift(newClass);
+        clearClasses(this);
+
+        // Invoke the 'add class' behavior
+        var classOptions = getOptionsForBehaviorClass(newClass);
+        if (classOptions.onApplyToObject) {
+            classOptions.onApplyToObject(this._tameObject);
+        }
+    }
+
+    TameObjectBehavior.prototype.removeClass = function(oldClass: string) {
+        // Splice out everwhere this class is used
+        var classes = this._classes;
+        for (var x=0; x<classes.length; ++x) {
+            if (classes[x] === oldClass) {
+                classes.splice(x, 1);
+                --x;
+            }
+        }
+
+        // Reset class values
+        clearClasses(this);
+
+        // Invoke the 'add class' behavior
+        var classOptions = getOptionsForBehaviorClass(oldClass);
+        if (classOptions.onRemoveFromObject) {
+            classOptions.onRemoveFromObject(this._tameObject);
+        }
+    }
 }

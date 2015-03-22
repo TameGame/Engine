@@ -26,6 +26,23 @@ module TameGame {
          */
         defaultValue: any;
     }
+
+    /** 
+     * Options that can be applied to a behavior class
+     */
+    export interface BehaviorClassOptions {
+        /** Callback called when this class is applied to a scene */
+        onApplyToScene?: (scene: Scene) => void;
+
+        /** Callback made when this class is removed from a scene */
+        onRemoveFromScene?: (scene: Scene) => void;
+
+        /** Callback called when this class is applied to an object */
+        onApplyToObject?: (obj: TameObject) => void;
+
+        /** Callback made when this class is removed from an object */
+        onRemoveFromObject?: (obj: TameObject) => void;
+    }
     
     /** The standard set of behaviors */
     var globalBehaviors: { [ name: string ]: BehaviorDefinition } = {};
@@ -36,6 +53,9 @@ module TameGame {
     /** The behavior classes to use for particular states */
     var behaviorStates: { [ className: string ]: { [ stateName: string ]: Behavior } } = { '': {} };
     
+    /** The class options for the behaviors */
+    var behaviorClassOptions: { [ className: string ]: BehaviorClassOptions } = {};
+
     /**
      * Declares a new behavior type with a particular default behavior
      *
@@ -130,7 +150,7 @@ module TameGame {
         };
 
         // Add to the default behavior prototype
-        defineUnintializedField(DefaultBehavior.prototype, name, (newBehavior, defineProperty) => {
+        defineUninitializedField(DefaultBehavior.prototype, name, (newBehavior, defineProperty) => {
             // An initial value of null indicates to use the state/class to retrieve the behavior
             var currentValue = null;
 
@@ -171,8 +191,33 @@ module TameGame {
      *
      * If an class already exists with this name, the passed in behavior will be merged in to it.
      */
-    export function declareBehaviorClass(behaviorClassName: string, behaviors: Behavior) {
+    export function declareBehaviorClass(behaviorClassName: string, behaviors: Behavior, classOptions?: BehaviorClassOptions) {
         var mergedBehavior = behaviorClasses[behaviorClassName] || {};
+        classOptions = classOptions || {};
+
+        // Set up the options
+        var currentOptions = behaviorClassOptions[behaviorClassName];
+        if (!currentOptions) {
+            currentOptions = behaviorClassOptions[behaviorClassName] = {
+                onApplyToScene: () => {},
+                onRemoveFromScene: () => {},
+                onApplyToObject: () => {},
+                onRemoveFromObject: () => {}
+            };
+        }
+
+        // Merge the class options
+        function mergeFn<TParamType>(fn1: (p: TParamType) => void, fn2: (p: TParamType) => void) : (p: TParamType) => void {
+            return (p) => {
+                fn1(p);
+                fn2(p);
+            }
+        }
+
+        if (classOptions.onApplyToScene)        { currentOptions.onApplyToScene     = mergeFn(classOptions.onApplyToScene, currentOptions.onApplyToScene);          }
+        if (classOptions.onRemoveFromScene)     { currentOptions.onRemoveFromScene  = mergeFn(classOptions.onRemoveFromScene, currentOptions.onRemoveFromScene);    }
+        if (classOptions.onApplyToObject)       { currentOptions.onApplyToObject    = mergeFn(classOptions.onApplyToObject, currentOptions.onApplyToObject);        }
+        if (classOptions.onRemoveFromObject)    { currentOptions.onRemoveFromObject = mergeFn(classOptions.onRemoveFromObject, currentOptions.onRemoveFromObject);  }
 
         // Merge in the behaviors
         Object.getOwnPropertyNames(behaviors).forEach((behaviorName) => {
@@ -206,5 +251,12 @@ module TameGame {
     export function declareBehaviorState(stateName: string, behaviors: Behavior) {
         // We use the class with the empty name as the soruce for the default states
         declareBehaviorClassState('', stateName, behaviors);
+    }
+
+    /**
+     * Retrieves the options applied to a particular behavior class
+     */
+    export function getOptionsForBehaviorClass(behaviorClassName: string): BehaviorClassOptions {
+        return behaviorClassOptions[behaviorClassName] || {};
     }
 }

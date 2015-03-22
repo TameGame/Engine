@@ -12,12 +12,12 @@ QUnit.test("CanCreateObject", function(assert) {
 QUnit.test("CanUseUninitializedField", function (assert) {
     var obj = {};
     var initCount = 0;
-    TameGame.defineUnintializedField(obj, 'test', function () {
+    TameGame.defineUninitializedField(obj, 'test', function () {
         initCount++;
         return 'InitialVal' + initCount;
     });
 
-    TameGame.defineUnintializedField(obj, 'test2', function () {
+    TameGame.defineUninitializedField(obj, 'test2', function () {
         initCount++;
         return 'InitialVal' + initCount;
     });
@@ -34,10 +34,27 @@ QUnit.test("CanUseUninitializedField", function (assert) {
     assert.ok(obj.test2 === 'StartWithInit', "Can replace the value without initialization");
 });
 
+QUnit.test("CanSetNewUninitializedFieldViaFunction", function (assert) {
+    var obj = {};
+    var initCount = 0;
+    var setOk = false;
+    TameGame.defineUninitializedField(obj, 'test', function (obj, defineProperty) {
+        defineProperty({
+            get: function () {},
+            set: function () { setOk = true; }
+        })
+        initCount++;
+        return 'InitialVal' + initCount;
+    });
+
+    obj.test = 'test';
+    assert.ok(setOk, 'Called field setter');
+});
+
 QUnit.test("PrototypeUninitializedField", function (assert) {
     function obj() { }
     var initCount = 0;
-    TameGame.defineUnintializedField(obj.prototype, 'test', function () {
+    TameGame.defineUninitializedField(obj.prototype, 'test', function () {
         initCount++;
         return 'InitialVal' + initCount;
     });
@@ -414,9 +431,17 @@ TameGame.declareBehavior('test', function () { return { test: function (obj) { o
 TameGame.declareBehaviorClass('testClass1', { test: { test: function (obj) { obj.testClass1 = true; } } });
 TameGame.declareBehaviorClass('testClass2', { test: { test: function (obj) { obj.testClass2 = true; } } });
 TameGame.declareBehaviorClass('noTestClass', { });
+TameGame.declareBehaviorClass('optionsClass', { }, 
+    { 
+        onApplyToScene:     function (scene)    { scene.doneOnApplyToScene = true; }, 
+        onRemoveFromScene:  function (scene)    { scene.doneOnRemoveFromScene = true; },
+        onApplyToObject:    function (obj)      { obj.doneOnApplyToObject = true; },
+        onRemoveFromObject: function (obj)      { obj.doneOnRemoveFromObject = true; }
+    });
 
 QUnit.test("ClassesAreApplied", function (assert) {
     var game    = new TameGame.StandardGame();
+    var someScene = game.createScene();
     var someObj = game.createObject();
 
     assert.ok(someObj.behavior.test, 'Test behavior defined');
@@ -463,6 +488,21 @@ QUnit.test("ClassesAreApplied", function (assert) {
     someObj.behavior.removeClass('testClass1');
     someObj.behavior.test.test(someObj);
     assert.ok(someObj.tested, 'Removing all classes reverts behavior back to default');
+
+    assert.ok(!someObj.doneOnApplyToObject, 'Class application behavior not applied to object');
+    assert.ok(!someScene.doneOnApplyToScene, 'Class application behavior not applied to scene');
+
+    someScene.behavior.addClass('optionsClass');
+    assert.ok(someScene.doneOnApplyToScene, 'Apply to scene behavior invoked');
+    assert.ok(!someScene.doneOnRemoveFromObject, 'Remove from scene behavior not invoked');
+    someScene.behavior.removeClass('optionsClass');
+    assert.ok(someScene.doneOnRemoveFromScene, 'Remove from scene behavior invoked');
+
+    someObj.behavior.addClass('optionsClass');
+    assert.ok(someObj.doneOnApplyToObject, 'Apply to object behavior invoked');
+    assert.ok(!someObj.doneOnRemoveFromObject, 'Remove from object behavior not invoked');
+    someObj.behavior.removeClass('optionsClass');
+    assert.ok(someObj.doneOnRemoveFromObject, 'Remove from object behavior invoked');
 });
 
 QUnit.test("BinarySearch", function (assert) {

@@ -31,15 +31,18 @@ module TameGame {
                 var newCallback = (originalControl: ControlInput, milliseconds: number, lastMilliseconds: number) => {
                     var modifiedControl = originalControl;
 
-                    // TODO: If the control uses a location, and the scene has a camera position, then translate the location from 0,0-1,0 to the scene's own coordinates
+                    // If the control uses a location, and the scene has a camera position, then translate the location from 0,0-1,0 to the scene's own coordinates
                     if (originalControl.location && newScene.camera) {
-                        // TODO: this doesn't actually modify it, just copies the object into a new one
+                        var cameraTransform = rotateTranslateMatrix(newScene.camera.rotation, newScene.camera.center);
+                        var halfHeight      = newScene.camera.height / 2.0;
+                        var location        = transform(cameraTransform, { x: originalControl.location.x*halfHeight, y: originalControl.location.y*halfHeight });
+
                         modifiedControl = {
                             device:     originalControl.device,
                             control:    originalControl.control,
                             pressure:   originalControl.pressure,
                             when:       originalControl.when,
-                            location:   originalControl.location
+                            location:   location
                         };
                     }
 
