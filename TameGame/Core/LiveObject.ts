@@ -144,7 +144,9 @@ module TameGame {
             
             // Time updates post-render
             scene.events.onPassFinish(UpdatePass.PreRender, (pass, time: number) => {
-                lastTime = time;
+                while (lastTime < time) {
+                    lastTime += tickDuration;
+                }
             });
             
             // When a scene is added to another one, the tick is reset (so a 'paused' scene doesn't have time pass for it)
