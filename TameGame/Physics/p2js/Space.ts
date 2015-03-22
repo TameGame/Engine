@@ -97,7 +97,7 @@ module TameGame {
             function firstTick(time: number): void {
                 // Advance the world by 1/60th of a second on the first tick
                 lastTime = time;
-                world.step(1/60, 0);
+                world.step(1/60, 1/60);
 
                 postTick();
 
