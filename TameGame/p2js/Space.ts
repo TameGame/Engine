@@ -51,7 +51,7 @@ module TameGame {
 
             // Updates a p2 body's location from a location
             function updateLocation(body: p2.Body, where: SpaceLocation) {
-                // Get the locaiton and presence
+                // Get the location and presence
                 var location = where.location;
                 var presence = where.presence;
 
@@ -60,15 +60,13 @@ module TameGame {
                 body.position[0]    = pos.x;
                 body.position[1]    = pos.y;
                 body.angle          = location.angle;
-
-                // Update the shape
-                updateShape(body, presence.shape);
             }
 
             // Creates a p2 body from a location
             function createBody(where: SpaceLocation): p2.Body {
                 // Create a new body and return it
                 var result = new p2.Body();
+                updateShape(result, where.presence.shape);
                 updateLocation(result, where);
                 return result;
             }
@@ -82,7 +80,7 @@ module TameGame {
 
             // Gets the matrix for a p2 body
             function getMatrix(body: p2.Body): number[] {
-                if (body.interpolatedPosition) {
+                if (body.interpolatedPosition && false) {
                     return rotateTranslateMatrix(body.interpolatedAngle, { x: body.interpolatedPosition[0], y: body.interpolatedPosition[1] });
                 } else {
                     return rotateTranslateMatrix(body.angle, { x: body.position[0], y: body.position[1] });
@@ -123,6 +121,8 @@ module TameGame {
 
                     move: function (where: SpaceLocation): P2SpaceRef<TObject> {
                         updateLocation(body, where);
+                        this.bounds = getBounds(body);
+                        this.matrix = getMatrix(body);
                         return this;
                     },
 
