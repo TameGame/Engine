@@ -434,7 +434,8 @@ module TameGame {
                 }
 
                 if (behindCount > 10) {
-                    console.warn('Unable to keep up with requested tick rate');
+                    var perSecond = 1000.0 / tickRate;
+                    console.warn('Unable to keep up with requested tick rate (' + perSecond + " fps)");
                     behindCount = 0;
                 } 
 
