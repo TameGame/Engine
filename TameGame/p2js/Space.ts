@@ -122,11 +122,27 @@ module TameGame {
                 return spaceRef;
             }
 
+            // Finds all of the objects in a certain bounding box
+            function forAllInBounds(bounds: BoundingBox, callback: (ref: SpaceRef<TObject>) => void): void {
+                // Fairly simple matter of trying out each body in turn
+                world.bodies.forEach(body => {
+                    var spaceRef: P2SpaceRef<TObject> = body['spaceRef'];
+                    if (spaceRef && bbOverlaps(spaceRef.bounds, bounds)) {
+                        callback(spaceRef);
+                    }
+                });
+            }
+
+            // Finds all of the collision pairs in this space
+            function findCollisionPairs(left: SpaceRef<TObject>[], right: SpaceRef<TObject>[]): void {
+
+            }
+
             // Store the function definitions
             this.addObject          = addObject;
             this.addSpace           = null;
-            this.forAllInBounds     = null;
-            this.findCollisionPairs = null;
+            this.forAllInBounds     = forAllInBounds;
+            this.findCollisionPairs = findCollisionPairs;
             this.world              = world;
         }
 

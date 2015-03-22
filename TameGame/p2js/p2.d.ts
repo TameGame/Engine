@@ -6,6 +6,8 @@ declare module p2 {
     class World {
         addBody(body: Body);
         removeBody(body: Body);
+
+        bodies: Body[];
     }
 
     class Body {
