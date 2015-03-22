@@ -63,9 +63,25 @@ module TameGame {
             // Default physics class for a new scene is 'SimplePhysics'
             newScene.behavior.addClass('SimplePhysics');
 
+            // When a pass starts for a scene, we rebuild the list of live objects
+            var tickObjects: TameObject[] = [];
+            newScene.events.onPassStart(UpdatePass.Preparation, (pass, time, lastTime) => {
+                tickObjects = [];
+
+                var liveObjectList = newScene.liveObjects;
+                Object.keys(liveObjectList).forEach((objId) => tickObjects.push(liveObjectList[objId]));
+            });
+
+            // When the pass is over, delete the list of tick objects
+            newScene.events.onPassFinish(UpdatePass.PreRender, (pass, time, lastTime) => {
+                tickObjects = [];
+            });
+
             // During the motion pass, apply forces and move obejcts
-            newScene.events.onTick(UpdatePass.PhysicsMotion, (tick, time, lastTime) => {
+            newScene.events.onPassStart(UpdatePass.PhysicsMotion, (pass, time, lastTime) => {
                 var physics = newScene.behavior.physics;
+
+                var tick: Tick = { duration: (time-lastTime)/1000.0, liveObjects: tickObjects };
 
                 if (physics.applyForces) {
                     physics.applyForces(newScene, tick, time, lastTime);
@@ -76,8 +92,10 @@ module TameGame {
             });
 
             // During the collision pass, detect collsions
-            newScene.events.onTick(UpdatePass.PhysicsCollision, (tick, time, lastTime) => {
+            newScene.events.onPassStart(UpdatePass.PhysicsCollision, (pass, time, lastTime) => {
                 var physics = newScene.behavior.physics;
+
+                var tick: Tick = { duration: (time-lastTime)/1000.0, liveObjects: tickObjects };
 
                 if (physics.detectCollisions) {
                     physics.detectCollisions(newScene, tick, time, lastTime);

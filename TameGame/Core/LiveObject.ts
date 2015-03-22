@@ -29,7 +29,7 @@ module TameGame {
      * Data passed to a live object tick event
      */
     export interface Tick {
-        /** Time since last tick */
+        /** Time since last tick, in seconds */
         duration: number;
         
         /** The objects that the tick applies to */
