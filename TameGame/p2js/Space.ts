@@ -135,7 +135,20 @@ module TameGame {
 
             // Finds all of the collision pairs in this space
             function findCollisionPairs(left: SpaceRef<TObject>[], right: SpaceRef<TObject>[]): void {
+                // Use p2js's OverlapKeeper to find anything that's in collision
+                var overlapping = world.overlapKeeper.overlappingShapesCurrentState;
 
+                overlapping.keys.forEach(key => {
+                    var overlap = overlapping.data[key];
+
+                    var leftRef: P2SpaceRef<TObject> = overlap.bodyA['spaceRef'];
+                    var rightRef: P2SpaceRef<TObject> = overlap.bodyB['spaceRef'];
+
+                    if (leftRef && rightRef) {
+                        left.push(leftRef);
+                        right.push(rightRef);
+                    }
+                });
             }
 
             // Store the function definitions

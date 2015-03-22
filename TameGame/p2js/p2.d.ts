@@ -8,6 +8,24 @@ declare module p2 {
         removeBody(body: Body);
 
         bodies: Body[];
+        overlapKeeper: OverlapKeeper;
+    }
+
+    class OverlapKeeper {
+        overlappingShapesCurrentState: TupleDictionary<OverlapKeeperRecord>;
+        overlappingShapesLastState: TupleDictionary<OverlapKeeperRecord>;
+    }
+
+    class OverlapKeeperRecord {
+        shapeA: Shape;
+        shapeB: Shape;
+        bodyA: Body;
+        bodyB: Body;
+    }
+
+    class TupleDictionary<T> {
+        data: { number: T };
+        keys: number[];
     }
 
     class Body {
