@@ -12,7 +12,7 @@ module TameGame {
     }
 
     function replay(vertices: Point2D[], replay: ShapeReplay) {
-        if (replay.polygon) {
+        if (!replay.polygon) {
             replay.unknownShape();
         } else {
             replay.polygon(vertices);
