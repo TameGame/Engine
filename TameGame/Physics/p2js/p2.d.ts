@@ -135,4 +135,8 @@ declare module p2 {
     class Convex extends Shape {
         constructor(vertices: number[][], axes?: number[][])
     }
+
+    class Rectangle extends Convex {
+        constructor(width: number, height: number);
+    }
 }
