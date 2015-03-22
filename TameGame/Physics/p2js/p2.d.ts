@@ -9,6 +9,7 @@ declare module p2 {
         step(dt: number, timeSinceLastCalled?: number, maxSubSteps?: number);
 
         bodies: Body[];
+        gravity: number[];
         overlapKeeper: OverlapKeeper;
     }
 

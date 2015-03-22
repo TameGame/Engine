@@ -67,8 +67,8 @@ module TameGame {
                 // Create a new body and return it
                 var result = new p2.Body();
 
+                result.type = result.DYNAMIC;
                 result.mass = 10;
-                result.velocity = [-1, -1];
 
                 updateShape(result, where.presence.shape);
                 updateLocation(result, where);

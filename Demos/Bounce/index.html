@@ -14,26 +14,6 @@
             } catch (e) {
                 alert(e);
             }
-
-            var testWorld = new p2.World();
-            var testBody = new p2.Body( { position: [10, 10], velocity: [ 1,1 ]});
-            var testShape = new p2.Rectangle(0.5,1);
-
-            testWorld.defaultContactMaterial.friction = 0.5;
-            testWorld.setGlobalStiffness(1e5);
-
-            testBody.position = [0,0];
-            testBody.velocity = [1,1];
-            testBody.mass = 10;
-            testBody.addShape(testShape);
-            testWorld.addBody(testBody);
-
-            console.log(testBody.position);
-
-            for (var x=0; x<100; ++x) {
-                testWorld.step(1/60, 1/60, 10);
-                console.log(testBody, testBody.position, testBody.velocity);
-            }
             
             var launched = TameGame.GameLauncher.launch('Bounce.js', canvas, { launchScript: "TameLaunch.js" });
             setTimeout(function() { launched.cancel(); console.log("Game cancelled"); }, 600000);
