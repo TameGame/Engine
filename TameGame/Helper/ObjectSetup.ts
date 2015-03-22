@@ -126,10 +126,10 @@ module TameGame {
 
             var pos = obj.tile.quad;
             obj.presence.shape = new Polygon([
-                { x: pos.x1, y: pos.y1 },
-                { x: pos.x2, y: pos.y2 },
+                { x: pos.x3, y: pos.y3 },
                 { x: pos.x4, y: pos.y4 },
-                { x: pos.x3, y: pos.y3 }
+                { x: pos.x2, y: pos.y2 },
+                { x: pos.x1, y: pos.y1 }
             ]);
 
             return this;
