@@ -16,3 +16,5 @@
 /// <reference path="Simple/SimplePhysics.ts" />
 /// <reference path="Simple/Motion.ts" />
 /// <reference path="Simple/Collision.ts" />
+
+/// <reference path="p2js/p2js.ts" />

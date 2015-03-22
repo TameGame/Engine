@@ -66,6 +66,10 @@ module TameGame {
             function createBody(where: SpaceLocation): p2.Body {
                 // Create a new body and return it
                 var result = new p2.Body();
+
+                result.mass = 10;
+                result.velocity = [-1, -1];
+
                 updateShape(result, where.presence.shape);
                 updateLocation(result, where);
                 return result;
@@ -92,15 +96,31 @@ module TameGame {
             function firstTick(time: number): void {
                 // Advance the world by 1/60th of a second on the first tick
                 lastTime = time;
-                world.step(1/60);
+                world.step(1/60, 0);
+
+                postTick();
 
                 // Use the lastTime for future ticks
                 this.tick = nextTick;
             }
 
             function nextTick(time: number): void {
-                world.step(lastTime - time);
+                world.step(1/60, (lastTime - time)/1000.0);
                 lastTime = time;
+
+                postTick();
+            }
+
+            function postTick(): void {
+                // Update the bounds/matrix for everything in the space
+                world.bodies.forEach(body => {
+                    var spaceRef: P2SpaceRef<TObject> = body['spaceRef'];
+
+                    if (spaceRef) {
+                        spaceRef.bounds = getBounds(body);
+                        spaceRef.matrix = getMatrix(body);
+                    }
+                });
             }
 
             // Adds an object to this space

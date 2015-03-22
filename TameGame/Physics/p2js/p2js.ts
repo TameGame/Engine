@@ -13,3 +13,4 @@ module TameGame {
 }
 
 /// <reference path="Space.ts" />
+/// <reference path="Behavior.ts" />
