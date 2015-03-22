@@ -60,6 +60,10 @@ module TameGame {
 
         // Apply the physics behavior on each game tick applied to a scene
         game.events.onCreateScene((newScene) => {
+            // Default physics class for a new scene is 'SimplePhysics'
+            newScene.behavior.addClass('SimplePhysics');
+
+            // During the motion pass, apply forces and move obejcts
             newScene.events.onTick(UpdatePass.PhysicsMotion, (tick, time, lastTime) => {
                 var physics = newScene.behavior.physics;
 
@@ -70,9 +74,8 @@ module TameGame {
                     physics.moveObjects(newScene, tick, time, lastTime);
                 }
             });
-        });
 
-        game.events.onCreateScene((newScene) => {
+            // During the collision pass, detect collsions
             newScene.events.onTick(UpdatePass.PhysicsCollision, (tick, time, lastTime) => {
                 var physics = newScene.behavior.physics;
 
