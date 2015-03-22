@@ -41,6 +41,12 @@ module TameGame {
                     polygon: (vertices) => {
                         var p2vertices = vertices.map((vertex) => [ vertex.x, vertex.y ]);
                         var convex = new p2.Convex(p2vertices);
+                        
+                        // TODO: This is just a hack to make polygons stay still (makes the bounce demo work)
+                        body.mass = 10000;
+                        body.type = body.STATIC;
+                        body.sleep();
+
                         body.addShape(convex, [ 0, 0 ], 0);
                     },
                     circle: (center, radius) => {
