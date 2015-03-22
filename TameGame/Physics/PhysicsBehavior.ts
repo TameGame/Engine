@@ -1,4 +1,8 @@
+/// <reference path="../Core/Interface.ts" />
+
 module TameGame {
+    "use strict";
+
     /** 
      * Set of behaviors that are used to define how physics works in a scene
      */
@@ -36,13 +40,35 @@ module TameGame {
     });
 
     export function generatePhysicsBehavior(game: Game) {
+        // Objects become 'alive' if they acquire motion
+        game.watch(Motion, UpdatePass.Preparation, (obj, objMotion) => {
+            // We only execute this behaviour once per object
+            if (obj['_hasMotion']) {
+                return;
+            }
+            
+            // Object becomes alive if its motion is changed to a non-zero value
+            if (objMotion.rotationVelocity !== 0 ||
+                objMotion.velocity.x !== 0 ||
+                objMotion.velocity.y !== 0) {
+                // Mark the object as alive
+                obj.aliveStatus.isAlive = true;
+                
+                obj['_hasMotion'] = true;
+            }
+        });
+
         // Apply the physics behavior on each game tick applied to a scene
         game.events.onCreateScene((newScene) => {
             newScene.events.onTick(UpdatePass.PhysicsMotion, (tick, time, lastTime) => {
                 var physics = newScene.behavior.physics;
 
-                physics.applyForces(newScene, tick, time, lastTime);
-                physics.moveObjects(newScene, tick, time, lastTime);
+                if (physics.applyForces) {
+                    physics.applyForces(newScene, tick, time, lastTime);
+                }
+                if (physics.moveObjects) {
+                    physics.moveObjects(newScene, tick, time, lastTime);
+                }
             });
         });
 
@@ -50,7 +76,9 @@ module TameGame {
             newScene.events.onTick(UpdatePass.PhysicsCollision, (tick, time, lastTime) => {
                 var physics = newScene.behavior.physics;
 
-                physics.detectCollisions(newScene, tick, time, lastTime);
+                if (physics.detectCollisions) {
+                    physics.detectCollisions(newScene, tick, time, lastTime);
+                }
             });
         });
     }

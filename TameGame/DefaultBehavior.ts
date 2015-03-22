@@ -27,15 +27,12 @@ module TameGame {
 
         // Allows animations to be attached to objects
         'tObjectAnimation': objectAnimationBehavior,
-    
-        // Objects that have Motion should become alive and move
-        'tSimpleMotion': simpleMotionBehavior,
+
+        // Causes the physics behavior to occur on active scenes
+        'tPhysics': generatePhysicsBehavior,
         
         // When the object's presence is updated, set its transformation matrix
         'tTransformationMatrix': setObjectTransformBehavior,
-        
-        // When two objects bounding boxes collide, invoke AABB collision behavior
-        'tAabbCollision': generateAabbCollisionBehavior,
     
         // Objects are tracked in a quad tree in each scene
         'tSceneSpace': sceneSpaceBehavior,
