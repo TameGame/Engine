@@ -1,4 +1,4 @@
-/// <reference path="../Physics/Physics.ts" />
+/// <reference path="../Physics.ts" />
 /// <reference path="p2.d.ts" />
 
 declare var WorkerGlobalScope;

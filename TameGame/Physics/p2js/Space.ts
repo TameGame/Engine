@@ -1,4 +1,4 @@
-/// <reference path="../Physics/Physics.ts" />
+/// <reference path="../Physics.ts" />
 
 module TameGame {
     "use strict";
