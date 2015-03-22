@@ -89,6 +89,22 @@ module TameGame {
                 }
             }
 
+            // Advances the world by a tick
+            var lastTime = 0;
+            function firstTick(time: number): void {
+                // Advance the world by 1/60th of a second on the first tick
+                lastTime = time;
+                world.step(1/60);
+
+                // Use the lastTime for future ticks
+                this.tick = nextTick;
+            }
+
+            function nextTick(time: number): void {
+                world.step(lastTime - time);
+                lastTime = time;
+            }
+
             // Adds an object to this space
             function addObject(obj: TObject, where: SpaceLocation): P2SpaceRef<TObject> {
                 // Create the body
@@ -157,6 +173,7 @@ module TameGame {
             this.forAllInBounds     = forAllInBounds;
             this.findCollisionPairs = findCollisionPairs;
             this.world              = world;
+            this.tick               = firstTick;
         }
 
         /** Adds an object to this space, or to a contained space if it is contained by it */
@@ -193,5 +210,10 @@ module TameGame {
          * The P2 world that this space represents
          */
         world: p2.World;
+
+        /**
+         * Performs a physics tick at the specified time
+         */
+        tick: (time: number) => void;
     }
 }

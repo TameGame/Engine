@@ -6,6 +6,7 @@ declare module p2 {
     class World {
         addBody(body: Body);
         removeBody(body: Body);
+        step(dt: number, timeSinceLastCalled?: number, maxSubSteps?: number);
 
         bodies: Body[];
         overlapKeeper: OverlapKeeper;
