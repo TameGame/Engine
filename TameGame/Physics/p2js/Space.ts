@@ -21,6 +21,7 @@ module TameGame {
         constructor() {
             // Create the world
             var world = new p2.World();
+            world.gravity = [ 0,0 ];
 
             // Updates the shape for a body
             function updateShape(body: p2.Body, shape: Shape) {
