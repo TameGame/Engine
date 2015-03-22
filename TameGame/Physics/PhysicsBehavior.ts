@@ -81,7 +81,7 @@ module TameGame {
             newScene.events.onPassStart(UpdatePass.PhysicsMotion, (pass, time, lastTime) => {
                 var physics = newScene.behavior.physics;
 
-                var tick: Tick = { duration: (time-lastTime)/1000.0, liveObjects: tickObjects };
+                var tick: Tick = { duration: time-lastTime, liveObjects: tickObjects };
 
                 if (physics.applyForces) {
                     physics.applyForces(newScene, tick, time, lastTime);
@@ -95,7 +95,7 @@ module TameGame {
             newScene.events.onPassStart(UpdatePass.PhysicsCollision, (pass, time, lastTime) => {
                 var physics = newScene.behavior.physics;
 
-                var tick: Tick = { duration: (time-lastTime)/1000.0, liveObjects: tickObjects };
+                var tick: Tick = { duration: time-lastTime, liveObjects: tickObjects };
 
                 if (physics.detectCollisions) {
                     physics.detectCollisions(newScene, tick, time, lastTime);

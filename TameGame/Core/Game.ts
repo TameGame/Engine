@@ -394,7 +394,7 @@ module TameGame {
                     });
 
                     // Run the pre-render passes
-                    preRenderPasses.forEach((pass) => runPass(pass, milliseconds, _lastTime, sceneChanges));
+                    preRenderPasses.forEach((pass) => runPass(pass, _currentTime, _lastTime, sceneChanges));
 
                     // Clear out any property changes: they are now all handled
                     recentChanges.clearChanges();
