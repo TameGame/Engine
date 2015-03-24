@@ -95,6 +95,23 @@ QUnit.test("PrototypeContextualField", function (assert) {
     assert.ok(context1 !== context2);
 });
 
+QUnit.test("CanGetChangedPropertiesInScene", function(assert) {
+    var someGame        = new TameGame.StandardGame();
+    var someObject      = someGame.createObject();
+    var someScene       = someGame.createScene();
+
+    someScene.addObject(someObject);
+
+    var noChanges = someScene.changesForProperty("details");
+    assert.ok(Object.keys(noChanges).length === 0, "No changes initially");
+
+    someObject.details.objectName = "Test value";
+
+    var oneChange = someScene.changesForProperty("details");
+    assert.ok(Object.keys(oneChange).length === 1, "One change after property update");
+    assert.ok(oneChange[someObject.identifier] === someObject, "Change matches object");
+});
+
 QUnit.test("PhysicsPassIsDeferredUntilTick", function(assert) {
     var someGame        = new TameGame.StandardGame();
     var someObject      = someGame.createObject();

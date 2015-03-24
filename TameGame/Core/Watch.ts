@@ -237,6 +237,18 @@ module TameGame {
             }
 
             /**
+             * Returns all of the changes that apply to a particular property
+             */
+            function getChanges(property: string): { [id: number]: TameObject } {
+                var changes = _getChange[property];
+                if (changes) {
+                    return changes();
+                } else {
+                    return {};
+                }
+            }
+
+            /**
              * Sends changes to the watchers in a RegisteredWatchers object
              */
             function dispatchChanges(pass: UpdatePass, target: RegisteredWatchers, milliseconds: number, lastMilliseconds: number) {
@@ -307,6 +319,7 @@ module TameGame {
             this.dispatchChanges    = dispatchChanges;
             this.filter             = filter;
             this.clearChanges       = clearChanges;
+            this.getChanges         = getChanges;
         }
 
         /**
@@ -329,5 +342,10 @@ module TameGame {
          * Clear out any changes that might have occurred 
          */
         clearChanges: () => void;
+
+        /**
+         * Returns all of the changes that apply to a particular property
+         */
+        getChanges: (property: string) => { [id: number]: TameObject };
     }
 }
