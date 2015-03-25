@@ -15,9 +15,6 @@ module TameGame {
         /** Set to true if the objects in this scene need to be re-added to the space */
         spaceChanged?: boolean;
 
-        /** List of objects that have moved since the last time the space was updated */
-        movedObjects?: { [id: number]: TameObject };
-
         /** Makes sure that all of the objects in the scene are up to date */
         updateMovedObjects?: () => void;
     }
@@ -39,12 +36,8 @@ module TameGame {
         };
 
         // Marks an object as having been moved since the space was updated
-        var markAsMoved = (obj: TameObject) => {
-            var scene = obj.scene;
+        var clearAABB = (obj: TameObject) => {
             obj['_aabb'] = null;
-            if (scene) {
-                scene.movedObjects[obj.identifier] = obj;
-            }
         }
 
         Object.defineProperty(game.objectPrototype, 'aabb', {
@@ -79,7 +72,6 @@ module TameGame {
         game.events.onCreateScene((scene) => {
             // Create a space for this scene
             scene.space         = new SimpleSpace<TameObject>();
-            scene.movedObjects  = {};
             scene.spaceChanged  = false;
             
             // When objects are added or removed from the scene, add or remove them from the appropriate space
@@ -93,14 +85,11 @@ module TameGame {
                     obj.spaceRef.removeObject();
                     obj.spaceRef = null;
                 }
-
-                delete scene.movedObjects[obj.identifier];
             });
 
             // Add a way to make sure that all of the objects are updated in a scene
             var updateMovedObjects = () => {
                 var objId;
-                var movedObjects = scene.movedObjects;
                 var space = scene.space;
 
                 if (scene.spaceChanged && space) {
@@ -120,18 +109,21 @@ module TameGame {
                     scene.spaceChanged = false;
                 }
 
-                for (objId in movedObjects) {
-                    updateAndMoveObject(movedObjects[objId], space);
-                }
+                // Get the changed objects from the scene
+                var tiled       = scene.changesForProperty('tile');
+                var reshaped    = scene.changesForProperty('presence');
+                var moved       = scene.changesForProperty('location');
 
-                scene.movedObjects = {};
+                tiled.forEach(obj => updateAndMoveObject(obj, space));
+                reshaped.forEach(obj => updateAndMoveObject(obj, space));
+                moved.forEach(obj => updateAndMoveObject(obj, space));
             };
 
             scene.updateMovedObjects = updateMovedObjects;
         });
         
-        game.watch(Tile, UpdatePass.Immediate, markAsMoved, Priority.UseDerivedValues);
-        game.watch(Presence, UpdatePass.Immediate, markAsMoved, Priority.UseDerivedValues);
-        game.watch(Location, UpdatePass.Immediate, markAsMoved, Priority.UseDerivedValues);
+        game.watch(Tile, UpdatePass.Immediate, clearAABB, Priority.UseDerivedValues);
+        game.watch(Presence, UpdatePass.Immediate, clearAABB, Priority.UseDerivedValues);
+        game.watch(Location, UpdatePass.Immediate, clearAABB, Priority.UseDerivedValues);
     }
 }
