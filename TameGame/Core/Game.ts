@@ -184,10 +184,19 @@ module TameGame {
                 function forAllSubscenes(callback: (scene: Scene) => void) {
                     Object.keys(subScenes).forEach((subSceneId) => callback(subScenes[subSceneId]));
                 }
-                function changesForProperty(propertyName: string): { [id: number]: TameObject } {
+                function changesForProperty(propertyName: string): TameObject[] {
                     var recentChanges   = _propertyManager.getRecentChanges();
-                    var sceneChanges    = recentChanges.filter((id) => objects[id]?true:false);
-                    return sceneChanges.getChanges(propertyName);
+                    var allChanges      = recentChanges.getChanges(propertyName);
+
+                    var result: TameObject[] = [];
+                    Object.keys(allChanges).forEach((id) => {
+                        var obj = objects[id];
+                        if (obj) {
+                            result.push(obj);
+                        }
+                    });
+
+                    return result;
                 }
 
                 // Assign an identifier to this object

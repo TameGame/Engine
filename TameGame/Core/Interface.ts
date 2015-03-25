@@ -348,7 +348,7 @@ module TameGame {
         /**
          * Retrieves the objects that have a change for a particular property since the last game tick
          */
-        changesForProperty(name: string): { [id: number]: TameObject };
+        changesForProperty(name: string): TameObject[];
         
         /**
          * Events attached to this scene

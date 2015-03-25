@@ -103,13 +103,13 @@ QUnit.test("CanGetChangedPropertiesInScene", function(assert) {
     someScene.addObject(someObject);
 
     var noChanges = someScene.changesForProperty("details");
-    assert.ok(Object.keys(noChanges).length === 0, "No changes initially");
+    assert.ok(noChanges.length === 0, "No changes initially");
 
     someObject.details.objectName = "Test value";
 
     var oneChange = someScene.changesForProperty("details");
-    assert.ok(Object.keys(oneChange).length === 1, "One change after property update");
-    assert.ok(oneChange[someObject.identifier] === someObject, "Change matches object");
+    assert.ok(oneChange.length === 1, "One change after property update");
+    assert.ok(oneChange[0] === someObject, "Change matches object");
 });
 
 QUnit.test("PhysicsPassIsDeferredUntilTick", function(assert) {
