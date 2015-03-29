@@ -112,6 +112,35 @@ QUnit.test("CanGetChangedPropertiesInScene", function(assert) {
     assert.ok(oneChange[0] === someObject, "Change matches object");
 });
 
+QUnit.test("CanGetChangedPropertiesInSceneDuringPass", function(assert) {
+    var someGame        = new TameGame.StandardGame();
+    var someObject      = someGame.createObject();
+    var someScene       = someGame.createScene();
+
+    someScene.addObject(someObject);
+    someGame.startScene(someScene);
+    someGame.tick(0);
+
+    var changesDuringPass = 0;
+    var numTicks = 0;
+    someScene.onPass(TameGame.UpdatePass.PhysicsMotion, function () {
+        ++numTicks;
+        changesDuringPass = someScene.changesForProperty("details").length;
+    });
+
+    someObject.details.objectName = "Test value";
+    assert.ok(changesDuringPass == 0, "Changes don't occur immediately");
+
+    someGame.tick(someGame.tickRate);
+
+    assert.ok(changesDuringPass == 1, "Changes occur during pass");
+    assert.ok(numTicks >= 1, "At least one tick");
+    assert.ok(numTicks == 1, "Only one tick");
+
+    var oneChange = someScene.changesForProperty("details");
+    assert.ok(oneChange.length === 0, "No changes after pass");
+});
+
 QUnit.test("PhysicsPassIsDeferredUntilTick", function(assert) {
     var someGame        = new TameGame.StandardGame();
     var someObject      = someGame.createObject();
