@@ -141,6 +141,39 @@ QUnit.test("CanGetChangedPropertiesInSceneDuringPass", function(assert) {
     assert.ok(oneChange.length === 0, "No changes after pass");
 });
 
+QUnit.test("ChangesInPreviousTickProcessedInNext", function(assert) {
+    var someGame        = new TameGame.StandardGame();
+    var someObject      = someGame.createObject();
+    var someScene       = someGame.createScene();
+
+    someScene.addObject(someObject);
+    someGame.startScene(someScene);
+    someGame.tick(0);
+
+    var changesDuringPass = 0;
+    var numTicks = 0;
+    someScene.everyPass(TameGame.UpdatePass.PhysicsMotion, function () {
+        changesDuringPass = someScene.changesForProperty("details").length;
+        numTicks++;
+        someObject.details.objectName = "Test value";
+    });
+
+    someGame.tick(someGame.tickRate);
+
+    assert.ok(changesDuringPass == 0, "No changes initially");
+    assert.ok(numTicks >= 1, "At least one tick");
+    assert.ok(numTicks == 1, "Only one tick");
+
+    var oneChange = someScene.changesForProperty("details");
+    assert.ok(oneChange.length >= 1, "Change exists after pass");
+
+    someGame.tick(someGame.tickRate*2);
+
+    assert.ok(changesDuringPass == 1, "Changes pass through to next tick");
+    assert.ok(numTicks >= 2, "At least two ticks");
+    assert.ok(numTicks == 2, "At exactly two ticks");
+});
+
 QUnit.test("PhysicsPassIsDeferredUntilTick", function(assert) {
     var someGame        = new TameGame.StandardGame();
     var someObject      = someGame.createObject();
