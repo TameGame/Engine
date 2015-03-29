@@ -12,6 +12,12 @@ module TameGame {
 
         /** Moves this object to a new location within the current space (or via its parent space). Returns a new reference to the moved object */
         move(where: SpaceLocation): P2SpaceRef<TObject>;
+
+        /** Updates this object with a new tile */
+        tileChanged(where: SpaceLocation): P2SpaceRef<TObject>;
+
+        /** Updates this object with a new presence */
+        presenceChanged(where: SpaceLocation): P2SpaceRef<TObject>;
     }
 
     /**
@@ -148,6 +154,16 @@ module TameGame {
                         updateLocation(body, where);
                         this.bounds = getBounds(body);
                         this.matrix = getMatrix(body);
+                        return this;
+                    },
+
+                    /** Updates this object with a new tile */
+                    tileChanged: function (where: SpaceLocation): P2SpaceRef<TObject> { 
+                        return this; 
+                    },
+
+                    /** Updates this object with a new presence */
+                    presenceChanged: function (where: SpaceLocation): P2SpaceRef<TObject> {
                         return this;
                     },
 

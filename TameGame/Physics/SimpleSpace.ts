@@ -84,6 +84,14 @@ module TameGame {
                         sorted = false;
 
                         return this;
+                    },
+
+                    tileChanged: function (where: SpaceLocation) {
+                        return this;
+                    },
+
+                    presenceChanged: function (where: SpaceLocation) {
+                        return this;
                     }
                 };
 
