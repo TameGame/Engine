@@ -1,5 +1,5 @@
-/// <reference path="Space.ts" />
-/// <reference path="../Algorithms/Algorithms.ts" />
+/// <reference path="../Space.ts" />
+/// <reference path="../../Algorithms/Algorithms.ts" />
 
 module TameGame {
     "use strict";

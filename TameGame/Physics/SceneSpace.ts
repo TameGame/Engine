@@ -2,7 +2,7 @@
 /// <reference path="../Sprite/Sprite.ts" />
 /// <reference path="BasicProperties.ts" />
 /// <reference path="Space.ts" />
-/// <reference path="SimpleSpace.ts" />
+/// <reference path="Simple/SimpleSpace.ts" />
 /// <reference path="SetObjectTransform.ts" />
 
 module TameGame {
