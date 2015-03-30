@@ -18,9 +18,32 @@ module TameGame {
         }
     }
 
+    // All collisions end up with the same value as P2.js ensures that obejcts don't overlap (so there's no MTV)
+    // We just re-use an array with the appropriate length rather than regenerate objects all the time
+    var genericCollision: Collision = { collided: true, getMtv: () => { return { x: 0, y: 0 }; } }
+    var collisionList: Collision[] = [];
+
     /** Detects any collisions that might have occurred in this scene */
     function detectCollisions(scene: Scene, tick: Tick, time: number, lastTime: number) {
+        if (scene.space) {
+            // Find all the collisions in this scene's space
+            var left: SpaceRef<TameObject>[] = [];
+            var right: SpaceRef<TameObject>[] = [];
 
+            // Find the collisions that have occurred
+            scene.space.findCollisionPairs(left, right);
+
+            // This is kind of a hack: as all the collision objects are the same, we can just re-use the array without needing to regenerate it
+            // We don't have a way to get the MTV (in fact, it's [0,0] as p2.js ensures that collided shapes don't overlap)
+            while (collisionList.length < left.length) {
+                collisionList.push(genericCollision);
+            }
+
+            // These are shape collisions
+            if (left.length > 0) {
+                scene.behavior.shapeCollision.resolveShapeCollisions(left.map(ref => ref.obj), right.map(ref => ref.obj), collisionList);
+            }
+        }
     }
 
     /** Behavior that enables P2JS physics on a scene */
@@ -32,5 +55,4 @@ module TameGame {
 
     /** Create the simple physics behavior */
     declareBehaviorClass("P2Physics", { physics: P2PhysicsBehavior });
-
 }
