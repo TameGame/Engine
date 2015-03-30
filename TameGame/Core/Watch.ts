@@ -198,6 +198,7 @@ module TameGame {
             var _getChange: { [property: string]: () => { [id: number]: TameObject } };
             var _startPass: { [ property: string]: () => void };
             var _endPass: { [ property: string]: () => void };
+            var _propertyNames: string[];
 
             if (!initialChanges) {
                 initialChanges = {};
@@ -207,6 +208,7 @@ module TameGame {
             _getChange          = {};
             _startPass          = {};
             _endPass            = {};
+            _propertyNames      = [];
 
             //
             // Retrieves a function that can be called to notify a change to a particular property
@@ -244,6 +246,8 @@ module TameGame {
                             // Process any changes that occured during the current pass during the next pass
                             currentChanges = nextChanges;
                         };
+
+                        _propertyNames = Object.getOwnPropertyNames(_getChange);
                     })();
                 }
 
@@ -277,7 +281,7 @@ module TameGame {
                 }
 
                 // For each property, dispatch the events
-                Object.getOwnPropertyNames(_getChange).forEach((prop) => {
+                _propertyNames.forEach((prop) => {
                     // Fetch the callbacks for this property
                     var callbacks = watchers[prop];
 
@@ -300,7 +304,7 @@ module TameGame {
              * Clear out any changes that might have occurred 
              */
             function clearChanges() {
-                Object.keys(_clearChange).forEach((propName) => {
+                _propertyNames.forEach((propName) => {
                     _clearChange[propName]();
                     initialChanges = {};
                 });
@@ -312,7 +316,7 @@ module TameGame {
              * This freezes the current set of changes and stores any future changes for the next pass.
              */
             function startPass() {
-                Object.keys(_startPass).forEach((propName) => {
+                _propertyNames.forEach((propName) => {
                     _startPass[propName]();
                     initialChanges = {};
                 });
@@ -324,7 +328,7 @@ module TameGame {
              * This unfreezes the changes frozen by startPass and makes them available
              */
             function endPass() {
-                Object.keys(_endPass).forEach((propName) => {
+                _propertyNames.forEach((propName) => {
                     _endPass[propName]();
                     initialChanges = {};
                 });
@@ -338,7 +342,7 @@ module TameGame {
                 var newChanges: { [property: string]: { [id: number]: TameObject } } = {}; 
                 
                 // Only include objects matched by the filter
-                Object.getOwnPropertyNames(_getChange).forEach((propertyName) => {
+                _propertyNames.forEach((propertyName) => {
                     var oldPropertyChanges = _getChange[propertyName]();
                     var newPropertyChanges = newChanges[propertyName] = {};
                     
