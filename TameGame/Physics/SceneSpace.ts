@@ -35,6 +35,30 @@ module TameGame {
             }
         };
 
+        var updateAndChangeTile = (obj: TameObject, space: Space<TameObject>) => {
+            if (obj.spaceRef) {
+                obj.spaceRef = obj.spaceRef.tileChanged(obj);
+            } else {
+                obj.spaceRef = space.addObject(obj, obj);
+            }
+        };
+
+        var updateAndChangePresence = (obj: TameObject, space: Space<TameObject>) => {
+            if (obj.spaceRef) {
+                obj.spaceRef = obj.spaceRef.presenceChanged(obj);
+            } else {
+                obj.spaceRef = space.addObject(obj, obj);
+            }
+        };
+
+        var updateAndChangeMotion = (obj: TameObject, space: Space<TameObject>) => {
+            if (obj.spaceRef) {
+                obj.spaceRef = obj.spaceRef.motionChanged(obj);
+            } else {
+                obj.spaceRef = space.addObject(obj, obj);
+            }
+        };
+
         // Marks an object as having been moved since the space was updated
         var clearAABB = (obj: TameObject) => {
             obj['_aabb'] = null;
@@ -113,9 +137,11 @@ module TameGame {
                 var tiled       = scene.changesForProperty('tile');
                 var reshaped    = scene.changesForProperty('presence');
                 var moved       = scene.changesForProperty('location');
+                var redirected  = scene.changesForProperty('motion');
 
-                tiled.forEach(obj => updateAndMoveObject(obj, space));
-                reshaped.forEach(obj => updateAndMoveObject(obj, space));
+                tiled.forEach(obj => updateAndChangeTile(obj, space));
+                reshaped.forEach(obj => updateAndChangePresence(obj, space));
+                redirected.forEach(obj => updateAndChangeMotion(obj, space));
                 moved.forEach(obj => updateAndMoveObject(obj, space));
             };
 

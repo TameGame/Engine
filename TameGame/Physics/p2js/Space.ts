@@ -18,6 +18,9 @@ module TameGame {
 
         /** Updates this object with a new presence */
         presenceChanged(where: SpaceLocation): P2SpaceRef<TObject>;
+
+        /** Updates this object with a new motion */
+        motionChanged(where: SpaceLocation): SpaceRef<TObject>;
     }
 
     /**
@@ -73,6 +76,18 @@ module TameGame {
                 body.angle          = location.angle;
             }
 
+            function updateMotion(body: p2.Body, where: SpaceLocation) {
+                var motion = where.motion;
+
+                if (motion) {
+                    var velocity = motion.velocity;
+
+                    body.velocity[0]        = velocity.x;
+                    body.velocity[1]        = velocity.y;
+                    body.angularVelocity    = motion.rotationVelocity;
+                }
+            }
+
             // Creates a p2 body from a location
             function createBody(where: SpaceLocation): p2.Body {
                 // Create a new body and return it
@@ -83,6 +98,7 @@ module TameGame {
 
                 updateShape(result, where.presence.shape);
                 updateLocation(result, where);
+                updateMotion(result, where);
                 return result;
             }
 
@@ -164,6 +180,15 @@ module TameGame {
 
                     /** Updates this object with a new presence */
                     presenceChanged: function (where: SpaceLocation): P2SpaceRef<TObject> {
+                        updateShape(body, where.presence.shape);
+                        updateLocation(body, where);
+                        this.bounds = getBounds(body);
+                        this.matrix = getMatrix(body);
+                        return this;
+                    },
+
+                    motionChanged: function (where: SpaceLocation): P2SpaceRef<TObject> {
+                        updateMotion(body, where);
                         return this;
                     },
 
