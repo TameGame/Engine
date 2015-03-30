@@ -196,6 +196,8 @@ module TameGame {
             var _propertyChangers: { [property: string]: (o: TameObject) => void };
             var _clearChange: { [property: string]: () => void };
             var _getChange: { [property: string]: () => { [id: number]: TameObject } };
+            var _startPass: { [ property: string]: () => void };
+            var _endPass: { [ property: string]: () => void };
 
             if (!initialChanges) {
                 initialChanges = {};
@@ -203,6 +205,8 @@ module TameGame {
             _propertyChangers   = {};
             _clearChange        = {};
             _getChange          = {};
+            _startPass          = {};
+            _endPass            = {};
 
             //
             // Retrieves a function that can be called to notify a change to a particular property
@@ -210,22 +214,36 @@ module TameGame {
             function getNoteForPropertyName(name: string): (o: TameObject) => void {
                 if (!_propertyChangers[name]) {
                     (function () {
-                        var propertyChanges = initialChanges[name] || {};
+                        var currentChanges  = initialChanges[name] || {};
+                        var nextChanges     = currentChanges;
 
-                        // Create a function to flag this property
+                        // Flags this property as changed
                         _propertyChangers[name] = function (o: TameObject) {
                             var id      = o.identifier;
-                            propertyChanges[id] = o;
-                        }
+                            nextChanges[id] = o;
+                        };
 
-                        // Create a function to clear this property
+                        // Clears all of the changes known about for this property
                         _clearChange[name] = function () {
-                            propertyChanges = {};
-                        }
+                            nextChanges = {};
+                        };
 
+                        // Returns the changes for this property
                         _getChange[name] = function () {
-                            return propertyChanges;
-                        }
+                            return currentChanges;
+                        };
+
+                        // Starts a pass
+                        _startPass[name] = function() {
+                            // Stores up changes that occur during this pass for the next one, and freezes the current set of changes
+                            nextChanges = {};
+                        };
+
+                        // Finishes an update pass
+                        _endPass[name] = function() {
+                            // Process any changes that occured during the current pass during the next pass
+                            currentChanges = nextChanges;
+                        };
                     })();
                 }
 
@@ -287,7 +305,31 @@ module TameGame {
                     initialChanges = {};
                 });
             }
-            
+
+            /**
+             * Starts an update pass
+             *
+             * This freezes the current set of changes and stores any future changes for the next pass.
+             */
+            function startPass() {
+                Object.keys(_startPass).forEach((propName) => {
+                    _startPass[propName]();
+                    initialChanges = {};
+                });
+            }
+
+            /**
+             * Ends an update pass
+             *
+             * This unfreezes the changes frozen by startPass and makes them available
+             */
+            function endPass() {
+                Object.keys(_endPass).forEach((propName) => {
+                    _endPass[propName]();
+                    initialChanges = {};
+                });
+            }
+
             /**
              * Generate a filtered version of this watcher that only applies to the specified object
              * IDs.
@@ -319,6 +361,8 @@ module TameGame {
             this.dispatchChanges    = dispatchChanges;
             this.filter             = filter;
             this.clearChanges       = clearChanges;
+            this.startPass          = startPass;
+            this.endPass            = endPass;
             this.getChanges         = getChanges;
         }
 
@@ -342,6 +386,20 @@ module TameGame {
          * Clear out any changes that might have occurred 
          */
         clearChanges: () => void;
+
+        /**
+         * Starts an update pass
+         *
+         * This freezes the current set of changes and stores any future changes for the next pass.
+         */
+        startPass: () => void;
+
+        /**
+         * Ends an update pass
+         *
+         * This makes the 'future' changes cached after startPass the 'current' changes, ready for the next pass
+         */
+        endPass: () => void;
 
         /**
          * Returns all of the changes that apply to a particular property
