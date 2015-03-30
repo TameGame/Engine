@@ -25,6 +25,21 @@ module TameGame {
         shape(newShape: Shape): ObjectSetup;
 
         /**
+         * Specifies the mass of this object
+         */
+        mass(newMass: number): ObjectSetup;
+
+        /**
+         * Makes this object static (so it won't be moved by the physics engine)
+         */
+        makeStatic(): ObjectSetup;
+
+        /**
+         * Makes this object dynamic (so it will be moved by the physics engine)
+         */
+        makeDynamic(): ObjectSetup;
+
+        /**
          * Specifies the shape of this object as matching its size (ie, basically a square or a rectangle)
          */
         useBasicShape(): ObjectSetup;
@@ -48,7 +63,7 @@ module TameGame {
     }
 
     export class ContextualObjectSetup implements ObjectSetup {
-        /** Context, set as part of a contextual field*/
+        /** Context, set as part of a contextual field */
         _context: TameObject;
 
         /**
@@ -115,6 +130,33 @@ module TameGame {
 
             obj.location.angle = degrees;
 
+            return this;
+        }
+
+        /**
+         * Specifies the mass of this object
+         */
+        mass(newMass: number): ObjectSetup {
+            var obj = this._context;
+            obj.presence.mass = newMass;
+            return this;
+        }
+
+        /**
+         * Makes this object static (so it won't be moved by the physics engine)
+         */
+        makeStatic(): ObjectSetup {
+            var obj = this._context;
+            obj.presence.isStatic = true;
+            return this;
+        }
+
+        /**
+         * Makes this object dynamic (so it will be moved by the physics engine)
+         */
+        makeDynamic(): ObjectSetup {
+            var obj = this._context;
+            obj.presence.isStatic = false;
             return this;
         }
 

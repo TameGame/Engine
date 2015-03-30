@@ -50,9 +50,6 @@ module TameGame {
                     polygon: (vertices) => {
                         var p2vertices = vertices.map((vertex) => [ vertex.x, vertex.y ]);
                         var convex = new p2.Convex(p2vertices);
-                        
-                        // TODO: This is just a hack to make polygons stay still (makes the bounce demo work)
-                        body.type = p2.Body.STATIC;
 
                         body.addShape(convex, [ 0, 0 ], 0);
                     },
@@ -61,6 +58,14 @@ module TameGame {
                         body.addShape(circle, [ center.x, center.y ], 0);
                     }
                 });
+            }
+
+            // Updates the mass for a body
+            function updateMass(body: p2.Body, presence: IPresence) {
+                body.mass = presence.mass;
+                body.type = presence.isStatic?p2.Body.STATIC:p2.Body.DYNAMIC;
+
+                body.updateMassProperties();
             }
 
             // Updates a p2 body's location from a location
@@ -97,6 +102,7 @@ module TameGame {
                 result.mass = 10;
 
                 updateShape(result, where.presence.shape);
+                updateMass(result, where.presence);
                 updateLocation(result, where);
                 updateMotion(result, where);
                 return result;
@@ -181,6 +187,7 @@ module TameGame {
                     /** Updates this object with a new presence */
                     presenceChanged: function (where: SpaceLocation): P2SpaceRef<TObject> {
                         updateShape(body, where.presence.shape);
+                        updateMass(body, where.presence);
                         updateLocation(body, where);
                         this.bounds = getBounds(body);
                         this.matrix = getMatrix(body);

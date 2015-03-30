@@ -54,6 +54,7 @@ module Bounce {
         newWall.setup
             .size(width, height)
             .moveTo(position.x, position.y)
+            .makeStatic()
             .useBasicShape();
 
         return newWall;

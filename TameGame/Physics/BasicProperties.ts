@@ -22,6 +22,12 @@ module TameGame {
         /** The shape of this object. Can be null for objects that can't be collided with */
         shape: Shape;
 
+        /** The mass of this object */
+        mass: number;
+
+        /** True if this object is static and shouldn't move */
+        isStatic: boolean;
+
         /** The bounding box of this shape (null or unset if they haven't been calculated yet) */
         bounds?: BoundingBox;
     }
@@ -36,7 +42,7 @@ module TameGame {
         /** The rotational velocity of this object (in degrees/second) */
         rotationVelocity: number;
     }
-    
+
     export interface TameObject {
         location?: ILocation;
         presence?: IPresence;
@@ -53,6 +59,8 @@ module TameGame {
     export var Presence: PropertyDefinition<IPresence> = declareProperty("presence", () => {
         return {
             shape: null,
+            mass: 1,
+            isStatic: false,
             bounds: null
         };
     });
