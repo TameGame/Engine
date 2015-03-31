@@ -95,8 +95,8 @@ module Bounce {
             }
 
             // Work out how far the objects move
-            var leftMtv = collide.getMtv();
-            var rightMtv = { x: -leftMtv.x, y: -leftMtv.y };
+            var leftMtv     = collide.getMtv();
+            var rightMtv    = { x: -leftMtv.x, y: -leftMtv.y };
 
             if (leftObj.isBall && rightObj.isBall) {
                 // Both are balls: move them apart by an equal amount
@@ -115,8 +115,12 @@ module Bounce {
             rightObj.location.pos = addVector(rightObj.location.pos, rightMtv);
 
             // Decide on a new velocity for both items
-            leftObj.motion.velocity = pickNewVelocity(leftObj.motion.velocity, leftMtv);
-            rightObj.motion.velocity = pickNewVelocity(rightObj.motion.velocity, rightMtv);
+            if (leftObj.isBall) {
+                leftObj.motion.velocity = pickNewVelocity(leftObj.motion.velocity, leftMtv);
+            }
+            if (rightObj.isBall) {
+                rightObj.motion.velocity = pickNewVelocity(rightObj.motion.velocity, rightMtv);
+            }
         }
     };
 
