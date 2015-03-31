@@ -14,7 +14,20 @@ module TameGame {
         var space: P2Space<TameObject> = <P2Space<TameObject>> scene.space;
 
         if (space.tick) {
+            // Update the space
             space.tick(lastTime - time);
+
+            // Update the objects from the space
+            // Note that this will cause things to update again on the next pass through
+            space.world.bodies.forEach(body => {
+                var spaceRef: P2SpaceRef<TameObject> = body['spaceRef'];
+                if (spaceRef) {
+                    spaceRef.obj.location = {
+                        pos: { x: body.position[0], y: body.position[1] },
+                        angle: body.angle
+                    };
+                }
+            });
         }
     }
 

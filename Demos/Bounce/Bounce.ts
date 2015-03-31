@@ -89,7 +89,6 @@ module Bounce {
                 continue;
             }
 
-            /*
             // Work out how far the objects move
             var leftMtv = collide.getMtv();
             var rightMtv = { x: -leftMtv.x, y: -leftMtv.y };
@@ -109,11 +108,10 @@ module Bounce {
             // Move the items apart
             leftObj.location.pos = addVector(leftObj.location.pos, leftMtv);
             rightObj.location.pos = addVector(rightObj.location.pos, rightMtv);
-            */
 
             // Decide on a new velocity for both items
-            leftObj.motion.velocity = pickNewVelocity(leftObj.motion.velocity, {x:0, y:1});
-            rightObj.motion.velocity = pickNewVelocity(rightObj.motion.velocity, {x:1, y:0});
+            leftObj.motion.velocity = pickNewVelocity(leftObj.motion.velocity, leftMtv);
+            rightObj.motion.velocity = pickNewVelocity(rightObj.motion.velocity, rightMtv);
         }
     };
 
