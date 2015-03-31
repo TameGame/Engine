@@ -12,6 +12,15 @@ module TameGame {
         /** Moves this object to a new location within the current space (or via its parent space). Returns a new reference to the moved object */
         move(where: SpaceLocation): SpaceRef<TObject>;
 
+        /** Updates this object with a new tile */
+        tileChanged(where: SpaceLocation): SpaceRef<TObject>;
+
+        /** Updates this object with a new presence */
+        presenceChanged(where: SpaceLocation): SpaceRef<TObject>;
+
+        /** Updates this object with a new motion */
+        motionChanged(where: SpaceLocation): SpaceRef<TObject>;
+
         // Defines the transformation matrix for this item
         matrix: number[];
 
@@ -34,6 +43,9 @@ module TameGame {
 
         /** The object's physical properties */
         presence?: IPresence;
+
+        /** How the object is moving in space */
+        motion?: IMotion;
     }
 
     /**

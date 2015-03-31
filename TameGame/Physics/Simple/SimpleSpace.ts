@@ -1,5 +1,5 @@
-/// <reference path="Space.ts" />
-/// <reference path="../Algorithms/Algorithms.ts" />
+/// <reference path="../Space.ts" />
+/// <reference path="../../Algorithms/Algorithms.ts" />
 
 module TameGame {
     "use strict";
@@ -83,6 +83,18 @@ module TameGame {
                         // Objects are no longer known to be sorted
                         sorted = false;
 
+                        return this;
+                    },
+
+                    tileChanged: function (where: SpaceLocation) {
+                        return this.move(where);
+                    },
+
+                    presenceChanged: function (where: SpaceLocation) {
+                        return this.move(where);
+                    },
+
+                    motionChanged: function (where: SpaceLocation) {
                         return this;
                     }
                 };

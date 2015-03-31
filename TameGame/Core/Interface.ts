@@ -344,6 +344,11 @@ module TameGame {
          * Performs an action for all subscenes of this scene
          */
         forAllSubscenes(callback: (scene: Scene) => void);
+
+        /**
+         * Retrieves the objects that have a change for a particular property since the last game tick
+         */
+        changesForProperty(name: string): TameObject[];
         
         /**
          * Events attached to this scene

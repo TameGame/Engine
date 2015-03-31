@@ -184,6 +184,20 @@ module TameGame {
                 function forAllSubscenes(callback: (scene: Scene) => void) {
                     Object.keys(subScenes).forEach((subSceneId) => callback(subScenes[subSceneId]));
                 }
+                function changesForProperty(propertyName: string): TameObject[] {
+                    var recentChanges   = _propertyManager.getRecentChanges();
+                    var allChanges      = recentChanges.getChanges(propertyName);
+
+                    var result: TameObject[] = [];
+                    Object.keys(allChanges).forEach((id) => {
+                        var obj = objects[id];
+                        if (obj) {
+                            result.push(obj);
+                        }
+                    });
+
+                    return result;
+                }
 
                 // Assign an identifier to this object
                 var identifier = _nextIdentifier;
@@ -197,6 +211,7 @@ module TameGame {
                 result._fireRender          = renderEvent.fire;
                 result.objectInScene        = (id) => objects[id]?true:false;
                 result.getChildScenes       = () => Object.keys(subScenes).map((key) => <InternalScene> subScenes[key]);
+                result.changesForProperty   = changesForProperty;
 
                 result.identifier           = identifier;
                 result.addObject            = addObject;
@@ -393,11 +408,14 @@ module TameGame {
                         return { scene: scene, watchers: scene._watchers, changes: recentChanges.filter(scene.objectInScene) }
                     });
 
+                    // Start a new update pass
+                    recentChanges.startPass();
+
                     // Run the pre-render passes
                     preRenderPasses.forEach((pass) => runPass(pass, _currentTime, _lastTime, sceneChanges));
 
-                    // Clear out any property changes: they are now all handled
-                    recentChanges.clearChanges();
+                    // Finished the pass
+                    recentChanges.endPass();
                 }
 
                 // Run the render pass
@@ -434,7 +452,8 @@ module TameGame {
                 }
 
                 if (behindCount > 10) {
-                    console.warn('Unable to keep up with requested tick rate');
+                    var perSecond = 1000.0 / tickRate;
+                    console.warn('Unable to keep up with requested tick rate (' + perSecond + " fps)");
                     behindCount = 0;
                 } 
 

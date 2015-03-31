@@ -40,6 +40,13 @@ module Bounce {
     // Set up a new scene
     var bounceScene = game.createScene();
 
+    /* -- uncomment to use the p2.js physics engine to manage the scene
+    var space = new TameGame.P2Space<TameGame.TameObject>();
+    space.world.gravity = [ 0, -9.8 ];
+    bounceScene.space = space;
+    bounceScene.behavior.addClass('P2Physics');
+    */
+
     // The camera describes how the scene coordinates map to the screen
     bounceScene.camera = { center: { x:0, y: 0 }, height: 12.0, rotation: 0 };
 
@@ -52,6 +59,7 @@ module Bounce {
         newWall.setup
             .size(width, height)
             .moveTo(position.x, position.y)
+            .makeStatic()
             .useBasicShape();
 
         return newWall;
@@ -87,8 +95,8 @@ module Bounce {
             }
 
             // Work out how far the objects move
-            var leftMtv = collide.getMtv();
-            var rightMtv = { x: -leftMtv.x, y: -leftMtv.y };
+            var leftMtv     = collide.getMtv();
+            var rightMtv    = { x: -leftMtv.x, y: -leftMtv.y };
 
             if (leftObj.isBall && rightObj.isBall) {
                 // Both are balls: move them apart by an equal amount
@@ -107,8 +115,12 @@ module Bounce {
             rightObj.location.pos = addVector(rightObj.location.pos, rightMtv);
 
             // Decide on a new velocity for both items
-            leftObj.motion.velocity = pickNewVelocity(leftObj.motion.velocity, leftMtv);
-            rightObj.motion.velocity = pickNewVelocity(rightObj.motion.velocity, rightMtv);
+            if (leftObj.isBall) {
+                leftObj.motion.velocity = pickNewVelocity(leftObj.motion.velocity, leftMtv);
+            }
+            if (rightObj.isBall) {
+                rightObj.motion.velocity = pickNewVelocity(rightObj.motion.velocity, rightMtv);
+            }
         }
     };
 
