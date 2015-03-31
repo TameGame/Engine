@@ -39,7 +39,9 @@ module Bounce {
 
     // Set up a new scene
     var bounceScene = game.createScene();
-    bounceScene.space = new TameGame.P2Space<TameGame.TameObject>();
+    var space = new TameGame.P2Space<TameGame.TameObject>();
+    space.world.gravity = [ 0, -9.8 ];
+    bounceScene.space = space;
     bounceScene.behavior.addClass('P2Physics');
 
     // The camera describes how the scene coordinates map to the screen
