@@ -2,6 +2,7 @@
 
 /// <reference path="Algorithms/Algorithms.ts"/>
 /// <reference path="Core/Core.ts"/>
+/// <reference path="Paths/Paths.ts" />
 /// <reference path="RenderQueue/RenderQueue.ts"/>
 /// <reference path="Input/Input.ts"/>
 /// <reference path="Physics/Physics.ts"/>

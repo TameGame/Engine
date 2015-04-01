@@ -82,7 +82,7 @@ module TameGame {
             return {
                 cancel: () => {
                     for (var eventNum=0; eventNum < events.length; ++eventNum) {
-                        if (events[eventNum].id == eventId) {
+                        if (events[eventNum].id === eventId) {
                             events.splice(eventNum, 1);
                             return;
                         }
