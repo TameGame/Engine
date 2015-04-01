@@ -31,3 +31,42 @@ QUnit.test("SplineUtilsWorkForSimpleLine", function (assert) {
     assert.ok(halfWay.x === 6, "Halfway X");
     assert.ok(halfWay.y === 3, "Halfway Y");
 });
+
+function approxPointEquals(a, b) {
+    var xDiff = a.x - b.x;
+    var yDiff = a.y - b.y;
+
+    if (Math.abs(xDiff) < 0.01 && Math.abs(yDiff) < 0.01) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+QUnit.test("SimpleSpline", function (assert) {
+    var splinePath = new TameGame.SplinePath([ 
+        { x: 0, y: 0 },
+        { x: 1, y: 1 },
+        { x: 5, y: 0 },
+        { x: 2, y: 10 },
+        { x: 10, y: -5 },
+        { x: 10, y: 10 }
+    ]);
+
+    var startPoint  = splinePath.pointAt(0);
+    var secondPoint = splinePath.pointAt(0.33333333333333);
+    var thirdPoint  = splinePath.pointAt(0.666666666666666);
+    var finalPoint  = splinePath.pointAt(1.0);
+
+    assert.ok(startPoint.x == 1 && startPoint.y == 1, "Start point");
+    assert.ok(approxPointEquals(secondPoint, { x: 5, y: 0 }), "Second point");
+    assert.ok(approxPointEquals(thirdPoint, { x: 2, y: 10 }), "Third point");
+    assert.ok(approxPointEquals(finalPoint, { x: 10, y: -5 }), "Fourth point");
+
+    /*
+    for (var x=0; x<=1.0; x += 0.05) {
+        var point = splinePath.pointAt(x);
+        console.log(x.toFixed(2), ' - ', point.x.toFixed(4), point.y.toFixed(4));
+    }
+    */
+});

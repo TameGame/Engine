@@ -1,6 +1,8 @@
 module TameGame {
     /**
      * Creates a hermite interpolation function
+     *
+     * This interpolates between the start and end numbers, given a known start and end tangent
      */
     export function createHermiteInterpolationFn(start: number, end: number, startTangent: number, endTangent: number): (proportion: number) => number {
         return (pos1: number) => {
