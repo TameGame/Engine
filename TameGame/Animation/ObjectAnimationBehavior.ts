@@ -33,7 +33,7 @@ module TameGame {
         /**
          * Contains ways to attach and run animations for this object
          */
-        animate?: ObjectAnimation;
+        animations?: ObjectAnimation;
     }
 
     /** Maps animation names to animation objects */
@@ -102,13 +102,13 @@ module TameGame {
                 tickAnimations: tickAnimations
             }
 
-            obj.animate = animate;
+            obj.animations = animate;
         });
 
         // Scenes should run any animations that objects have whenever they are live
         game.events.onCreateScene((scene) => {
             scene.events.onTick(UpdatePass.Animations, (tick, time) => {
-                tick.liveObjects.forEach(obj => obj.animate.tickAnimations(time));
+                tick.liveObjects.forEach(obj => obj.animations.tickAnimations(time));
             });
         });
     }

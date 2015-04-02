@@ -11,5 +11,8 @@ module TameGame {
         // The object setup field is contextual (so that it can know which object it's running against)
         // (this means we don't have to initialize the field for every object that's created)
         defineContextualField(game.objectPrototype, "setup", new ContextualObjectSetup());
+
+        // The animate field is also contextual
+        defineContextualField(game.objectPrototype, "animate", new ContextualAnimationSetup());
     }
 }
