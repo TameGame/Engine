@@ -12,15 +12,17 @@ module TameGame {
             endPoint = 0.5;
         }
 
+        var k = endPoint;
+        var a = -2/(k-2);
+        var b = 1-a;
+        var c = a/(2*k);
+
         // Create an ease-in function
         var result: EasingFunction = (val) => {
             if (val >= endPoint) {
-                return val;
+                return a*val + b;
             } else {
-                var proportion = (val/endPoint);
-                var pos = proportion * proportion;
-
-                return pos * endPoint;
+                return c*val*val;
             }
         }
 
@@ -41,11 +43,7 @@ module TameGame {
 
         // Create an ease-in function
         var result: EasingFunction = (val) => {
-            if (val < startPoint) {
-                return val;
-            } else {
-                return 1.0-easeIn(1.0 - val);
-            }
+            return 1.0-easeIn(1.0 - val);
         }
 
         return result;
