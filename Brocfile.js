@@ -89,4 +89,6 @@ var minifySource = mergeTrees([launchMinSource, engineMinSource]);
 var engineMinified = uglifyJs(minifySource, {
 });
 
+test = mergeTrees([test, pickFiles(p2js, { srcDir: '/', destDir: '/Test' }) ]);
+
 module.exports = mergeTrees([ engineJs, p2js, engineMinified, tameLaunchJs, test, completeBounceDemo ]);
