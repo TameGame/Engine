@@ -177,8 +177,9 @@ module TameGame {
                     animation.onFinish(() => resolve());
 
                     // Start the animation
-                    if (_delay !== null && obj.scene) {
-                        obj.scene.clock.after(_delay).then(() => obj.animations.addAnimation("animationSetup", animation));
+                    if (_delay !== null) {
+                        // Use the scene clock when animating in a scene
+                        obj.clock.after(_delay).then(() => obj.animations.addAnimation("animationSetup", animation));
                     } else {
                         obj.animations.addAnimation("animationSetup", animation);
                     }
