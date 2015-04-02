@@ -153,7 +153,7 @@ module TameGame {
                     }
 
                     // Finally, the animation itself
-                    var animation = new SmoothAnimation(0, 1, { easingFunction: easing, duration: _duration });
+                    var animation = new SmoothAnimation(0, 1, { easing: easing, duration: _duration });
                     if (_path) {
                         animation.onFrame((proportion) => {
                             obj.location.pos = _path.pointAt(proportion);

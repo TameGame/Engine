@@ -17,7 +17,7 @@ module TameGame {
             if (val >= endPoint) {
                 return val;
             } else {
-                var proportion = (endPoint/val);
+                var proportion = (val/endPoint);
                 var pos = proportion * proportion;
 
                 return pos * endPoint;
@@ -43,8 +43,8 @@ module TameGame {
             if (val < startPoint) {
                 return val;
             } else {
-                var proportion = remaining/(val-startPoint);
-                var pos = proportion * proportion;
+                var proportion = 1.0-((val-startPoint)/remaining);
+                var pos = 1.0-(proportion * proportion);
 
                 return pos*remaining + startPoint;
             }

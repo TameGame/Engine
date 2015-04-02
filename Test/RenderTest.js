@@ -34,7 +34,7 @@ var spriteIds   = TameGame.loadTpJsonSpriteSheet(sprites, data, 'Sprites/SpriteS
     
     secondObj.location.pos      = { x: -3, y: 0 };
     secondObj.location.angle    = 45;
-    secondObj.animate.to({ x:2, y: 0 }).duration(10000).rotate(360).start();
+    secondObj.animate.to({ x:2, y: 0 }).duration(10000).rotate(360).easeIn(0.1).easeOut(0.1).start();
     
     spriteObject.collisionPriority = -1;
 
