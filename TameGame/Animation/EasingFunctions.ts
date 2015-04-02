@@ -30,7 +30,7 @@ module TameGame {
     /**
      * Creates an easing function that decelerates from the starting point until 1
      */
-    var createEaseOut =  (startPoint?: number) => {
+    var createEaseOut = (startPoint?: number) => {
         // Default value for the start point is 0.5
         if (typeof startPoint === 'undefined') {
             startPoint = 0.5;
