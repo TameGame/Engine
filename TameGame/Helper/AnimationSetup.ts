@@ -73,7 +73,125 @@ module TameGame {
      */
     class BasicAnimationSetup implements AnimationSetup {
         constructor(obj: TameObject) {
-            // TODO!
+            // Settings for this object
+            var _duration               = 500.0;
+            var _delay                  = 0.0;
+            var _to: Point2D            = null;
+            var _path: Path             = null;
+            var _targetAngle: number    = null;
+            var _easeIn                 = 0.0;
+            var _easeOut                = 0.0;
+
+            // Function declarations
+            function to(where: Point2D) {
+                _to = where;
+                return this;
+            }
+
+            function followPath(path: Path) {
+                _path = path;
+                return this;
+            }
+
+            function rotate(newAngle: number) {
+                _targetAngle = newAngle;
+                return this;
+            }
+
+            function delay(milliseconds: number) {
+                _delay = milliseconds;
+                return this;
+            }
+
+            function duration(milliseconds: number) {
+                _duration = milliseconds;
+                return this;
+            }
+
+            function easeIn(proportion?: number) {
+                if (typeof proportion === 'undefined') {
+                    proportion = 0.5;
+                }
+                _easeIn = proportion;
+                return this;
+            }
+
+            function easeOut(proportion?: number) {
+                if (typeof proportion === 'undefined') {
+                    proportion = 0.5;
+                }
+                _easeOut = proportion;
+                return this;
+            }
+
+            function start() {
+                return new Promise<void>((resolve, reject) => {
+                    // Generate an easing function
+                    var easing: (proportion: number) => number;
+
+                    if (_easeIn > 0.0 && _easeOut > 0.0) {
+                        easing = createEasingFunction.inOut(_easeIn, 1.0-_easeOut);
+                    } else if (_easeIn > 0.0) {
+                        easing = createEasingFunction.in(_easeIn);
+                    } else if (_easeOut > 0.0) {
+                        easing = createEasingFunction.out(1.0-_easeOut);
+                    } else {
+                        easing = proportion => proportion;
+                    }
+
+                    // Also need a rotation function
+                    var rotate: (prop) => void;
+
+                    if (_targetAngle !== null) {
+                        var sourceAngle = obj.location.angle;
+                        var angleDiff   = _targetAngle - sourceAngle;
+                        rotate = (proportion) => {
+                            obj.location.angle = sourceAngle + (angleDiff*proportion);
+                        };
+                    } else {
+                        rotate = () => {};
+                    }
+
+                    // Finally, the animation itself
+                    var animation = new SmoothAnimation(0, 1, { easingFunction: easing });
+                    if (_path) {
+                        animation.onFrame((proportion) => {
+                            obj.location.pos = _path.pointAt(proportion);
+                            rotate(proportion);
+                        });
+                    } else if (_to !== null) {
+                        var startPos    = obj.location.pos;
+                        var diff        = subtractVector(_to, startPos);
+
+                        animation.onFrame((proportion) => {
+                            obj.location.pos = { 
+                                x: startPos.x + diff.x*proportion,
+                                y: startPos.y + diff.y*proportion
+                            }
+                            rotate(proportion);
+                        });
+                    }
+
+                    animation.onFinish(() => resolve());
+
+                    // Start the animation
+                    if (_delay !== null && obj.scene) {
+                        obj.scene.clock.after(_delay).then(() => obj.animations.addAnimation("animationSetup", animation));
+                    } else {
+                        obj.animations.addAnimation("animationSetup", animation);
+                    }
+                });
+            }
+
+            // Finish setup
+            this.to         = to;
+            this.followPath = followPath;
+            this.rotate     = rotate;
+            this.delay      = delay;
+            this.duration   = duration;
+            this.easeIn     = easeIn;
+            this.easeOut    = easeOut;
+            this.start      = start;
         }
 
         /** 
