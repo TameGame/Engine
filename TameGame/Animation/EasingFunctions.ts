@@ -36,17 +36,15 @@ module TameGame {
             startPoint = 0.5;
         }
 
-        var remaining = 1.0 - startPoint;
+        var remaining   = 1.0 - startPoint;
+        var easeIn      = createEaseIn(remaining);
 
         // Create an ease-in function
         var result: EasingFunction = (val) => {
             if (val < startPoint) {
                 return val;
             } else {
-                var proportion = 1.0-((val-startPoint)/remaining);
-                var pos = 1.0-(proportion * proportion);
-
-                return pos*remaining + startPoint;
+                return 1.0-easeIn(1.0 - val);
             }
         }
 
