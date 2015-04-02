@@ -42,6 +42,8 @@ module TameGame {
         /**
          * Specifies the delay before the animation starts
          *
+         * Note that if the object is not part of a scene, no delay will be applied to the animation
+         *
          * Default is no delay
          */
         delay(milliseconds: number): AnimationSetup;
