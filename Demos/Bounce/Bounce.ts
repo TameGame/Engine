@@ -1,3 +1,6 @@
+"use strict";
+
+// This forces the reference not to be used, which allows gulp to work but isn't really what we want to do, I think
 /// <reference path="TameGame.d.ts" />
 
 module TameGame {
