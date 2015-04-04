@@ -57,7 +57,7 @@ gulp.task('build', function() {
     // Put everything together in the output directory
     return merge([
         engine.pipe(gulp.dest('build/dist')),
-        tests.pipe(gulp.dest('build/Tests')),
+        tests.pipe(gulp.dest('build/Test')),
         demoBounce.pipe(gulp.dest('build/Demos/Bounce'))
     ]);
 });
