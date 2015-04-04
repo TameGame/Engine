@@ -2,6 +2,7 @@ var gulp        = require('gulp');
 var merge       = require('merge2');
 var gulpMerge   = require('gulp-merge');
 var ts          = require('gulp-typescript');
+var connect     = require('gulp-connect');
 
 var engineTsProject = {
     out: 'TameGame.js',
@@ -15,7 +16,10 @@ var launchTsProject = {
     noExternalResolve: true
 };
 
-gulp.task('default', function() {
+// The build task builds the engine, tests and demos
+// As the engine is copied into the tests and demos and gulp can't re-use the results of a task, we do this
+// monolithically rather than with independent tasks.
+gulp.task('build', function() {
     // Build TameGame.js
     var engineTs        = gulp.src([ 'TameGame/**/*.ts', 'ThirdParty/**/*.d.ts' ]);
     var compiledEngine  = engineTs.pipe(ts(engineTsProject));
@@ -57,3 +61,28 @@ gulp.task('default', function() {
         demoBounce.pipe(gulp.dest('build/Demos/Bounce'))
     ]);
 });
+
+// Watches and rebuilds
+gulp.task('watch', function () {
+    // Gulp can't pipe tasks into other tasks so we can't rebuild things individually without rebuilding the engine multiple times: just watch everything
+    gulp.watch([ 'TameGame/**/*.ts', 'TameLaunch/**/*.ts', 'Demos/**/*' ], [ 'build' ]);
+});
+
+// Runs a server for the build result
+gulp.task('connect', function () {
+    connect.server({
+        root: [ 'build' ],
+        port: 4200,
+        liveReload: true
+    })
+});
+
+// Builds and serves the result
+gulp.task('serve', [ 'build', 'watch', 'connect' ]);
+
+// Gulp uses FSEvents on OS X which are broken so allow serving without watching to make it possible to at least build the thing
+// This issue: https://github.com/joyent/node/issues/5463 - it's closed. It's still broken. Great.
+gulp.task('serveNoWatch', [ 'build', 'connect' ]);                  // Using gulp watch often results in ERROR: f2d_register_rpc() => (null) for me regardless of how many files are watched
+
+// Default is just to build
+gulp.task('default', [ 'build' ]);
