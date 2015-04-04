@@ -24,8 +24,11 @@ gulp.task('doc.markdown', function() {
     var md          = gulp.src(['doc/content/**/*.md']);
     var compiled    = md.pipe(markdown());
     var wrapped     = compiled.pipe(wrap({ src: 'doc/templates/doc.lodash.html' }));
+    var css         = gulp.src(['doc/templates/*.css']);
 
-    return wrapped.pipe(gulp.dest('build/doc'));
+    var combined    = gulpMerge(wrapped, css);
+
+    return combined.pipe(gulp.dest('build/doc')).pipe(connect.reload());
 });
 
 gulp.task('doc.reference', ['build'], function () {
