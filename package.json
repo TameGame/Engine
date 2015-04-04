@@ -20,6 +20,8 @@
   "homepage": "https://github.com/TameGame/Engine",
   "devDependencies": {
     "gulp": "^3.8.11",
-    "gulp-typescript": "^2.6.0"
+    "gulp-concat": "^2.5.2",
+    "gulp-typescript": "^2.6.0",
+    "merge2": "^0.3.2"
   }
 }
