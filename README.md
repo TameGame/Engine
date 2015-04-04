@@ -9,9 +9,9 @@ actual game ideas.
 Building
 ========
 
-    npm install -g broccoli-cli
+    npm install -g gulp
     npm install
-    broccoli build dist
+    gulp build
 
 Status
 ======
