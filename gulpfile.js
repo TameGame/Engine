@@ -8,6 +8,7 @@ var typedoc         = require('gulp-typedoc');
 var applyTemplate   = require('gulp-apply-template');
 var frontmatter     = require('gulp-front-matter');
 var through         = require('through2');
+var path            = require('path');
 
 var engineTsProject = {
     out: 'TameGame.js',
@@ -44,7 +45,7 @@ gulp.task('doc.sections', function() {
             }
 
             // It so happens the file.history[1] contains the filename but I don't know if that's how you're supposed to do it
-            sections[file.frontmatter.section][file.frontmatter.title] = { name: file.history[1], order: file.frontmatter.order };
+            sections[file.frontmatter.section][file.frontmatter.title] = { name: path.basename(file.history[1]), order: file.frontmatter.order };
 
             file.sections = { allSections: sections, firstPage: {} };
             this.push(file);
