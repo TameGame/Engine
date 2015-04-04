@@ -1,2 +1,2 @@
 /// <reference path="TileMapRenderer.ts" />
-/// <reference path="StringTileMapGnerator.ts" />
+/// <reference path="StringTileMapGenerator.ts" />
