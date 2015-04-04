@@ -1,0 +1,116 @@
+html {
+    font-family: sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin: 0px;
+    padding: 0px;
+}
+
+#topicHeader {
+    height: 44px;
+    font-size: 18px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    background: #333333;
+    color: #f0f0f0;
+    margin: 0px;
+    padding: 0px;
+}
+
+#topicHeader ul {
+    padding: 0px;
+    padding-right: 250px;
+    margin: 0px;
+    height: 100%;
+    min-height: 100%;
+    font-weight: 100;
+    text-align: right;
+}
+
+#topicHeader ul li {
+    display: inline-block;
+    padding-left: 6px;
+    padding-right: 6px;
+    margin-left: 2px;
+    margin-right: 2px;
+    list-style: none;
+    height: 100%;
+    min-height: 100%;
+    line-height: 44px;
+    border-left: 1px solid transparent;
+    border-right: 1px solid transparent;
+    vertical-align: middle;
+}
+
+#topicHeader ul li.selected {
+    font-weight: normal;
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+    background: black;
+}
+
+#articleList {
+    font-weight: 100;
+    position: fixed;
+    top: 44px;
+    left: 100px;
+    width: 250px;
+    padding: 0px;
+    margin: 0px;
+}
+
+#articleList * {
+    margin-left: 25px;
+}
+
+#articleList h1 {
+    padding: 0px;
+    margin: 0px;
+    font-weight: 400;
+    font-size: 18px;
+    margin-left: 0px;
+    padding-left: 25px;
+    padding-bottom: 4px;
+    padding-top: 4px;
+    background: #555555;
+    color: #f0f0f0;
+}
+
+#articleList ul {
+    font-size: 16px;
+    padding: 0px;
+    margin: 0px;
+    list-style: none;
+    width: 100%;
+    display: block;
+}
+
+#articleList ul li {
+    margin-top: 2px;
+    margin-bottom: 2px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    display: block;
+}
+
+#articleList ul li.selected {
+    background: #333333;
+    margin-left: 15px;
+    padding-left: 10px;
+    color: #fafafa;
+}
+
+article {
+    position: absolute;
+    top: 80px;
+    margin-left: 450px;
+    margin-right: 300px;
+}
