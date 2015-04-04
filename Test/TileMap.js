@@ -46,8 +46,6 @@ QUnit.test("RenderTileMap", function(assert) {
     var hitLeft     = false;
     var hitBottom   = false;
     renderer.renderTile = function(queue, spriteNumber, cameraId, zIndex, center, matrix) {
-        console.log(spriteNumber, center);
-
         if (approxEquals(center.x, 0) && approxEquals(center.y, 0)) {
             hitCenter = true;
             assert.ok(spriteNumber === 1);

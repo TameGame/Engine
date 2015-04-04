@@ -11,8 +11,8 @@ module TameGame {
             var widthTiles  = Math.max.apply(null, tiles.map(row => row.length));
             var heightTiles = tiles.length;
 
-            var minX        = (tileSize.width*widthTiles)/2.0;
-            var minY        = (tileSize.height*heightTiles)/2.0;
+            var minX        = -(tileSize.width*(widthTiles-1))/2.0;
+            var minY        = -(tileSize.height*(heightTiles-1))/2.0;
 
             var halfWidth   = tileSize.width/2.0;
             var halfHeight  = tileSize.height/2.0;
@@ -82,7 +82,7 @@ module TameGame {
         render: (queue: RenderQueue, cameraId: number, zIndex: number, center: ILocation, bounds?: BoundingBox) => void;
 
         /**
-         * Renders a tile in this map
+         * Renders a tile in this map. Can be overridden for custom behavior.
          */
         renderTile: (queue: RenderQueue, spriteNumber: number, cameraId: number, zIndex: number, center: Point2D, matrix: number[]) => void;
     };
