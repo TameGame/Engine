@@ -41,7 +41,7 @@ gulp.task('doc.markdown', function() {
 
             sections[file.frontmatter.section][file.frontmatter.title] = { name: file.name, order: file.frontmatter.order };
 
-            file.sections = { allSections: sections };
+            file.sections = { allSections: sections, firstPage: {} };
             this.push(file);
             cb();
         }, function (cb) {
@@ -58,6 +58,8 @@ gulp.task('doc.markdown', function() {
         file.sections.pages.sort(function (a, b) {
             return sectionPages[a].order - sectionPages[b].order;
         });
+
+        file.sections.firstPage[file.frontmatter.section] = sectionPages[file.sections.pages[0]].name;
 
         this.push(file);
         cb();
