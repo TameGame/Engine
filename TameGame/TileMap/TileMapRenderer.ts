@@ -34,10 +34,10 @@ module TameGame {
                     var reverseMatrix   = rotateTranslateMatrix(-center.angle, { x: -center.pos.x, y: -center.pos.y });
                     var tileBounds      = transformBoundingBox(bounds, reverseMatrix);
 
-                    minTileX = Math.floor(tileBounds.x/tileSize.width);
-                    minTileY = Math.floor(tileBounds.y/tileSize.height);
-                    maxTileX = Math.ceil((tileBounds.x+tileBounds.width)/tileSize.width);
-                    maxTileY = Math.ceil((tileBounds.y+tileBounds.height)/tileSize.height);
+                    minTileX = Math.floor((tileBounds.x-minX+halfWidth)/tileSize.width);
+                    minTileY = Math.floor((tileBounds.y-minY+halfHeight)/tileSize.height);
+                    maxTileX = Math.ceil((tileBounds.x+tileBounds.width-minX+halfWidth)/tileSize.width);
+                    maxTileY = Math.ceil((tileBounds.y+tileBounds.height-minY+halfHeight)/tileSize.height);
 
                     if (minTileX < 0) { minTileX = 0; }
                     if (minTileY < 0) { minTileY = 0; }
