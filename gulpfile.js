@@ -1,12 +1,12 @@
-var gulp        = require('gulp');
-var merge       = require('merge2');
-var gulpMerge   = require('gulp-merge');
-var ts          = require('gulp-typescript');
-var connect     = require('gulp-connect');
-var markdown    = require('gulp-markdown');
-var typedoc     = require('gulp-typedoc');
-var wrap        = require('gulp-wrap')
-var frontmatter = require('gulp-front-matter');
+var gulp            = require('gulp');
+var merge           = require('merge2');
+var gulpMerge       = require('gulp-merge');
+var ts              = require('gulp-typescript');
+var connect         = require('gulp-connect');
+var markdown        = require('gulp-markdown');
+var typedoc         = require('gulp-typedoc');
+var applyTemplate   = require('gulp-apply-template');
+var frontmatter     = require('gulp-front-matter');
 
 var engineTsProject = {
     out: 'TameGame.js',
@@ -25,7 +25,7 @@ gulp.task('doc.markdown', function() {
     var md              = gulp.src(['doc/content/**/*.md']);
     var noFrontMatter   = md.pipe(frontmatter({ property: 'frontmatter', remove: true }));
     var compiled        = noFrontMatter.pipe(markdown());
-    var wrapped         = compiled.pipe(wrap({ src: 'doc/templates/doc.lodash.html' }));
+    var wrapped         = compiled.pipe(applyTemplate({ engine: 'lodash', template: 'doc/templates/doc.lodash.html' }));
     var css             = gulp.src(['doc/templates/*.css']);
 
     var combined    = gulpMerge(wrapped, css);
