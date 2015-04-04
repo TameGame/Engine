@@ -23,12 +23,24 @@ var launchTsProject = {
 // Produces the HTML from the documentation content
 gulp.task('doc.markdown', function() {
     var md              = gulp.src(['doc/content/**/*.md']);
-    var noFrontMatter   = md.pipe(frontmatter({ property: 'frontmatter', remove: true }));
+    var noFrontMatter   = md.pipe(frontmatter({ 
+        property: 'frontmatter', 
+        remove: true 
+    }));
     var compiled        = noFrontMatter.pipe(markdown());
-    var wrapped         = compiled.pipe(applyTemplate({ engine: 'lodash', template: 'doc/templates/doc.lodash.html' }));
+    var wrapped         = compiled.pipe(applyTemplate({ 
+        engine: 'lodash', 
+        template: 'doc/templates/doc.lodash.html',
+        props: [ 'contents', 'data' ],
+        context: function(file) {
+            return {
+                data: { frontmatter: file.frontmatter },
+            };
+        }
+    }));
     var css             = gulp.src(['doc/templates/*.css']);
 
-    var combined    = gulpMerge(wrapped, css);
+    var combined        = gulpMerge(wrapped, css);
 
     return combined.pipe(gulp.dest('build/doc')).pipe(connect.reload());
 });
