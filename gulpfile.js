@@ -66,7 +66,7 @@ gulp.task('doc.markdown', ['doc.sections'], function() {
     }));
     var compiled        = noFrontMatter.pipe(markdown());
 
-    // Create an object with all the sections in it and attach to the files
+    // Attach the allSections object to the files
     var withSections    = compiled.pipe(through.obj(function (file, enc, cb) {
         file.sections = { allSections: allSections, firstPage: {} }
 
@@ -109,6 +109,7 @@ gulp.task('doc.markdown', ['doc.sections'], function() {
     return combined.pipe(gulp.dest('build/doc')).pipe(connect.reload());
 });
 
+// Creates the reference documentation from the source files
 gulp.task('doc.reference', ['build'], function () {
     var engineTs    = gulp.src([ 'build/dist/TameGame.d.ts', 'build/dist/TameLaunch.d.ts' ]);
     var docs        = engineTs.pipe(typedoc({

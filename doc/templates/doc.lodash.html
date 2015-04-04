@@ -27,7 +27,10 @@
                 <% } else { %>
                     <li>
                 <% } %>
-                <%= data.sections.pages[x] %></li>
+                    <a href="<%= data.sections.allSections[data.frontmatter.section][data.sections.pages[x]].name %>">
+                        <%= data.sections.pages[x] %>
+                    </a>
+                </li>
             <% } %>
         </ul>
     </nav>
