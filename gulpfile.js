@@ -3,6 +3,7 @@ var merge       = require('merge2');
 var gulpMerge   = require('gulp-merge');
 var ts          = require('gulp-typescript');
 var connect     = require('gulp-connect');
+var markdown    = require('gulp-markdown');
 
 var engineTsProject = {
     out: 'TameGame.js',
@@ -15,6 +16,14 @@ var launchTsProject = {
     declarationFiles: true,
     noExternalResolve: true
 };
+
+// Produces the HTML from the documentation content
+gulp.task('doc.markdown', function() {
+    var md          = gulp.src(['doc/content/**/*.md']);
+    var compiled    = md.pipe(markdown());
+
+    return compiled.pipe(gulp.dest('tmp/doc/content'));
+});
 
 // The build task builds the engine, tests and demos
 // As the engine is copied into the tests and demos and gulp can't re-use the results of a task, we do this
