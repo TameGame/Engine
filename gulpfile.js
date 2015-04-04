@@ -4,6 +4,7 @@ var gulpMerge   = require('gulp-merge');
 var ts          = require('gulp-typescript');
 var connect     = require('gulp-connect');
 var markdown    = require('gulp-markdown');
+var typedoc     = require('gulp-typedoc');
 
 var engineTsProject = {
     out: 'TameGame.js',
@@ -23,6 +24,18 @@ gulp.task('doc.markdown', function() {
     var compiled    = md.pipe(markdown());
 
     return compiled.pipe(gulp.dest('tmp/doc/content'));
+});
+
+gulp.task('doc.reference', function () {
+    var engineTs    = gulp.src([ 'TameGame/**/*.ts' ]);
+    var docs        = engineTs.pipe(typedoc({
+        module: 'amd',
+        out: './tmp/reference',
+        name: 'TameGame',
+        target: 'es5'
+    }));
+
+    return docs;
 });
 
 // The build task builds the engine, tests and demos

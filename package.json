@@ -23,6 +23,7 @@
     "gulp-connect": "^2.2.0",
     "gulp-markdown": "^1.0.0",
     "gulp-merge": "^0.1.0",
+    "gulp-typedoc": "^1.1.0",
     "gulp-typescript": "^2.6.0",
     "highlight.js": "^8.5.0",
     "merge2": "^0.3.2"
