@@ -63,6 +63,7 @@ gulp.task('build', function() {
 });
 
 // Watches and rebuilds
+// FSEvents are broken on OS X so this often just errors out: one fix is to quit your editor (Sublime Text, for example) before starting gulp
 gulp.task('watch', function () {
     // Gulp can't pipe tasks into other tasks so we can't rebuild things individually without rebuilding the engine multiple times: just watch everything
     gulp.watch([ 'TameGame/**/*.ts', 'TameLaunch/**/*.ts', 'Demos/**/*' ], [ 'build' ]);
