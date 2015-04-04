@@ -122,6 +122,26 @@ body {
     color: #fafafa;
 }
 
+#articleList ul li.selected:hover {
+    background: #333333;
+    color: #fafafa;
+}
+
+#articleList ul a {
+    color: black;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+}
+
+#articleList ul li:hover {
+    background: #aaaaaa;
+}
+
+#articleList ul li.selected a {
+    color: #fafafa;
+}
+
 article {
     position: absolute;
     top: 80px;
