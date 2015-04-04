@@ -4,7 +4,7 @@ module TameGame {
     /**
      * Represents a linear path between two points
      */
-    export class LinearPath {
+    export class LinearPath implements Path {
         constructor(from: Point2D, to: Point2D) {
             var fromX = from.x;
             var fromY = from.y;
