@@ -27,12 +27,13 @@ gulp.task('doc.markdown', function() {
 });
 
 gulp.task('doc.reference', function () {
-    var engineTs    = gulp.src([ 'TameGame/**/*.ts' ]);
+    var engineTs    = gulp.src([ 'build/dist/TameGame.d.ts', 'build/dist/TameLaunch.d.ts' ]);
     var docs        = engineTs.pipe(typedoc({
         module: 'amd',
         out: './tmp/reference',
         name: 'TameGame',
-        target: 'es5'
+        target: 'es5',
+        includeDeclarations: true
     }));
 
     return docs;
