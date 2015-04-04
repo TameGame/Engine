@@ -97,7 +97,7 @@ QUnit.test("RenderPartialTileMap", function(assert) {
     var hitLeft     = false;
     var hitBottom   = false;
     renderer.renderTile = function(queue, spriteNumber, cameraId, zIndex, center, matrix) {
-        assert.ok(center.x === 0, center.y === 0, 'Only center tile rendered');
+        assert.ok(approxEquals(center.x, 0) && approxEquals(center.y, 0), 'Only center tile rendered');
         hitCenter = true;
     };
 
