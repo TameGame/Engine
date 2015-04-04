@@ -12,7 +12,7 @@ module TameGame {
             var _nextSpriteId: number;
             var _properties: { [id: number]: SpriteProperties };
 
-            _nextSpriteId   = 0;
+            _nextSpriteId   = 1;
             _properties     = {};
 
             /**

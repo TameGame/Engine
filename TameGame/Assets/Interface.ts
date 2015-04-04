@@ -77,7 +77,7 @@ module TameGame {
         /**
          * Loads an image file as a single sprite
          *
-         * Sprite assets usually come in the form of .png files
+         * Sprite assets usually come in the form of .png files. Sprite ID 0 is reserved and means 'no sprite'
          */
         loadSprite(assetName: string, id?: number): number;
 

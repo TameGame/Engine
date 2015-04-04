@@ -53,7 +53,9 @@ module TameGame {
                         var xpos        = minX + x*tileSize.width;
                         var tileSprite  = tiles[y][x] || 0;
 
-                        this.renderTile(queue, tileSprite, cameraId, zIndex, { x: xpos, y: ypos }, matrix);
+                        if (tileSprite) {
+                            this.renderTile(queue, tileSprite, cameraId, zIndex, { x: xpos, y: ypos }, matrix);
+                        }
                     }
                 }
             }
