@@ -1,5 +1,6 @@
 var gulp    = require('gulp');
 var merge   = require('merge2');
+var concat  = require('gulp-concat');
 var ts      = require('gulp-typescript');
 
 var engineTsProject = {

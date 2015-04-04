@@ -123,7 +123,7 @@ module TameGame {
                 }
                 
                 // Deal with aborts and failed loads
-                image.onabort = image.onerror = (ev) => {
+                image.onabort = image.onerror = (ev: any) => {
                     console.error('Error while loading image from ' + url + ':', ev);
                 }
                 

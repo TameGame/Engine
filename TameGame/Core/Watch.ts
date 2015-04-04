@@ -343,8 +343,8 @@ module TameGame {
                 
                 // Only include objects matched by the filter
                 _propertyNames.forEach((propertyName) => {
-                    var oldPropertyChanges = _getChange[propertyName]();
-                    var newPropertyChanges = newChanges[propertyName] = {};
+                    var oldPropertyChanges: { [id: number]: TameObject } = _getChange[propertyName]();
+                    var newPropertyChanges: { [id: number]: TameObject } = newChanges[propertyName] = {};
                     
                     // Using forEach() here would be preferable but it seems to fail the type checks (TypeScript doesn't realise the IDs are numbers)
                     for (var objId in oldPropertyChanges) {

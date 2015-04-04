@@ -51,7 +51,7 @@ module TameGame {
     var behaviorClasses: { [ name: string ]: Behavior } = {};
 
     /** The behavior classes to use for particular states */
-    var behaviorStates: { [ className: string ]: { [ stateName: string ]: Behavior } } = { '': {} };
+    var behaviorStates: { [ className: string ]: { [ stateName: string ]: Behavior } } = { '': <any> {} };
     
     /** The class options for the behaviors */
     var behaviorClassOptions: { [ className: string ]: BehaviorClassOptions } = {};
