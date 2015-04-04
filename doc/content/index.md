@@ -1,2 +1,5 @@
+---
+title: Main index
+---
 # TameGame
 

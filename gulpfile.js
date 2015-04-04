@@ -5,6 +5,7 @@ var ts          = require('gulp-typescript');
 var connect     = require('gulp-connect');
 var markdown    = require('gulp-markdown');
 var typedoc     = require('gulp-typedoc');
+var wrap        = require('gulp-wrap')
 
 var engineTsProject = {
     out: 'TameGame.js',
@@ -22,15 +23,16 @@ var launchTsProject = {
 gulp.task('doc.markdown', function() {
     var md          = gulp.src(['doc/content/**/*.md']);
     var compiled    = md.pipe(markdown());
+    var wrapped     = compiled.pipe(wrap({ src: 'doc/templates/doc.lodash.html' }));
 
-    return compiled.pipe(gulp.dest('tmp/doc/content'));
+    return wrapped.pipe(gulp.dest('build/doc'));
 });
 
 gulp.task('doc.reference', ['build'], function () {
     var engineTs    = gulp.src([ 'build/dist/TameGame.d.ts', 'build/dist/TameLaunch.d.ts' ]);
     var docs        = engineTs.pipe(typedoc({
         module: 'amd',
-        out: './tmp/reference',
+        out: 'build/doc/reference',
         name: 'TameGame',
         target: 'es5',
         includeDeclarations: true
@@ -38,6 +40,9 @@ gulp.task('doc.reference', ['build'], function () {
 
     return docs;
 });
+
+// Creates the documentation
+gulp.task('doc', ['doc.markdown', 'doc.reference']);
 
 // The build task builds the engine, tests and demos
 // As the engine is copied into the tests and demos and gulp can't re-use the results of a task, we do this
@@ -90,6 +95,7 @@ gulp.task('build', function() {
 gulp.task('watch', function () {
     // Gulp can't pipe tasks into other tasks so we can't rebuild things individually without rebuilding the engine multiple times: just watch everything
     gulp.watch([ 'TameGame/**/*.ts', 'TameLaunch/**/*.ts', 'Demos/**/*' ], [ 'build' ]);
+    gulp.watch([ 'doc/**/*' ], [ 'doc.markdown' ]);
 });
 
 // Runs a server for the build result
@@ -102,7 +108,7 @@ gulp.task('connect', function () {
 });
 
 // Builds and serves the result
-gulp.task('serve', [ 'build', 'watch', 'connect' ]);
+gulp.task('serve', [ 'build', 'watch', 'doc', 'connect' ]);
 
 // Gulp uses FSEvents on OS X which are broken so allow serving without watching to make it possible to at least build the thing
 // This issue: https://github.com/joyent/node/issues/5463 - it's closed. It's still broken. Great.
