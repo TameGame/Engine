@@ -26,7 +26,7 @@ gulp.task('doc.markdown', function() {
     return compiled.pipe(gulp.dest('tmp/doc/content'));
 });
 
-gulp.task('doc.reference', function () {
+gulp.task('doc.reference', ['build'], function () {
     var engineTs    = gulp.src([ 'build/dist/TameGame.d.ts', 'build/dist/TameLaunch.d.ts' ]);
     var docs        = engineTs.pipe(typedoc({
         module: 'amd',
