@@ -28,33 +28,48 @@ gulp.task('doc.markdown', function() {
         property: 'frontmatter', 
         remove: true 
     }));
+    var compiled        = noFrontMatter.pipe(markdown());
 
-    var withMenuData    = noFrontMatter.pipe((function() {
-        var sections        = [];
-        var usedSections    = {};
+    // Create an object with all the sections in it and attach to the files
+    var withSections    = compiled.pipe((function() {
+        var sections        = {};
 
         return through.obj(function (file, enc, cb) {
-            if (!usedSections[file.frontmatter.section]) {
-                sections.push(file.frontmatter.section);
-                usedSections[file.frontmatter.section] = true;
+            if (!sections[file.frontmatter.section]) {
+                sections[file.frontmatter.section] = {};
             }
 
-            file.frontmatter.sectionList = sections;
+            sections[file.frontmatter.section][file.frontmatter.title] = { name: file.name, order: file.frontmatter.order };
+
+            file.sections = { allSections: sections };
             this.push(file);
             cb();
         }, function (cb) {
             cb()
-        })
+        });
     })());
 
-    var compiled        = noFrontMatter.pipe(markdown());
-    var wrapped         = compiled.pipe(applyTemplate({ 
+    // Attach an object with the ordered page data in it
+    var withPages   = withSections.pipe(through.obj(function (file, enc, cb) {
+        var allSections = file.sections.allSections;
+        var sectionPages = allSections[file.frontmatter.section];
+
+        file.sections.pages = Object.keys(sectionPages);
+        file.sections.pages.sort(function (a, b) {
+            return sectionPages[a].order - sectionPages[b].order;
+        });
+
+        this.push(file);
+        cb();
+    }));
+
+    var wrapped         = withPages.pipe(applyTemplate({ 
         engine: 'lodash', 
         template: 'doc/templates/doc.lodash.html',
         props: [ 'contents', 'data' ],
         context: function(file) {
             return {
-                data: { frontmatter: file.frontmatter },
+                data: { frontmatter: file.frontmatter, sections: file.sections },
             };
         }
     }));
