@@ -45,6 +45,7 @@ QUnit.test("RenderTileMap", function(assert) {
     var hitCenter   = false;
     var hitLeft     = false;
     var hitBottom   = false;
+    var hitRight    = false;
     renderer.renderTile = function(queue, spriteNumber, cameraId, zIndex, center, matrix) {
         if (approxEquals(center.x, 0) && approxEquals(center.y, 0)) {
             hitCenter = true;
@@ -63,6 +64,11 @@ QUnit.test("RenderTileMap", function(assert) {
             assert.ok(spriteNumber === 1, 'Tile at 4,4 renders')
             hitBottom = true;
         }
+
+        if (approxEquals(center.x, 4) && approxEquals(center.y, 0)) {
+            // As a space, this should be invisible and hence never render
+            hitRight = true;
+        }
     };
 
     renderer.render(renderQueue, 1, 2, { pos: { x: 0, y: 0 }, angle: 0 } );
@@ -70,6 +76,7 @@ QUnit.test("RenderTileMap", function(assert) {
     assert.ok(hitCenter);
     assert.ok(hitLeft);
     assert.ok(hitBottom);
+    assert.ok(!hitRight);
 });
 
 QUnit.test("RenderPartialTileMap", function(assert) {
