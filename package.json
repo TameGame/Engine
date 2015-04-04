@@ -21,6 +21,7 @@
   "devDependencies": {
     "gulp": "^3.8.11",
     "gulp-connect": "^2.2.0",
+    "gulp-front-matter": "^1.2.2",
     "gulp-markdown": "^1.0.0",
     "gulp-merge": "^0.1.0",
     "gulp-typedoc": "^1.1.0",
