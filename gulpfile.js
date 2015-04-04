@@ -21,8 +21,12 @@ var launchTsProject = {
     noExternalResolve: true
 };
 
-// Produces the HTML from the documentation content
-gulp.task('doc.markdown', function() {
+var allSections = {};
+
+// Fills up the allSections array with a list of the sections and pages found in the markdown files
+gulp.task('doc.sections', function() {
+    allSections = {};
+
     var md              = gulp.src(['doc/content/**/*.md']);
     var noFrontMatter   = md.pipe(frontmatter({ 
         property: 'frontmatter', 
@@ -32,14 +36,15 @@ gulp.task('doc.markdown', function() {
 
     // Create an object with all the sections in it and attach to the files
     var withSections    = compiled.pipe((function() {
-        var sections        = {};
+        var sections = allSections;
 
         return through.obj(function (file, enc, cb) {
             if (!sections[file.frontmatter.section]) {
                 sections[file.frontmatter.section] = {};
             }
 
-            sections[file.frontmatter.section][file.frontmatter.title] = { name: file.name, order: file.frontmatter.order };
+            // It so happens the file.history[1] contains the filename but I don't know if that's how you're supposed to do it
+            sections[file.frontmatter.section][file.frontmatter.title] = { name: file.history[1], order: file.frontmatter.order };
 
             file.sections = { allSections: sections, firstPage: {} };
             this.push(file);
@@ -48,6 +53,26 @@ gulp.task('doc.markdown', function() {
             cb()
         });
     })());
+
+    return withSections;
+});
+
+// Produces the HTML from the documentation content
+gulp.task('doc.markdown', ['doc.sections'], function() {
+    var md              = gulp.src(['doc/content/**/*.md']);
+    var noFrontMatter   = md.pipe(frontmatter({ 
+        property: 'frontmatter', 
+        remove: true 
+    }));
+    var compiled        = noFrontMatter.pipe(markdown());
+
+    // Create an object with all the sections in it and attach to the files
+    var withSections    = compiled.pipe(through.obj(function (file, enc, cb) {
+        file.sections = { allSections: allSections, firstPage: {} }
+
+        this.push(file);
+        cb();
+    }));
 
     // Attach an object with the ordered page data in it
     var withPages   = withSections.pipe(through.obj(function (file, enc, cb) {
@@ -62,6 +87,8 @@ gulp.task('doc.markdown', function() {
         file.sections.firstPage[file.frontmatter.section] = sectionPages[file.sections.pages[0]].name;
 
         this.push(file);
+        cb();
+    }, function(cb) {
         cb();
     }));
 

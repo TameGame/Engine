@@ -21,10 +21,14 @@
         <h1>Introduction</h1>
 
         <ul>
-            <li class="selected">Welcome</li>
-            <li>Getting Started</li>
-            <li>FAQ</li>
-            <li>SomethingElse</li>
+            <% for (var x=0; x<data.sections.pages.length; ++x) { %>
+                <% if (data.frontmatter.title == data.sections.pages[x]) { %>
+                    <li class="selected">
+                <% } else { %>
+                    <li>
+                <% } %>
+                <%= data.sections.pages[x] %></li>
+            <% } %>
         </ul>
     </nav>
 
