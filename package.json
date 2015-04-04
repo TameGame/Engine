@@ -30,6 +30,7 @@
     "gulp-wrap": "^0.11.0",
     "highlight.js": "^8.5.0",
     "lodash": "^3.6.0",
-    "merge2": "^0.3.2"
+    "merge2": "^0.3.2",
+    "through2": "^0.6.3"
   }
 }

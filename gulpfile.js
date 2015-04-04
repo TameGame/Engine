@@ -7,6 +7,7 @@ var markdown        = require('gulp-markdown');
 var typedoc         = require('gulp-typedoc');
 var applyTemplate   = require('gulp-apply-template');
 var frontmatter     = require('gulp-front-matter');
+var through         = require('through2');
 
 var engineTsProject = {
     out: 'TameGame.js',
@@ -27,6 +28,25 @@ gulp.task('doc.markdown', function() {
         property: 'frontmatter', 
         remove: true 
     }));
+
+    var withMenuData    = noFrontMatter.pipe((function() {
+        var sections        = [];
+        var usedSections    = {};
+
+        return through.obj(function (file, enc, cb) {
+            if (!usedSections[file.frontmatter.section]) {
+                sections.push(file.frontmatter.section);
+                usedSections[file.frontmatter.section] = true;
+            }
+
+            file.frontmatter.sectionList = sections;
+            this.push(file);
+            cb();
+        }, function (cb) {
+            cb()
+        })
+    })());
+
     var compiled        = noFrontMatter.pipe(markdown());
     var wrapped         = compiled.pipe(applyTemplate({ 
         engine: 'lodash', 
