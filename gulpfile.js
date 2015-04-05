@@ -22,11 +22,14 @@ var launchTsProject = {
     noExternalResolve: true
 };
 
-var allSections = {};
+var allSections     = {};
+var orderedSections = [];
+var sectionOrder    = [ 'Introduction', 'Guides', 'Examples', 'Contact' ];
 
 // Fills up the allSections array with a list of the sections and pages found in the markdown files
 gulp.task('doc.sections', function() {
-    allSections = {};
+    allSections     = {};
+    orderedSections = [];
 
     var md              = gulp.src(['doc/content/**/*.md']);
     var noFrontMatter   = md.pipe(frontmatter({ 
@@ -47,11 +50,14 @@ gulp.task('doc.sections', function() {
             // It so happens the file.history[1] contains the filename but I don't know if that's how you're supposed to do it
             sections[file.frontmatter.section][file.frontmatter.title] = { name: path.basename(file.history[1]), order: file.frontmatter.order };
 
-            file.sections = { allSections: sections, firstPage: {} };
+            file.sections = { allSections: sections, orderedSections: orderedSections, firstPage: {} };
             this.push(file);
             cb();
         }, function (cb) {
-            cb()
+            orderedSections = Object.keys(allSections);
+            orderedSections.sort();
+
+            cb();
         });
     })());
 
@@ -104,8 +110,9 @@ gulp.task('doc.markdown', ['doc.sections'], function() {
         }
     }));
     var css             = gulp.src(['doc/templates/*.css']);
+    var images          = gulp.src(['doc/images/**/*']);
 
-    var combined        = gulpMerge(wrapped, css);
+    var combined        = gulpMerge(wrapped, css, images);
 
     return combined.pipe(gulp.dest('build/doc')).pipe(connect.reload());
 });
