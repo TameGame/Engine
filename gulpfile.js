@@ -124,9 +124,11 @@ gulp.task('doc.markdown', ['doc.sections'], function() {
     css                 = gulpMerge(css, gulp.src('node_modules/highlight.js/styles/default.css'));
     var images          = gulp.src(['doc/images/**/*']);
 
-    var combined        = gulpMerge(wrapped, css, images);
-
-    return combined.pipe(gulp.dest('build/doc')).pipe(connect.reload());
+    return merge([
+        wrapped.pipe(gulp.dest('build/doc')),
+        css.pipe(gulp.dest('build/doc')),
+        images.pipe(gulp.dest('build/doc'))
+    ]);
 });
 
 // Creates the reference documentation from the source files
@@ -215,7 +217,7 @@ gulp.task('build', [ 'build.engine', 'build.demos', 'build.tests' ]);
 gulp.task('watch', function () {
     // Gulp can't pipe tasks into other tasks so we can't rebuild things individually without rebuilding the engine multiple times: just watch everything
     gulp.watch([ 'TameGame/**/*.ts', 'TameLaunch/**/*.ts', 'Demos/**/*' ], [ 'build' ]);
-    gulp.watch([ 'doc/**/*' ], [ 'doc.markdown' ]);                 // TODO: for some reason that's utterly unclear, gulp only rebuilds doc.sections which is useless
+    gulp.watch([ 'doc/**/*' ], [ 'doc.markdown' ]);
 });
 
 // Runs a server for the build result
