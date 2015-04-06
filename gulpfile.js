@@ -111,6 +111,7 @@ gulp.task('doc.markdown', ['doc.sections'], function() {
         }
     }));
     var css             = gulp.src(['doc/templates/*.css']);
+    css                 = gulpMerge(css, gulp.src('node_modules/highlight.js/styles/default.css'), gulp.src('node_modules/highlight.js/lib/highlight.js'));
     var images          = gulp.src(['doc/images/**/*']);
 
     var combined        = gulpMerge(wrapped, css, images);
