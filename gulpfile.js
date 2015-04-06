@@ -9,6 +9,7 @@ var applyTemplate   = require('gulp-apply-template');
 var frontmatter     = require('gulp-front-matter');
 var through         = require('through2');
 var path            = require('path');
+var highlight       = require('highlight.js');
 
 var engineTsProject = {
     out: 'TameGame.js',
@@ -36,7 +37,7 @@ gulp.task('doc.sections', function() {
         property: 'frontmatter', 
         remove: true 
     }));
-    var compiled        = noFrontMatter.pipe(markdown());
+    var compiled        = noFrontMatter.pipe(markdown({ highlight: function () { return highlight; }}));
 
     // Create an object with all the sections in it and attach to the files
     var withSections    = compiled.pipe((function() {
