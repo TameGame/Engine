@@ -118,7 +118,7 @@ gulp.task('doc.markdown', ['doc.sections'], function() {
 });
 
 // Creates the reference documentation from the source files
-gulp.task('doc.reference', ['build'], function () {
+gulp.task('doc.reference', ['build.engine'], function () {
     var engineTs    = gulp.src([ 'build/dist/TameGame.d.ts', 'build/dist/TameLaunch.d.ts' ]);
     var docs        = engineTs.pipe(typedoc({
         module: 'amd',
@@ -134,10 +134,8 @@ gulp.task('doc.reference', ['build'], function () {
 // Creates the documentation
 gulp.task('doc', ['doc.markdown', 'doc.reference']);
 
-// The build task builds the engine, tests and demos
-// As the engine is copied into the tests and demos and gulp can't re-use the results of a task, we do this
-// monolithically rather than with independent tasks.
-gulp.task('build', function() {
+// Builds the engine, placing it in build/dist
+gulp.task('build.engine', function () {
     // Build TameGame.js
     var engineTs        = gulp.src([ 'TameGame/**/*.ts', 'ThirdParty/**/*.d.ts' ]);
     var compiledEngine  = engineTs.pipe(ts(engineTsProject));
@@ -150,7 +148,20 @@ gulp.task('build', function() {
 
     // Merge in the required dependencies
     var p2js    = gulp.src('ThirdParty/p2.js/build/**/*');
-    var engine  = gulpMerge(compiledEngine.js, compiledEngine.dts, compiledLaunch.js, compiledLaunch.dts, p2js);
+
+    return merge([
+        compiledEngine.js.pipe(gulp.dest('build/dist')),
+        compiledEngine.dts.pipe(gulp.dest('build/dist')),
+        compiledLaunch.js.pipe(gulp.dest('build/dist')),
+        compiledLaunch.dts.pipe(gulp.dest('build/dist')),
+        p2js.pipe(gulp.dest('build/dist'))
+    ]);
+});
+
+// Builds the demos, placing the result in build/Demos
+gulp.task('build.demos', [ 'build.engine' ], function() {
+    var engine = gulp.src('build/dist/**/*.js');
+    var definitionFiles = gulpMerge(gulp.src([ 'ThirdParty/**/*.d.ts', 'TameGame/**/*.d.ts', 'build/dist/**/*.d.ts' ]));
 
     // Build the demos
     function buildDemo(directory, targetJsName) {
@@ -169,16 +180,23 @@ gulp.task('build', function() {
 
     var demoBounce = buildDemo('Demos/Bounce', 'Bounce.js');
 
-    // Build the tests
-    var tests   = gulpMerge(gulp.src('Test/**/*'), engine);
-
-    // Put everything together in the output directory
     return merge([
-        engine.pipe(gulp.dest('build/dist')),
-        tests.pipe(gulp.dest('build/Test')),
         demoBounce.pipe(gulp.dest('build/Demos/Bounce'))
     ]);
 });
+
+// Builds the tests, placing the result in build/Test
+gulp.task('build.tests', [ 'build.engine' ], function() {
+    var engine = gulp.src('build/dist/**/*.js');
+
+    // Build the tests
+    var tests   = gulpMerge(gulp.src('Test/**/*'), engine);
+
+    return tests.pipe(gulp.dest('build/Test'));
+});
+
+// The build task builds the engine, tests and demos
+gulp.task('build', [ 'build.engine', 'build.demos', 'build.tests' ]);
 
 // Watches and rebuilds
 // FSEvents are broken on OS X so this often just errors out: one fix is to quit your editor (Sublime Text, for example) before starting gulp
@@ -205,4 +223,4 @@ gulp.task('serve', [ 'build', 'watch', 'doc', 'connect' ]);
 gulp.task('serveNoWatch', [ 'build', 'connect' ]);                  // Using gulp watch often results in ERROR: f2d_register_rpc() => (null) for me regardless of how many files are watched
 
 // Default is just to build
-gulp.task('default', [ 'build' ]);
+gulp.task('default', [ 'build', 'doc' ]);
