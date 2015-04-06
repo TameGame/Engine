@@ -22,11 +22,15 @@ install and use it for those that are unfamiliar.
 Finally, you'll need gulp to actually build TameGame. This is installed from the command
 line after installing node using the following command:
 
-    npm install -g gulp
+```bash
+npm install -g gulp
+```
 
 You can check it's installed with the following command:
 
-    gulp --version
+```bash
+gulp --version
+```
 
 ## Building
 
@@ -34,8 +38,10 @@ Once the requirements are met, you can build TameGame. Use the git tool to clone
 engine repository from `https://github.com/TameGame/Engine.git` into a new folder.
 Bring up the command line and navigate to that folder and run the following commands:
 
-	npm install
-	gulp
+```bash
+npm install
+gulp
+```
 
 `npm install` installs everything needed to perform the build and `gulp` actually builds
 the engine. It will create a `build` directory with everything in it.
@@ -44,7 +50,9 @@ You can also use gulp to run a webserver. Due to the way that most browsers work
 need to run the demos from a webserver rather than by loading the local files. To do this,
 run the following command from the engine folder:
 
-    gulp serve
+```bash
+gulp serve
+```
 
 You should now be able to use a browser to see the demos by going to 
 `localhost:4200/Demos/Bounce/index.html`

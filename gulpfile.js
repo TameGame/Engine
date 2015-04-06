@@ -37,7 +37,7 @@ gulp.task('doc.sections', function() {
         property: 'frontmatter', 
         remove: true 
     }));
-    var compiled        = noFrontMatter.pipe(markdown({ highlight: function () { return highlight; }}));
+    var compiled        = noFrontMatter.pipe(markdown());
 
     // Create an object with all the sections in it and attach to the files
     var withSections    = compiled.pipe((function() {
@@ -72,7 +72,17 @@ gulp.task('doc.markdown', ['doc.sections'], function() {
         property: 'frontmatter', 
         remove: true 
     }));
-    var compiled        = noFrontMatter.pipe(markdown());
+    var compiled        = noFrontMatter.pipe(markdown({ 
+        highlight: function (code, lang, callback) {
+            var langList    = null;
+            if (lang) {
+                langList = [ lang ];
+            }
+
+            var highlighted = highlight.highlightAuto(code, langList);
+            callback(null, highlighted.value);
+        }
+    }));
 
     // Attach the allSections object to the files
     var withSections    = compiled.pipe(through.obj(function (file, enc, cb) {
@@ -111,7 +121,7 @@ gulp.task('doc.markdown', ['doc.sections'], function() {
         }
     }));
     var css             = gulp.src(['doc/templates/*.css']);
-    css                 = gulpMerge(css, gulp.src('node_modules/highlight.js/styles/default.css'), gulp.src('node_modules/highlight.js/lib/highlight.js'));
+    css                 = gulpMerge(css, gulp.src('node_modules/highlight.js/styles/default.css'));
     var images          = gulp.src(['doc/images/**/*']);
 
     var combined        = gulpMerge(wrapped, css, images);
