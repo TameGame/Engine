@@ -10,6 +10,7 @@ body {
     font-family: 'Lato', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     margin: 0px;
     padding: 0px;
+    width: 100%;
 }
 
 #topicHeader {
@@ -72,7 +73,7 @@ body {
 }
 
 #articleList {
-    font-weight: 100;
+    font-weight: 300;
     position: absolute;
     top: 44px;
     left: 100px;
@@ -154,4 +155,33 @@ article {
     top: 80px;
     margin-left: 450px;
     margin-right: 300px;
+}
+
+code {
+    background: #f7f7f7;
+    border: 1px solid #999999;
+    padding-left: 2px;
+    padding-right: 2px;
+    margin-left: 2px;
+    margin-right: 2px;
+    font-family: 'Droid Sans Mono', 'Lucida Console', Monaco, monospace;
+    font-size: 90%;
+}
+
+pre code {
+    border: none;
+    background: none;
+    word-wrap: normal;
+    white-space: pre;
+    margin: 0px;
+    padding: 0px;
+}
+
+pre {
+    overflow-x: auto;
+    max-width: 600px;
+    margin-left: 16px;
+    margin-right: 16px;
+    padding: 8px;
+    background: #eeeeee;
 }
