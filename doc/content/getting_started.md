@@ -84,4 +84,8 @@ with your game in and using the following command:
 http-server
 ```
 
-You'll find the game running at `http://localhost:8080/`.
+You'll find the game running at `http://localhost:8080/`. One annoying thing about http-server
+is that due to the way caching works, you may need to manually load 
+`http://localhost:8080/Game.js` in order to persuade the browser to update its copy of the game
+when making changes.
+
