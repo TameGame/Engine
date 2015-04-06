@@ -53,11 +53,14 @@ var ballSprite = sprites.loadSprite('Ball.png');
 var ballObject = game.createObject();
 
 // Set the sprite and put it in the center of the screen
-ballObject.setup.sprite(ballSprite, .5, .5).moveTo(0, 0);
+ballObject.setup.sprite(ballSprite, 0.5, 0.5).moveTo(0, 0);
 
 // Create a scene to display the sprite in
 var scene = game.createScene();
 scene.addObject(ballObject);
+
+// The camera specifies which part of the scene is rendered
+scene.camera = { center: { x: 0, y: 0 }, height: 4.0, rotation: 0 };
 
 // Start the scene running
 game.startScene(scene);
