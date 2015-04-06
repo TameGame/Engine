@@ -5,7 +5,7 @@ order: 0.0
 ---
 # Welcome
 
-TameGame is a 2D game engine written in JavaScript. It's built to be modular and to
+TameGame is a 2D game engine written in TypeScript. It's built to be modular and to
 stay out of the way whenever it can, while still being as helpful as possible. It runs
 in modern browsers that support WebGL and WebWorkers.
 

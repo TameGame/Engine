@@ -71,7 +71,7 @@ and call it `Ball.png` to give the game something to display (though you should 
 placeholder image even without it)
 
 To try this out, you'll need to be running a webserver. The easiest way to do this is to
-install `node.js` and then install `http-server` from the command line:
+install node.js and then install `http-server` from the command line:
 
 ```bash
 npm install -g http-server
