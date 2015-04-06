@@ -171,17 +171,15 @@ code {
 pre code {
     border: none;
     background: none;
-    word-wrap: normal;
-    white-space: pre;
     margin: 0px;
     padding: 0px;
 }
 
 pre {
     overflow-x: auto;
-    max-width: 600px;
     margin-left: 16px;
     margin-right: 16px;
     padding: 8px;
     background: #eeeeee;
+    white-space: pre-wrap;
 }
