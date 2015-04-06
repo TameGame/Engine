@@ -215,7 +215,7 @@ gulp.task('build', [ 'build.engine', 'build.demos', 'build.tests' ]);
 gulp.task('watch', function () {
     // Gulp can't pipe tasks into other tasks so we can't rebuild things individually without rebuilding the engine multiple times: just watch everything
     gulp.watch([ 'TameGame/**/*.ts', 'TameLaunch/**/*.ts', 'Demos/**/*' ], [ 'build' ]);
-    gulp.watch([ 'doc/**/*' ], [ 'doc.markdown' ]);
+    gulp.watch([ 'doc/**/*' ], [ 'doc.markdown' ]);                 // TODO: for some reason that's utterly unclear, gulp only rebuilds doc.sections which is useless
 });
 
 // Runs a server for the build result

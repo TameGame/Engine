@@ -9,10 +9,6 @@ First you'll need to get hold of the TameGame files. There are two that'll you'l
 `TameGame.js` and `TameLaunch.js`. Right now, the way to do this is to follow the instructions
 in [Building from Source](building.html).
 
-```javascript
-var foo = bar;
-```
-
 ```html
 <!DOCTYPE html>
 <html>
